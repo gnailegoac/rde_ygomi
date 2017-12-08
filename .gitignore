@@ -1,88 +1,16 @@
-M temp file
+build/
+build_ut/
+test/
+out/
+system_test/
+build*
 
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-*.un~
-Session.vim
-.netrwhist
-*~
-*.bak
-*.swp
-
-#IBM ROSE RealTime file
-*.rtto
-*.rtusr
-*.rtwks
-*.rtlogpkg
-*.rtmdl
-#Windows script/tools
-#*.bat
-*.reg
-
-#package files
-*.zip
-*.tar.gz
-*.tar.gz2
-*.7z
-#resource files
-*.wav
-*.rmvb
-*.pdf
-*.doc
-*.xls
-*.docx
-*.xlsx
-#man/ help
-man/
-share/
-help/
-ti_lib/
-#man/ help
-man/
-share/
-help/
-ti_lib/
-Readme.txt
-
-
-# C extensions
+*.a
 *.so
-# C++ objects and libs
-*.slo
-*.lo
+*.user*
+*.autosave
+*.xml
 *.o
 *.a
-*.la
-*.lai
-*.so
 *.dll
 *.dylib
-
-
-
-# Distribution / packaging
-.Python
-env/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-man/
-share/
-README
-doc/
-# Windows image file caches
-
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-

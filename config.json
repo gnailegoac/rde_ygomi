@@ -1,0 +1,13 @@
+{
+    "configuration" : {
+        "name" : "RoadDatabaseExplorer",
+        "outdir" : "out",
+        "major_version" : "0.1.0",
+        "make_tool" : "qmake",
+        "dev_user" : "rde",
+        "channel" : "devel",
+        "conan_server" : "NEXUS",
+        "extra_lib_path" : "/home/bamboo/Qt5.7.0/5.7/gcc_64/lib:/home/bamboo/Qt5.7.0/Tools/QtCreator/lib/qtcreator",
+        "env_path" : "/home/bamboo/Qt5.7.0/5.7/gcc_64/bin:/home/bamboo/Qt5.7.0/Tools/QtCreator/bin"
+    }
+}
