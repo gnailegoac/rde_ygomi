@@ -8,7 +8,6 @@ build*
 *.a
 *.so
 *.user*
-main.cpp
 *.autosave
 *.xml
 *.o
