@@ -1,0 +1,17 @@
+from conans import ConanFile
+
+class PROJNAMEConan(ConanFile):
+    name = "PROJNAME"
+    version = "CURRENT_VERSION"
+    settings = "os", "compiler", "build_type", "arch"
+    exports = "*"
+
+    def build(self):
+        pass
+
+    def package(self):
+        self.copy("*.h", dst="include/DbConverter", src=".")
+        self.copy("*.so*", dst="lib", src=".")
+
+    def package_info(self):
+        self.cpp_info.libs = ["PROJNAME"]

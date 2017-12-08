@@ -1,0 +1,9 @@
+[requires]
+gtest/1.8@RDBDelivery/stable
+gmock_main/1.8@RDBDelivery/stable
+
+[generators]
+qmake
+
+[imports]
+lib, *.so* -> ./
