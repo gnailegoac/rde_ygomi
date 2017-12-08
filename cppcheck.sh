@@ -8,6 +8,6 @@ exclude_files="-i${LINE} ${exclude_files}"
 done < exclude_cppcheck_files
 echo $exclude_files
 fi
-cppcheck --xml-version=2 $exclude_files source test 2> cppcheck_report.xml
+cppcheck --xml-version=2 $exclude_files src unit_test 2> cppcheck_report.xml
 cppcheck_junit cppcheck_report.xml cppcheck_junit.xml
 rm -f cppcheck_report.xml
