@@ -1,0 +1,5 @@
+[requires]
+osg/3.4.1@RDE/stable
+
+[generators]
+qmake
