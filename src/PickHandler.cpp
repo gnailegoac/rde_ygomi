@@ -35,7 +35,7 @@ bool Controller::PickHandler::Handle(const osgGA::GUIEventAdapter& aEventAdapter
                                      osgGA::GUIActionAdapter& aActionAdapter)
 {
     if(aEventAdapter.getEventType() != osgGA::GUIEventAdapter::RELEASE &&
-       aEventAdapter.getButton()    != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
+       aEventAdapter.getButton() != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
     {
         return false;
     }
@@ -48,14 +48,14 @@ bool Controller::PickHandler::Handle(const osgGA::GUIEventAdapter& aEventAdapter
                 new osgUtil::LineSegmentIntersector(osgUtil::Intersector::WINDOW,
                                                     aEventAdapter.getX() * mDevicePixelRatio,
                                                     aEventAdapter.getY() * mDevicePixelRatio);
-        osgUtil::IntersectionVisitor aIv(aIntersector);
+        osgUtil::IntersectionVisitor aIntersectionVisitor(aIntersector);
         osg::Camera* aCamera = viewer->getCamera();
         if(!aCamera)
         {
             return false;
         }
 
-        aCamera->accept(aIv);
+        aCamera->accept(aIntersectionVisitor);
 
         if(!aIntersector->containsIntersections())
         {

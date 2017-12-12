@@ -86,10 +86,9 @@ QRect MakeRectangle(const QPoint& first, const QPoint& second)
 
 }
 
-
 void Render::Viewer::setupThreading()
 {
-    if( _threadingModel == SingleThreaded)
+    if(_threadingModel == SingleThreaded)
     {
         if(_threadsRunning)
         {
@@ -116,7 +115,7 @@ Render::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
   , mSelectionFinished(true)
 {
     float aAspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
-    auto aPixelRatio   = this->devicePixelRatio();
+    auto aPixelRatio = this->devicePixelRatio();
 
     osg::Camera* aCamera = new osg::Camera;
     aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
@@ -127,13 +126,11 @@ Render::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
     osgViewer::View* aView = new osgViewer::View;
     aView->setCamera(aCamera);
     aView->addEventHandler(new osgViewer::StatsHandler);
-//    aView->addEventHandler(new PickHandler(this->devicePixelRatio()));
 
     osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
 
     aView->setCameraManipulator(aManipulator);
-    //    aView->setSceneData(mapNode);
 
     mViewer->addView(aView);
     mViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
@@ -185,7 +182,7 @@ void Render::OsgWidget::resizeGL(int aWidth, int aHeight)
 
 void Render::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 {
-    QString aKeyString   = aEvent->text();
+    QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
     if(aEvent->key() == Qt::Key_S)
@@ -212,7 +209,7 @@ void Render::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 
 void Render::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 {
-    QString aKeyString   = aEvent->text();
+    QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
     this->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KeySymbol(*aKeyData));
@@ -244,9 +241,9 @@ void Render::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
     // Selection processing
     if(mSelectionActive && aEvent->button() == Qt::LeftButton)
     {
-        mSelectionStart    = aEvent->pos();
-        mSelectionEnd      = mSelectionStart; // Deletes the old selection
-        mSelectionFinished = false;           // As long as this is set, the rectangle will be drawn
+        mSelectionStart = aEvent->pos();
+        mSelectionEnd = mSelectionStart;   // Deletes the old selection
+        mSelectionFinished = false;        // As long as this is set, the rectangle will be drawn
     }
     // Normal processing
     else
@@ -282,10 +279,8 @@ void Render::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
     // through polytope intersection.
     if(mSelectionActive && aEvent->button() == Qt::LeftButton)
     {
-        mSelectionEnd      = aEvent->pos();
-        mSelectionFinished = true; // Will force the painter to stop drawing the
-        // selection rectangle
-
+        mSelectionEnd = aEvent->pos();
+        mSelectionFinished = true; // Will force the painter to stop drawing the selection rectangle
         this->processSelection();
     }
     // Normal processing
@@ -412,7 +407,7 @@ void Render::OsgWidget::processSelection()
     // preferred and expected behaviour.
     polytopeIntersector->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
 
-    osgUtil::IntersectionVisitor iv(polytopeIntersector);
+    osgUtil::IntersectionVisitor aIntersectionVisitor(polytopeIntersector);
 
     for(unsigned int viewIndex = 0; viewIndex < mViewer->getNumViews(); viewIndex++)
     {
@@ -432,7 +427,7 @@ void Render::OsgWidget::processSelection()
             throw std::runtime_error("Unable to obtain valid camera for selection processing");
         }
 
-        camera->accept(iv);
+        camera->accept(aIntersectionVisitor);
 
         if(!polytopeIntersector->containsIntersections())
         {
