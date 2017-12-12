@@ -25,12 +25,20 @@ LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPu
 
 SOURCES +=\
     RoadDBExplorer.cpp \
-    window/MainWindow.cpp \
-    PickHandler.cpp \
-    OsgWidget.cpp
+    view/MainWindow.cpp \
+    view/PickHandler.cpp \
+    view/OsgWidget.cpp \
+    facade/ApplicationFacade.cpp \
+    proxy/MainProxy.cpp \
+    model/MemoryModel.cpp \
+    control/FileOpenCommand.cpp
 
-HEADERS  += window/MainWindow.h \
-    PickHandler.h \
-    OsgWidget.h
+HEADERS  += view/MainWindow.h \
+    view/PickHandler.h \
+    view/OsgWidget.h \
+    facade/ApplicationFacade.h \
+    proxy/MainProxy.h \
+    model/MemoryModel.h \
+    control/FileOpenCommand.h
 
-FORMS    += window/MainWindow.ui
+FORMS    += view/MainWindow.ui

@@ -6,18 +6,13 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    RoadDBExplorer.cpp
+ * @file    FileOpenCommand.cpp
  *******************************************************************************
  */
 
-#include "view/MainWindow.h"
-#include <QApplication>
+#include "FileOpenCommand.h"
 
-int main(int argc, char *argv[])
+FileOpenCommand::FileOpenCommand()
 {
-    QApplication application(argc, argv);
-    MainWindow mainWindow;
-    mainWindow.show();
 
-    return application.exec();
 }

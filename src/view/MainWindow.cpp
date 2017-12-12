@@ -6,18 +6,24 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    RoadDBExplorer.cpp
+ * @file    MainWindow.cpp
  *******************************************************************************
  */
 
 #include "view/MainWindow.h"
-#include <QApplication>
+#include "ui_MainWindow.h"
 
-int main(int argc, char *argv[])
+#include "OsgWidget.h"
+
+MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
+    QMainWindow(parent, flags),
+    ui(new Ui::MainWindow)
 {
-    QApplication application(argc, argv);
-    MainWindow mainWindow;
-    mainWindow.show();
+    ui->setupUi(this);
+    this->setCentralWidget(new Render::OsgWidget(this));
+}
 
-    return application.exec();
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
