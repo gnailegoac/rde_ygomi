@@ -34,8 +34,8 @@ Controller::PickHandler::~PickHandler()
 bool Controller::PickHandler::Handle(const osgGA::GUIEventAdapter& aEventAdapter,
                                      osgGA::GUIActionAdapter& aActionAdapter)
 {
-    if( aEventAdapter.getEventType() != osgGA::GUIEventAdapter::RELEASE &&
-            aEventAdapter.getButton()    != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
+    if(aEventAdapter.getEventType() != osgGA::GUIEventAdapter::RELEASE &&
+       aEventAdapter.getButton()    != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
     {
         return false;
     }

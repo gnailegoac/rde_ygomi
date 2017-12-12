@@ -47,8 +47,7 @@
 namespace
 {
 
-#ifdef WITH_SELECTION_PROCESSING
-QRect makeRectangle( const QPoint& first, const QPoint& second )
+QRect MakeRectangle(const QPoint& first, const QPoint& second)
 {
   // Relative to the first point, the second point may be in either one of the
   // four quadrants of an Euclidean coordinate system.
@@ -64,19 +63,26 @@ QRect makeRectangle( const QPoint& first, const QPoint& second )
   //       (2)  |  (1)
   //            |
 
-  if( second.x() >= first.x() && second.y() >= first.y() )
-    return QRect( first, second );
-  else if( second.x() < first.x() && second.y() >= first.y() )
-    return QRect( QPoint( second.x(), first.y() ), QPoint( first.x(), second.y() ) );
-  else if( second.x() < first.x() && second.y() < first.y() )
-    return QRect( second, first );
-  else if( second.x() >= first.x() && second.y() < first.y() )
-    return QRect( QPoint( first.x(), second.y() ), QPoint( second.x(), first.y() ) );
+  if(second.x() >= first.x() && second.y() >= first.y())
+  {
+      return QRect(first, second);
+  }
+  else if(second.x() < first.x() && second.y() >= first.y())
+  {
+    return QRect(QPoint(second.x(), first.y()), QPoint(first.x(), second.y()));
+  }
+  else if(second.x() < first.x() && second.y() < first.y())
+  {
+    return QRect(second, first);
+  }
+  else if(second.x() >= first.x() && second.y() < first.y())
+  {
+    return QRect(QPoint(first.x(), second.y()), QPoint(second.x(), first.y()));
+  }
 
   // Should never reach that point...
   return QRect();
 }
-#endif
 
 }
 
@@ -109,21 +115,19 @@ Render::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
   , mSelectionActive(false)
   , mSelectionFinished(true)
 {
-    float aAspectRatio = static_cast<float>(this->width() ) / static_cast<float>(this->height());
+    float aAspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
     auto aPixelRatio   = this->devicePixelRatio();
 
     osg::Camera* aCamera = new osg::Camera;
     aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
-    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ) );
+    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
     aCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
     aCamera->setGraphicsContext(mGraphicsWindow);
 
     osgViewer::View* aView = new osgViewer::View;
     aView->setCamera(aCamera);
     aView->addEventHandler(new osgViewer::StatsHandler);
-#ifdef WITH_PICK_HANDLER
-    view->addEventHandler(new PickHandler(this->devicePixelRatio()));
-#endif
+//    aView->addEventHandler(new PickHandler(this->devicePixelRatio()));
 
     osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
@@ -151,20 +155,18 @@ Render::OsgWidget::~OsgWidget()
 {
 }
 
-void Render::OsgWidget::paintEvent(QPaintEvent* /* paintEvent */)
+void Render::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
 {
     this->makeCurrent();
     QPainter aPainter(this);
     aPainter.setRenderHint(QPainter::Antialiasing);
     this->paintGL();
-#ifdef WITH_SELECTION_PROCESSING
     if(mSelectionActive && !mSelectionFinished)
     {
-        aPainter.setPen(Qt::black);
+        aPainter.setPen(Qt::red);
         aPainter.setBrush(Qt::transparent);
-        aPainter.drawRect(makeRectangle(mSelectionStart, mSelectionEnd));
+        aPainter.drawRect(MakeRectangle(mSelectionStart, mSelectionEnd));
     }
-#endif
     aPainter.end();
     this->doneCurrent();
 }
@@ -188,9 +190,7 @@ void Render::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 
     if(aEvent->key() == Qt::Key_S)
     {
-#ifdef WITH_SELECTION_PROCESSING
         mSelectionActive = !mSelectionActive;
-#endif
         // Further processing is required for the statistics handler here, so we do
         // not return right away.
     }
@@ -242,7 +242,7 @@ void Render::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 void Render::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
 {
     // Selection processing
-    if( mSelectionActive && aEvent->button() == Qt::LeftButton )
+    if(mSelectionActive && aEvent->button() == Qt::LeftButton)
     {
         mSelectionStart    = aEvent->pos();
         mSelectionEnd      = mSelectionStart; // Deletes the old selection
@@ -255,7 +255,7 @@ void Render::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
         // 2 = middle mouse button
         // 3 = right mouse button
         unsigned int aButton = 0;
-        switch( aEvent->button() )
+        switch(aEvent->button())
         {
         case Qt::LeftButton:
             aButton = 1;
@@ -295,7 +295,7 @@ void Render::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
         // 2 = middle mouse button
         // 3 = right mouse button
         unsigned int aButton = 0;
-        switch( aEvent->button() )
+        switch(aEvent->button())
         {
         case Qt::LeftButton:
             aButton = 1;
@@ -382,14 +382,13 @@ osgGA::EventQueue* Render::OsgWidget::getEventQueue() const
     }
     else
     {
-        throw std::runtime_error( "Unable to obtain valid event queue");
+        throw std::runtime_error("Unable to obtain valid event queue");
     }
 }
 
 void Render::OsgWidget::processSelection()
 {
-#ifdef WITH_SELECTION_PROCESSING
-  QRect selectionRectangle = makeRectangle( mSelectionStart, mSelectionEnd );
+  QRect selectionRectangle = MakeRectangle(mSelectionStart, mSelectionEnd);
   auto widgetHeight        = this->height();
   auto pixelRatio          = this->devicePixelRatio();
 
@@ -404,41 +403,47 @@ void Render::OsgWidget::processSelection()
   yMax *= pixelRatio;
 
   osgUtil::PolytopeIntersector* polytopeIntersector
-      = new osgUtil::PolytopeIntersector( osgUtil::PolytopeIntersector::WINDOW,
-                                          xMin, yMin,
-                                          xMax, yMax );
+      = new osgUtil::PolytopeIntersector(osgUtil::PolytopeIntersector::WINDOW,
+                                         xMin, yMin, xMax, yMax);
 
   // This limits the amount of intersections that are reported by the
   // polytope intersector. Using this setting, a single drawable will
   // appear at most once while calculating intersections. This is the
   // preferred and expected behaviour.
-  polytopeIntersector->setIntersectionLimit( osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE );
+  polytopeIntersector->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
 
-  osgUtil::IntersectionVisitor iv( polytopeIntersector );
+  osgUtil::IntersectionVisitor iv(polytopeIntersector);
 
-  for( unsigned int viewIndex = 0; viewIndex < mViewer->getNumViews(); viewIndex++ )
+  for(unsigned int viewIndex = 0; viewIndex < mViewer->getNumViews(); viewIndex++)
   {
     qDebug() << "View index:" << viewIndex;
 
-    osgViewer::View* view = mViewer->getView( viewIndex );
+    osgViewer::View* view = mViewer->getView(viewIndex);
 
-    if( !view )
-      throw std::runtime_error( "Unable to obtain valid view for selection processing" );
+    if(!view)
+    {
+      throw std::runtime_error("Unable to obtain valid view for selection processing");
+    }
 
     osg::Camera* camera = view->getCamera();
 
-    if( !camera )
-      throw std::runtime_error( "Unable to obtain valid camera for selection processing" );
+    if(!camera)
+    {
+      throw std::runtime_error("Unable to obtain valid camera for selection processing");
+    }
 
-    camera->accept( iv );
+    camera->accept(iv);
 
-    if( !polytopeIntersector->containsIntersections() )
+    if(!polytopeIntersector->containsIntersections())
+    {
       continue;
+    }
 
     auto intersections = polytopeIntersector->getIntersections();
 
-    for( auto&& intersection : intersections )
-      qDebug() << "Selected a drawable:" << QString::fromStdString( intersection.drawable->getName() );
+    for(auto&& intersection : intersections)
+    {
+      qDebug() << "Selected a drawable:" << QString::fromStdString(intersection.drawable->getName());
+    }
   }
-#endif
 }
