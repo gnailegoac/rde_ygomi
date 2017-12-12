@@ -1,4 +1,5 @@
 [requires]
+PureMVC/1.0@RDE/stable
 osg/3.4.1@RDE/stable
 
 [generators]
