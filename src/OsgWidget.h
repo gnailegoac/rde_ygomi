@@ -11,8 +11,7 @@
  *******************************************************************************
  */
 
-#ifndef OSGWIDGET_H__
-#define OSGWIDGET_H__
+#pragma once
 
 #include <QOpenGLWidget>
 #include <QPoint>
@@ -81,5 +80,3 @@ private:
     void processSelection();
 };
 }
-
-#endif

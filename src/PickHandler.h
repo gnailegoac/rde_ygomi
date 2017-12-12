@@ -11,8 +11,7 @@
  *******************************************************************************
  */
 
-#ifndef PICKHANDLER_H__
-#define PICKHANDLER_H__
+#pragma once
 
 #include <osgGA/GUIEventHandler>
 
@@ -31,4 +30,3 @@ private:
     double mDevicePixelRatio;
 };
 }
-#endif
