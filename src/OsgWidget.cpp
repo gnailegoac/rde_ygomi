@@ -49,39 +49,39 @@ namespace
 
 QRect MakeRectangle(const QPoint& first, const QPoint& second)
 {
-  // Relative to the first point, the second point may be in either one of the
-  // four quadrants of an Euclidean coordinate system.
-  //
-  // We enumerate them in counter-clockwise order, starting from the lower-right
-  // quadrant that corresponds to the default case:
-  //
-  //            |
-  //       (3)  |  (4)
-  //            |
-  //     -------|-------
-  //            |
-  //       (2)  |  (1)
-  //            |
+    // Relative to the first point, the second point may be in either one of the
+    // four quadrants of an Euclidean coordinate system.
+    //
+    // We enumerate them in counter-clockwise order, starting from the lower-right
+    // quadrant that corresponds to the default case:
+    //
+    //            |
+    //       (3)  |  (4)
+    //            |
+    //     -------|-------
+    //            |
+    //       (2)  |  (1)
+    //            |
 
-  if(second.x() >= first.x() && second.y() >= first.y())
-  {
-      return QRect(first, second);
-  }
-  else if(second.x() < first.x() && second.y() >= first.y())
-  {
-    return QRect(QPoint(second.x(), first.y()), QPoint(first.x(), second.y()));
-  }
-  else if(second.x() < first.x() && second.y() < first.y())
-  {
-    return QRect(second, first);
-  }
-  else if(second.x() >= first.x() && second.y() < first.y())
-  {
-    return QRect(QPoint(first.x(), second.y()), QPoint(second.x(), first.y()));
-  }
+    if(second.x() >= first.x() && second.y() >= first.y())
+    {
+        return QRect(first, second);
+    }
+    else if(second.x() < first.x() && second.y() >= first.y())
+    {
+        return QRect(QPoint(second.x(), first.y()), QPoint(first.x(), second.y()));
+    }
+    else if(second.x() < first.x() && second.y() < first.y())
+    {
+        return QRect(second, first);
+    }
+    else if(second.x() >= first.x() && second.y() < first.y())
+    {
+        return QRect(QPoint(first.x(), second.y()), QPoint(second.x(), first.y()));
+    }
 
-  // Should never reach that point...
-  return QRect();
+    // Should never reach that point...
+    return QRect();
 }
 
 }
@@ -388,62 +388,62 @@ osgGA::EventQueue* Render::OsgWidget::getEventQueue() const
 
 void Render::OsgWidget::processSelection()
 {
-  QRect selectionRectangle = MakeRectangle(mSelectionStart, mSelectionEnd);
-  auto widgetHeight        = this->height();
-  auto pixelRatio          = this->devicePixelRatio();
+    QRect selectionRectangle = MakeRectangle(mSelectionStart, mSelectionEnd);
+    auto widgetHeight        = this->height();
+    auto pixelRatio          = this->devicePixelRatio();
 
-  double xMin = selectionRectangle.left();
-  double xMax = selectionRectangle.right();
-  double yMin = widgetHeight - selectionRectangle.bottom();
-  double yMax = widgetHeight - selectionRectangle.top();
+    double xMin = selectionRectangle.left();
+    double xMax = selectionRectangle.right();
+    double yMin = widgetHeight - selectionRectangle.bottom();
+    double yMax = widgetHeight - selectionRectangle.top();
 
-  xMin *= pixelRatio;
-  yMin *= pixelRatio;
-  xMax *= pixelRatio;
-  yMax *= pixelRatio;
+    xMin *= pixelRatio;
+    yMin *= pixelRatio;
+    xMax *= pixelRatio;
+    yMax *= pixelRatio;
 
-  osgUtil::PolytopeIntersector* polytopeIntersector
-      = new osgUtil::PolytopeIntersector(osgUtil::PolytopeIntersector::WINDOW,
-                                         xMin, yMin, xMax, yMax);
+    osgUtil::PolytopeIntersector* polytopeIntersector
+            = new osgUtil::PolytopeIntersector(osgUtil::PolytopeIntersector::WINDOW,
+                                               xMin, yMin, xMax, yMax);
 
-  // This limits the amount of intersections that are reported by the
-  // polytope intersector. Using this setting, a single drawable will
-  // appear at most once while calculating intersections. This is the
-  // preferred and expected behaviour.
-  polytopeIntersector->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
+    // This limits the amount of intersections that are reported by the
+    // polytope intersector. Using this setting, a single drawable will
+    // appear at most once while calculating intersections. This is the
+    // preferred and expected behaviour.
+    polytopeIntersector->setIntersectionLimit(osgUtil::Intersector::LIMIT_ONE_PER_DRAWABLE);
 
-  osgUtil::IntersectionVisitor iv(polytopeIntersector);
+    osgUtil::IntersectionVisitor iv(polytopeIntersector);
 
-  for(unsigned int viewIndex = 0; viewIndex < mViewer->getNumViews(); viewIndex++)
-  {
-    qDebug() << "View index:" << viewIndex;
-
-    osgViewer::View* view = mViewer->getView(viewIndex);
-
-    if(!view)
+    for(unsigned int viewIndex = 0; viewIndex < mViewer->getNumViews(); viewIndex++)
     {
-      throw std::runtime_error("Unable to obtain valid view for selection processing");
+        qDebug() << "View index:" << viewIndex;
+
+        osgViewer::View* view = mViewer->getView(viewIndex);
+
+        if(!view)
+        {
+            throw std::runtime_error("Unable to obtain valid view for selection processing");
+        }
+
+        osg::Camera* camera = view->getCamera();
+
+        if(!camera)
+        {
+            throw std::runtime_error("Unable to obtain valid camera for selection processing");
+        }
+
+        camera->accept(iv);
+
+        if(!polytopeIntersector->containsIntersections())
+        {
+            continue;
+        }
+
+        auto intersections = polytopeIntersector->getIntersections();
+
+        for(auto&& intersection : intersections)
+        {
+            qDebug() << "Selected a drawable:" << QString::fromStdString(intersection.drawable->getName());
+        }
     }
-
-    osg::Camera* camera = view->getCamera();
-
-    if(!camera)
-    {
-      throw std::runtime_error("Unable to obtain valid camera for selection processing");
-    }
-
-    camera->accept(iv);
-
-    if(!polytopeIntersector->containsIntersections())
-    {
-      continue;
-    }
-
-    auto intersections = polytopeIntersector->getIntersections();
-
-    for(auto&& intersection : intersections)
-    {
-      qDebug() << "Selected a drawable:" << QString::fromStdString(intersection.drawable->getName());
-    }
-  }
 }
