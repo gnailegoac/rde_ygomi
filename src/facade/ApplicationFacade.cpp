@@ -6,24 +6,13 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    MainWindow.cpp
+ * @file    ApplicationFacade.cpp
  *******************************************************************************
  */
 
-#include "window/MainWindow.h"
-#include "ui_MainWindow.h"
+#include "ApplicationFacade.h"
 
-#include "OsgWidget.h"
-
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
-    QMainWindow(parent, flags),
-    ui(new Ui::MainWindow)
+ApplicationFacade::ApplicationFacade()
 {
-    ui->setupUi(this);
-    this->setCentralWidget(new Render::OsgWidget(this));
-}
 
-MainWindow::~MainWindow()
-{
-    delete ui;
 }

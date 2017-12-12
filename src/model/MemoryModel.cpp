@@ -6,18 +6,13 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    RoadDBExplorer.cpp
+ * @file    MemoryModel.cpp
  *******************************************************************************
  */
 
-#include "view/MainWindow.h"
-#include <QApplication>
+#include "MemoryModel.h"
 
-int main(int argc, char *argv[])
+MemoryModel::MemoryModel()
 {
-    QApplication application(argc, argv);
-    MainWindow mainWindow;
-    mainWindow.show();
 
-    return application.exec();
 }
