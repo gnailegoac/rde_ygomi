@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -61,9 +61,12 @@
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
     <size>
-     <width>550</width>
+     <width>41</width>
      <height>35</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -71,7 +74,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <property name="minimumSize">
      <size>
-      <width>550</width>
+      <width>0</width>
       <height>0</height>
      </size>
     </property>
