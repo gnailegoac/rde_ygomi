@@ -18,6 +18,8 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace View
+{
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -29,3 +31,5 @@ public:
 private:
     Ui::MainWindow *ui;
 };
+}
+

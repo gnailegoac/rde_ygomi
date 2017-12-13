@@ -22,8 +22,8 @@
 
 #include <osgViewer/Viewer>
 
-Controller::PickHandler::PickHandler(double aDevicePixelRatio)
-  : mDevicePixelRatio(aDevicePixelRatio)
+Controller::PickHandler::PickHandler(double aDevicePixelRatio):
+    mDevicePixelRatio(aDevicePixelRatio)
 {
 }
 

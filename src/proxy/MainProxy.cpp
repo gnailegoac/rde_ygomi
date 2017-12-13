@@ -12,7 +12,14 @@
 
 #include "MainProxy.h"
 
-MainProxy::MainProxy()
+MainProxy::MainProxy():
+    Proxy("MainProxy")
+{
+
+}
+
+MainProxy::MainProxy(const std::string& aName):
+    Proxy(aName)
 {
 
 }

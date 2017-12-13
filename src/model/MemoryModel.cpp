@@ -12,7 +12,7 @@
 
 #include "MemoryModel.h"
 
-MemoryModel::MemoryModel()
+Model::MemoryModel::MemoryModel()
 {
 
 }

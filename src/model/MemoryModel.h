@@ -12,9 +12,12 @@
 
 #pragma once
 
-
+namespace Model
+{
 class MemoryModel
 {
 public:
     MemoryModel();
 };
+}
+
