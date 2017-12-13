@@ -27,3 +27,8 @@ View::MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void View::MainWindow::resizeEvent(QResizeEvent *event)
+{
+    resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
+}
