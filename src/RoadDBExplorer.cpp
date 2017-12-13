@@ -12,12 +12,12 @@
 
 #include "view/MainWindow.h"
 #include <QApplication>
+#include "facade/ApplicationFacade.h"
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    MainWindow mainWindow;
-    mainWindow.show();
-
+    View::MainWindow mainWindow;
+    ApplicationFacade::GetInstance()->StartUp(&mainWindow);
     return application.exec();
 }

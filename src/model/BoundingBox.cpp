@@ -13,7 +13,7 @@
 
 #include "BoundingBox.h"
 
-BoundingBox::BoundingBox():
+Model::BoundingBox::BoundingBox():
     mPosition(),
     mHeading(0.),
     mWidth(0.),
@@ -23,7 +23,7 @@ BoundingBox::BoundingBox():
 
 }
 
-BoundingBox::BoundingBox(Point3D aPosition,
+Model::BoundingBox::BoundingBox(Point3D aPosition,
                          double aHeading,
                          float aWidth,
                          float aLength,
@@ -37,57 +37,57 @@ BoundingBox::BoundingBox(Point3D aPosition,
 
 }
 
-BoundingBox::~BoundingBox()
+Model::BoundingBox::~BoundingBox()
 {
 
 }
 
-Point3D BoundingBox::GetPosition() const
+Model::Point3D Model::BoundingBox::GetPosition() const
 {
     return mPosition;
 }
 
-void BoundingBox::SetPosition(Point3D aPosition)
+void Model::BoundingBox::SetPosition(Point3D aPosition)
 {
     mPosition = aPosition;
 }
 
-double BoundingBox::GetHeading() const
+double Model::BoundingBox::GetHeading() const
 {
     return mHeading;
 }
 
-void BoundingBox::SetHeading(double aHeading)
+void Model::BoundingBox::SetHeading(double aHeading)
 {
     mHeading = aHeading;
 }
 
-float BoundingBox::GetWidth() const
+float Model::BoundingBox::GetWidth() const
 {
     return mWidth;
 }
 
-void BoundingBox::SetWidth(float aWidth)
+void Model::BoundingBox::SetWidth(float aWidth)
 {
     mWidth = aWidth;
 }
 
-float BoundingBox::GetLength() const
+float Model::BoundingBox::GetLength() const
 {
     return mLength;
 }
 
-void BoundingBox::SetLength(float aLength)
+void Model::BoundingBox::SetLength(float aLength)
 {
     mLength = aLength;
 }
 
-float BoundingBox::GetHeight() const
+float Model::BoundingBox::GetHeight() const
 {
     return mHeight;
 }
 
-void BoundingBox::SetHeight(float aHeight)
+void Model::BoundingBox::SetHeight(float aHeight)
 {
    mHeight = aHeight;
 }

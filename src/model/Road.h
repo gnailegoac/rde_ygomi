@@ -17,6 +17,9 @@
 #include "Element.h"
 #include "Lane.h"
 
+namespace Model
+{
+
 class Tile;
 
 class Road : public Element
@@ -49,3 +52,5 @@ private:
     std::shared_ptr<Element> mSuccessor;
     std::shared_ptr<Tile> mTile;
 };
+
+}

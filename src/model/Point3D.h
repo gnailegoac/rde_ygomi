@@ -15,6 +15,9 @@
 
 #include "Common.h"
 
+namespace Model
+{
+
 class Point3D
 {
 public:
@@ -37,3 +40,5 @@ private:
     double mY;
     double mZ;
 };
+
+}

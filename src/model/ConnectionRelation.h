@@ -15,6 +15,9 @@
 
 #include "Common.h"
 
+namespace Model
+{
+
 class ConnectionRelation
 {
 public:
@@ -43,3 +46,5 @@ private:
     std::uint64_t mToRoadId;
     std::int8_t mToLaneId;
 };
+
+}

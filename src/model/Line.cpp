@@ -13,7 +13,7 @@
 
 #include "Line.h"
 
-Line::Line():
+Model::Line::Line():
     Element(),
     mLineId(0),
     mCurveList(),
@@ -25,37 +25,37 @@ Line::Line():
 
 }
 
-Line::~Line()
+Model::Line::~Line()
 {
 
 }
 
-std::uint64_t Line::GetLineId() const
+std::uint64_t Model::Line::GetLineId() const
 {
     return mLineId;
 }
 
-void Line::SetLineId(std::uint64_t aLineId)
+void Model::Line::SetLineId(std::uint64_t aLineId)
 {
     mLineId = aLineId;
 }
 
-const std::vector<std::shared_ptr<Curve>> Line::GetCurveList() const
+const std::vector<std::shared_ptr<Model::Curve>> Model::Line::GetCurveList() const
 {
     return mCurveList;
 }
 
-std::vector<std::shared_ptr<Curve>>* Line::GetMutableCurveList()
+std::vector<std::shared_ptr<Model::Curve>>* Model::Line::GetMutableCurveList()
 {
     return &mCurveList;
 }
 
-size_t Line::GetCurveListSize() const
+size_t Model::Line::GetCurveListSize() const
 {
     return mCurveList.size();
 }
 
-std::shared_ptr<Curve> Line::GetCurve(size_t aIndex)
+std::shared_ptr<Model::Curve> Model::Line::GetCurve(size_t aIndex)
 {
     if (aIndex < mCurveList.size())
     {
@@ -65,47 +65,47 @@ std::shared_ptr<Curve> Line::GetCurve(size_t aIndex)
     return nullptr;
 }
 
-float Line::GetConfidence() const
+float Model::Line::GetConfidence() const
 {
     return mConfidence;
 }
 
-void Line::SetConfidence(float aConfidence)
+void Model::Line::SetConfidence(float aConfidence)
 {
     mConfidence = aConfidence;
 }
 
-float Line::GetLength() const
+float Model::Line::GetLength() const
 {
     return mLength;
 }
 
-void Line::SetLength(float aLength)
+void Model::Line::SetLength(float aLength)
 {
     mLength = aLength;
 }
 
-std::shared_ptr<Lane> Line::GetLane() const
+std::shared_ptr<Model::Lane> Model::Line::GetLane() const
 {
     return mLane;
 }
 
-void Line::SetLane(std::shared_ptr<Lane> aLane)
+void Model::Line::SetLane(std::shared_ptr<Model::Lane> aLane)
 {
     mLane = aLane;
 }
 
-const std::unordered_map<std::uint8_t, std::vector<Point3D>> Line::GetPointListMap() const
+const std::unordered_map<std::uint8_t, std::vector<Model::Point3D>> Model::Line::GetPointListMap() const
 {
     return mPointListMap;
 }
 
-std::unordered_map<std::uint8_t, std::vector<Point3D>>* Line::GetMutablePointListMap()
+std::unordered_map<std::uint8_t, std::vector<Model::Point3D>>* Model::Line::GetMutablePointListMap()
 {
     return &mPointListMap;
 }
 
-std::vector<Point3D>* Line::GetPointListByLevel(std::uint8_t aLevel)
+std::vector<Model::Point3D>* Model::Line::GetPointListByLevel(std::uint8_t aLevel)
 {
     if (0 != mPointListMap.count(aLevel))
     {

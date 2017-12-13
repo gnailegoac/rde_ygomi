@@ -17,6 +17,9 @@
 #include "Element.h"
 #include "Line.h"
 
+namespace Model
+{
+
 class Road;
 
 class Lane : public Element
@@ -52,3 +55,5 @@ private:
     std::unordered_map<std::uint64_t, std::uint64_t> mConnectionMap;
     std::shared_ptr<Road> mRoad;
 };
+
+}

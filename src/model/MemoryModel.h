@@ -15,6 +15,9 @@
 #include "Common.h"
 #include "Tile.h"
 
+namespace Model
+{
+
 class MemoryModel
 {
 public:
@@ -28,3 +31,6 @@ public:
 private:
     std::unordered_map<std::int64_t, std::shared_ptr<Tile>> mTileMap;
 };
+
+}
+

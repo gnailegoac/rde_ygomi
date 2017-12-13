@@ -16,6 +16,9 @@
 #include "Common.h"
 #include "BoundingBox.h"
 
+namespace Model
+{
+
 class Element
 {
 public:
@@ -36,3 +39,5 @@ protected:
     bool mIsEdited;
     std::shared_ptr<BoundingBox> mBox;
 };
+
+}

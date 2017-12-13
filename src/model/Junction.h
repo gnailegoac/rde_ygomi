@@ -19,6 +19,9 @@
 #include "ConnectionRelation.h"
 #include "Line.h"
 
+namespace Model
+{
+
 class Junction : public Element
 {
 public:
@@ -50,3 +53,5 @@ private:
     std::vector<std::shared_ptr<Line>> mBorderLineList;
     std::vector<std::shared_ptr<ConnectionRelation>> mConnectionRelationList;
 };
+
+}

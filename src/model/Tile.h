@@ -20,6 +20,9 @@
 #include "Line.h"
 #include "Junction.h"
 
+namespace Model
+{
+
 class Tile
 {
 public:
@@ -57,3 +60,5 @@ private:
     std::unordered_map<std::uint64_t, std::shared_ptr<Line>> mLineMap;
     std::unordered_map<std::uint64_t, std::shared_ptr<Junction>> mJunctionMap;
 };
+
+}

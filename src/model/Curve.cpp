@@ -13,7 +13,7 @@
 
 #include "Curve.h"
 
-Curve::Curve():
+Model::Curve::Curve():
     mCurveId(0),
     mLength(0.0),
     mCurveType(CurveType::UnDefine),
@@ -24,77 +24,77 @@ Curve::Curve():
 
 }
 
-Curve::~Curve()
+Model::Curve::~Curve()
 {
 
 }
 
-std::uint64_t Curve::GetCurveId() const
+std::uint64_t Model::Curve::GetCurveId() const
 {
     return mCurveId;
 }
 
-void Curve::SetCurveId(std::uint64_t aCurveId)
+void Model::Curve::SetCurveId(std::uint64_t aCurveId)
 {
     mCurveId = aCurveId;
 }
 
-float Curve::GetLength() const
+float Model::Curve::GetLength() const
 {
     return mLength;
 }
 
-void Curve::SetLength(float aLength)
+void Model::Curve::SetLength(float aLength)
 {
     mLength = aLength;
 }
 
-CurveType Curve::GetCurveType() const
+Model::CurveType Model::Curve::GetCurveType() const
 {
     return mCurveType;
 }
 
-void Curve::SetCurveType(CurveType aCurveType)
+void Model::Curve::SetCurveType(CurveType aCurveType)
 {
     mCurveType = aCurveType;
 }
 
-std::int8_t Curve::GetIndexInLine() const
+std::int8_t Model::Curve::GetIndexInLine() const
 {
     return mIndexInLine;
 }
 
-void Curve::SetIndexInLine(std::int8_t aIndexInLine)
+void Model::Curve::SetIndexInLine(std::int8_t aIndexInLine)
 {
     mIndexInLine = aIndexInLine;
 }
 
-float Curve::GetWidth() const
+float Model::Curve::GetWidth() const
 {
     return mWidth;
 }
 
-void Curve::SetWidth(float aWidth)
+void Model::Curve::SetWidth(float aWidth)
 {
     mWidth = aWidth;
 }
 
-const std::vector<std::pair<double, double>>& Curve::GetPaintRange() const
+const std::vector<std::pair<double, double>>& Model::Curve::GetPaintRange() const
 {
     return mPaintRange;
 }
 
-std::vector<std::pair<double, double>>* Curve::GetMutablePaintRange()
+std::vector<std::pair<double, double>>* Model::Curve::GetMutablePaintRange()
 {
     return &mPaintRange;
 }
 
-size_t Curve::GetPaintRangeSize() const
+size_t Model::Curve::GetPaintRangeSize() const
 {
     return mPaintRange.size();
 }
 
-std::pair<double, double> Curve::GetPaintRange(size_t aIndex) const
+std::pair<double, double> Model::Curve::GetPaintRange(size_t aIndex) const
 {
     if (aIndex < mPaintRange.size())
     {

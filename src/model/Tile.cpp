@@ -13,7 +13,7 @@
 
 #include "Tile.h"
 
-Tile::Tile():
+Model::Tile::Tile():
     mTileId(0),
     mTrafficSignMap(),
     mRoadMap(),
@@ -24,32 +24,32 @@ Tile::Tile():
 
 }
 
-Tile::~Tile()
+Model::Tile::~Tile()
 {
 
 }
 
-std::int64_t Tile::GetTileId() const
+std::int64_t Model::Tile::GetTileId() const
 {
     return mTileId;
 }
 
-void Tile::SetTileId(std::int64_t aTileId)
+void Model::Tile::SetTileId(std::int64_t aTileId)
 {
     mTileId = aTileId;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<TrafficSign>>& Tile::GetTrafficSignMap() const
+const std::unordered_map<std::uint64_t, std::shared_ptr<Model::TrafficSign>>& Model::Tile::GetTrafficSignMap() const
 {
     return mTrafficSignMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<TrafficSign>>* Tile::GetMutableTrafficSignMap()
+std::unordered_map<std::uint64_t, std::shared_ptr<Model::TrafficSign>>* Model::Tile::GetMutableTrafficSignMap()
 {
     return &mTrafficSignMap;
 }
 
-std::shared_ptr<TrafficSign> Tile::GetTrafficSign(std::uint64_t aId)
+std::shared_ptr<Model::TrafficSign> Model::Tile::GetTrafficSign(std::uint64_t aId)
 {
     if (0 != mTrafficSignMap.count(aId))
     {
@@ -59,17 +59,17 @@ std::shared_ptr<TrafficSign> Tile::GetTrafficSign(std::uint64_t aId)
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Road>>& Tile::GetRoadMap() const
+const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Road>>& Model::Tile::GetRoadMap() const
 {
     return mRoadMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Road>>* Tile::GetMutableRoadMap()
+std::unordered_map<std::uint64_t, std::shared_ptr<Model::Road>>* Model::Tile::GetMutableRoadMap()
 {
     return &mRoadMap;
 }
 
-std::shared_ptr<Road> Tile::GetRoad(std::uint64_t aId)
+std::shared_ptr<Model::Road> Model::Tile::GetRoad(std::uint64_t aId)
 {
     if (0 != mRoadMap.count(aId))
     {
@@ -79,17 +79,17 @@ std::shared_ptr<Road> Tile::GetRoad(std::uint64_t aId)
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Lane>>& Tile::GetLaneMap() const
+const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Lane>>& Model::Tile::GetLaneMap() const
 {
     return mLaneMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Lane>>* Tile::GetMutableLaneMap()
+std::unordered_map<std::uint64_t, std::shared_ptr<Model::Lane>>* Model::Tile::GetMutableLaneMap()
 {
     return &mLaneMap;
 }
 
-std::shared_ptr<Lane> Tile::GetLane(std::uint64_t aId)
+std::shared_ptr<Model::Lane> Model::Tile::GetLane(std::uint64_t aId)
 {
     if (0 != mLaneMap.count(aId))
     {
@@ -99,17 +99,17 @@ std::shared_ptr<Lane> Tile::GetLane(std::uint64_t aId)
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Line>>& Tile::GetLineMap() const
+const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Line>>& Model::Tile::GetLineMap() const
 {
     return mLineMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Line>>* Tile::GetMutableLineMap()
+std::unordered_map<std::uint64_t, std::shared_ptr<Model::Line>>* Model::Tile::GetMutableLineMap()
 {
     return &mLineMap;
 }
 
-std::shared_ptr<Line> Tile::GetLine(std::uint64_t aId)
+std::shared_ptr<Model::Line> Model::Tile::GetLine(std::uint64_t aId)
 {
     if (0 != mLineMap.count(aId))
     {
@@ -119,17 +119,17 @@ std::shared_ptr<Line> Tile::GetLine(std::uint64_t aId)
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Junction>>& Tile::GetJunctionMap() const
+const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Junction>>& Model::Tile::GetJunctionMap() const
 {
     return mJunctionMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Junction>>* Tile::GetMutableJunctionMap()
+std::unordered_map<std::uint64_t, std::shared_ptr<Model::Junction>>* Model::Tile::GetMutableJunctionMap()
 {
     return &mJunctionMap;
 }
 
-std::shared_ptr<Junction> Tile::GetJunction(std::uint64_t aId)
+std::shared_ptr<Model::Junction> Model::Tile::GetJunction(std::uint64_t aId)
 {
     if (0 != mJunctionMap.count(aId))
     {

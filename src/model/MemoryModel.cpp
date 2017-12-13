@@ -12,28 +12,27 @@
 
 #include "MemoryModel.h"
 
-MemoryModel::MemoryModel():
-    mTileMap()
+Model::MemoryModel::MemoryModel()
 {
 
 }
 
-MemoryModel::~MemoryModel()
+Model::MemoryModel::~MemoryModel()
 {
 
 }
 
-const std::unordered_map<std::int64_t, std::shared_ptr<Tile>>& MemoryModel::GetTileMap() const
+const std::unordered_map<std::int64_t, std::shared_ptr<Model::Tile>>& Model::MemoryModel::GetTileMap() const
 {
     return mTileMap;
 }
 
-std::unordered_map<std::int64_t, std::shared_ptr<Tile>>* MemoryModel::GetMutableTileMap()
+std::unordered_map<std::int64_t, std::shared_ptr<Model::Tile>>* Model::MemoryModel::GetMutableTileMap()
 {
     return &mTileMap;
 }
 
-std::shared_ptr<Tile> MemoryModel::GetTile(std::int64_t aId)
+std::shared_ptr<Model::Tile> Model::MemoryModel::GetTile(std::int64_t aId)
 {
     if (0 != mTileMap.count(aId))
     {

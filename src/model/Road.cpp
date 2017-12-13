@@ -13,7 +13,7 @@
 
 #include "Road.h"
 
-Road::Road():
+Model::Road::Road():
     Element(),
     mRoadId(0),
     mLaneList(),
@@ -24,37 +24,37 @@ Road::Road():
 
 }
 
-Road::~Road()
+Model::Road::~Road()
 {
 
 }
 
-std::uint64_t Road::GetRoadId() const
+std::uint64_t Model::Road::GetRoadId() const
 {
     return mRoadId;
 }
 
-void Road::SetRoadId(std::uint64_t aRoadId)
+void Model::Road::SetRoadId(std::uint64_t aRoadId)
 {
     mRoadId = aRoadId;
 }
 
-const std::vector<std::shared_ptr<Lane>>& Road::GetLaneList() const
+const std::vector<std::shared_ptr<Model::Lane>>& Model::Road::GetLaneList() const
 {
     return mLaneList;
 }
 
-std::vector<std::shared_ptr<Lane>>* Road::GetMutableLaneList()
+std::vector<std::shared_ptr<Model::Lane>>* Model::Road::GetMutableLaneList()
 {
     return &mLaneList;
 }
 
-size_t Road::GetLaneListSize() const
+size_t Model::Road::GetLaneListSize() const
 {
     return mLaneList.size();
 }
 
-std::shared_ptr<Lane> Road::GetLane(size_t aIndex)
+std::shared_ptr<Model::Lane> Model::Road::GetLane(size_t aIndex)
 {
     if (aIndex < mLaneList.size())
     {
@@ -64,32 +64,32 @@ std::shared_ptr<Lane> Road::GetLane(size_t aIndex)
     return nullptr;
 }
 
-std::shared_ptr<Element> Road::GetPredecessor() const
+std::shared_ptr<Model::Element> Model::Road::GetPredecessor() const
 {
     return mPredecessor;
 }
 
-void Road::SetPredecessor(std::shared_ptr<Element> aPredecessor)
+void Model::Road::SetPredecessor(std::shared_ptr<Model::Element> aPredecessor)
 {
     mPredecessor = aPredecessor;
 }
 
-std::shared_ptr<Element> Road::GetSuccessor() const
+std::shared_ptr<Model::Element> Model::Road::GetSuccessor() const
 {
     return mSuccessor;
 }
 
-void Road::SetSuccessor(std::shared_ptr<Element> aSuccessor)
+void Model::Road::SetSuccessor(std::shared_ptr<Model::Element> aSuccessor)
 {
     mSuccessor = aSuccessor;
 }
 
-std::shared_ptr<Tile> Road::GetTile() const
+std::shared_ptr<Model::Tile> Model::Road::GetTile() const
 {
     return mTile;
 }
 
-void Road::SetTile(std::shared_ptr<Tile> aTile)
+void Model::Road::SetTile(std::shared_ptr<Model::Tile> aTile)
 {
     mTile = aTile;
 }

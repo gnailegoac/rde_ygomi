@@ -13,7 +13,7 @@
 
 #include "TrafficSign.h"
 
-TrafficSign::TrafficSign():
+Model::TrafficSign::TrafficSign():
     Element(),
     mTrafficSignType(0),
     mOrientation(0),
@@ -25,67 +25,67 @@ TrafficSign::TrafficSign():
 
 }
 
-TrafficSign::~TrafficSign()
+Model::TrafficSign::~TrafficSign()
 {
 
 }
 
-std::uint64_t TrafficSign::GetTrafficSignType() const
+std::uint64_t Model::TrafficSign::GetTrafficSignType() const
 {
     return mTrafficSignType;
 }
 
-void TrafficSign::SetTrafficSignType(std::uint64_t aTrafficSignType)
+void Model::TrafficSign::SetTrafficSignType(std::uint64_t aTrafficSignType)
 {
     mTrafficSignType = aTrafficSignType;
 }
 
-std::int8_t TrafficSign::GetOrientation() const
+std::int8_t Model::TrafficSign::GetOrientation() const
 {
     return mOrientation;
 }
 
-void TrafficSign::SetOrientation(std::int8_t aOrientation)
+void Model::TrafficSign::SetOrientation(std::int8_t aOrientation)
 {
     mOrientation = aOrientation;
 }
 
-double TrafficSign::GetShapeWidth() const
+double Model::TrafficSign::GetShapeWidth() const
 {
     return mShapeWidth;
 }
 
-void TrafficSign::SetShapeWidth(double aShapeWidth)
+void Model::TrafficSign::SetShapeWidth(double aShapeWidth)
 {
     mShapeWidth = aShapeWidth;
 }
 
-double TrafficSign::GetShapeHeight() const
+double Model::TrafficSign::GetShapeHeight() const
 {
     return mShapeHeight;
 }
 
-void TrafficSign::SetShapeHeight(double aShapeHeight)
+void Model::TrafficSign::SetShapeHeight(double aShapeHeight)
 {
     mShapeHeight = aShapeHeight;
 }
 
-float TrafficSign::GetConfidence() const
+float Model::TrafficSign::GetConfidence() const
 {
     return mConfidence;
 }
 
-void TrafficSign::SetConfidence(double aConfidence)
+void Model::TrafficSign::SetConfidence(double aConfidence)
 {
     mConfidence = aConfidence;
 }
 
-Point3D TrafficSign::GetPosition() const
+Model::Point3D Model::TrafficSign::GetPosition() const
 {
     return mPosition;
 }
 
-void TrafficSign::SetPosition(Point3D aPosition)
+void Model::TrafficSign::SetPosition(Point3D aPosition)
 {
     mPosition = aPosition;
 }

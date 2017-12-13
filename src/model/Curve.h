@@ -15,6 +15,9 @@
 
 #include "Common.h"
 
+namespace Model
+{
+
 enum class CurveType : std::uint8_t
 {
     Solid = 0,
@@ -59,3 +62,5 @@ protected:
     float mWidth;
     std::vector<std::pair<double, double>> mPaintRange;
 };
+
+}

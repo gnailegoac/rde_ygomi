@@ -16,6 +16,9 @@
 #include "Common.h"
 #include "Point3D.h"
 
+namespace Model
+{
+
 class BoundingBox
 {
 public:
@@ -49,3 +52,5 @@ private:
     float mLength;
     float mHeight;
 };
+
+}

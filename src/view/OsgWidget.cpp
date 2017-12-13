@@ -86,7 +86,7 @@ QRect MakeRectangle(const QPoint& first, const QPoint& second)
 
 }
 
-void Render::Viewer::setupThreading()
+void View::Viewer::setupThreading()
 {
     if(_threadingModel == SingleThreaded)
     {
@@ -104,13 +104,13 @@ void Render::Viewer::setupThreading()
     }
 }
 
-Render::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
+View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
   : QOpenGLWidget(aParent, aFlag)
   , mGraphicsWindow(new osgViewer::GraphicsWindowEmbedded(this->x(),
                                                           this->y(),
                                                           this->width(),
                                                           this->height()))
-  , mViewer(new Render::Viewer)
+  , mViewer(new View::Viewer)
   , mSelectionActive(false)
   , mSelectionFinished(true)
 {
@@ -148,11 +148,11 @@ Render::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
     this->setMouseTracking(true);
 }
 
-Render::OsgWidget::~OsgWidget()
+View::OsgWidget::~OsgWidget()
 {
 }
 
-void Render::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
+void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
 {
     this->makeCurrent();
     QPainter aPainter(this);
@@ -168,19 +168,19 @@ void Render::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
     this->doneCurrent();
 }
 
-void Render::OsgWidget::paintGL()
+void View::OsgWidget::paintGL()
 {
     mViewer->frame();
 }
 
-void Render::OsgWidget::resizeGL(int aWidth, int aHeight)
+void View::OsgWidget::resizeGL(int aWidth, int aHeight)
 {
     this->getEventQueue()->windowResize(this->x(), this->y(), aWidth, aHeight);
     mGraphicsWindow->resized(this->x(), this->y(), aWidth, aHeight);
     this->onResize(aWidth, aHeight);
 }
 
-void Render::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
+void View::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 {
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
@@ -207,7 +207,7 @@ void Render::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
     this->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KeySymbol(*aKeyData));
 }
 
-void Render::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
+void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 {
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
@@ -215,7 +215,7 @@ void Render::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
     this->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KeySymbol(*aKeyData));
 }
 
-void Render::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
+void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 {
     // Note that we have to check the buttons mask in order to see whether the
     // left button has been pressed. A call to `button()` will only result in
@@ -236,7 +236,7 @@ void Render::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
     }
 }
 
-void Render::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
+void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
 {
     // Selection processing
     if(mSelectionActive && aEvent->button() == Qt::LeftButton)
@@ -273,7 +273,7 @@ void Render::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
     }
 }
 
-void Render::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
+void View::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
 {
     // Selection processing: Store end position and obtain selected objects
     // through polytope intersection.
@@ -311,7 +311,7 @@ void Render::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
     }
 }
 
-void Render::OsgWidget::wheelEvent(QWheelEvent* aEvent)
+void View::OsgWidget::wheelEvent(QWheelEvent* aEvent)
 {
     // Ignore wheel events as long as the selection is active.
     if(mSelectionActive)
@@ -325,7 +325,7 @@ void Render::OsgWidget::wheelEvent(QWheelEvent* aEvent)
     this->getEventQueue()->mouseScroll(aMotion);
 }
 
-bool Render::OsgWidget::event(QEvent* aEvent)
+bool View::OsgWidget::event(QEvent* aEvent)
 {
     bool aHandled = QOpenGLWidget::event(aEvent);
     // This ensures that the OSG widget is always going to be repainted after the
@@ -348,7 +348,7 @@ bool Render::OsgWidget::event(QEvent* aEvent)
     return aHandled;
 }
 
-void Render::OsgWidget::onHome()
+void View::OsgWidget::onHome()
 {
     osgViewer::ViewerBase::Views aViews;
     mViewer->getViews(aViews);
@@ -360,7 +360,7 @@ void Render::OsgWidget::onHome()
     }
 }
 
-void Render::OsgWidget::onResize(int aWidth, int aHeight)
+void View::OsgWidget::onResize(int aWidth, int aHeight)
 {
     std::vector<osg::Camera*> aCameras;
     mViewer->getCameras(aCameras);
@@ -368,7 +368,7 @@ void Render::OsgWidget::onResize(int aWidth, int aHeight)
     aCameras[0]->setViewport(0, 0, aWidth * aPixelRatio, aHeight * aPixelRatio);
 }
 
-osgGA::EventQueue* Render::OsgWidget::getEventQueue() const
+osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 {
     osgGA::EventQueue* aEventQueue = mGraphicsWindow->getEventQueue();
     if(aEventQueue)
@@ -381,7 +381,7 @@ osgGA::EventQueue* Render::OsgWidget::getEventQueue() const
     }
 }
 
-void Render::OsgWidget::processSelection()
+void View::OsgWidget::processSelection()
 {
     QRect selectionRectangle = MakeRectangle(mSelectionStart, mSelectionEnd);
     auto widgetHeight        = this->height();

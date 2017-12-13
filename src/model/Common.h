@@ -21,6 +21,12 @@
 #include <limits>
 #include <cstring>
 
+
+namespace Model
+{
+
 #ifndef DBL_NAN
 #define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
 #endif
+
+}

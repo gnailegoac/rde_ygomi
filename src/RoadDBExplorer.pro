@@ -31,7 +31,6 @@ SOURCES +=\
     facade/ApplicationFacade.cpp \
     proxy/MainProxy.cpp \
     model/MemoryModel.cpp \
-    control/FileOpenCommand.cpp \
     model/ConnectionRelation.cpp \
     model/Element.cpp \
     model/Junction.cpp \
@@ -44,7 +43,12 @@ SOURCES +=\
     model/Lane.cpp \
     model/TrafficSign.cpp \
     model/Tile.cpp \
-    model/Point3D.cpp
+    model/Point3D.cpp \
+    control/FileOpenCommand.cpp \
+    control/StartUpCommand.cpp \
+    control/BasicCommand.cpp \
+    view/MainWindowMediator.cpp \
+    CommonFunction.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -52,7 +56,6 @@ HEADERS  += view/MainWindow.h \
     facade/ApplicationFacade.h \
     proxy/MainProxy.h \
     model/MemoryModel.h \
-    control/FileOpenCommand.h \
     model/Common.h \
     model/ConnectionRelation.h \
     model/Curve.h \
@@ -66,6 +69,11 @@ HEADERS  += view/MainWindow.h \
     model/Road.h \
     model/Tile.h \
     model/TrafficSign.h \
-    model/BoundingBox.h
+    model/BoundingBox.h \
+    control/FileOpenCommand.h \
+    control/StartUpCommand.h \
+    control/BasicCommand.h \
+    view/MainWindowMediator.h \
+    CommonFunction.h
 
 FORMS    += view/MainWindow.ui

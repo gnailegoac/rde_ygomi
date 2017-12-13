@@ -17,6 +17,8 @@
 #include "Element.h"
 #include "Point3D.h"
 
+namespace Model
+{
 
 class TrafficSign : public Element
 {
@@ -50,3 +52,5 @@ private:
     float mConfidence;
     Point3D mPosition;
 };
+
+}

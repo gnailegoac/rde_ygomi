@@ -13,7 +13,7 @@
 
 #include "ConnectionRelation.h"
 
-ConnectionRelation::ConnectionRelation():
+Model::ConnectionRelation::ConnectionRelation():
     mFromRoadId(0),
     mFromLaneId(0),
     mToRoadId(0),
@@ -22,7 +22,7 @@ ConnectionRelation::ConnectionRelation():
 
 }
 
-ConnectionRelation::ConnectionRelation(std::uint64_t aFromRoadId,
+Model::ConnectionRelation::ConnectionRelation(std::uint64_t aFromRoadId,
                                        std::int8_t aFromLaneId,
                                        std::uint64_t aToRoadId,
                                        std::int8_t aToLaneId):
@@ -34,47 +34,47 @@ ConnectionRelation::ConnectionRelation(std::uint64_t aFromRoadId,
 
 }
 
-ConnectionRelation::~ConnectionRelation()
+Model::ConnectionRelation::~ConnectionRelation()
 {
 
 }
 
-std::uint64_t ConnectionRelation::GetFromRoadId() const
+std::uint64_t Model::ConnectionRelation::GetFromRoadId() const
 {
     return mFromRoadId;
 }
 
-void ConnectionRelation::SetFromRoadId(std::uint64_t aFromRoadId)
+void Model::ConnectionRelation::SetFromRoadId(std::uint64_t aFromRoadId)
 {
     mFromRoadId = aFromRoadId;
 }
 
-std::int8_t ConnectionRelation::GetFromLaneId() const
+std::int8_t Model::ConnectionRelation::GetFromLaneId() const
 {
     return mFromLaneId;
 }
 
-void ConnectionRelation::SetFromLaneId(std::int8_t aFromLaneId)
+void Model::ConnectionRelation::SetFromLaneId(std::int8_t aFromLaneId)
 {
     mFromLaneId = aFromLaneId;
 }
 
-std::uint64_t ConnectionRelation::GetToRoadId() const
+std::uint64_t Model::ConnectionRelation::GetToRoadId() const
 {
     return mToRoadId;
 }
 
-void ConnectionRelation::SetToRoadId(std::uint64_t aToRoadId)
+void Model::ConnectionRelation::SetToRoadId(std::uint64_t aToRoadId)
 {
     mToRoadId = aToRoadId;
 }
 
-std::int8_t ConnectionRelation::GetToLaneId() const
+std::int8_t Model::ConnectionRelation::GetToLaneId() const
 {
     return mToLaneId;
 }
 
-void ConnectionRelation::SetToLaneId(std::int8_t aToLaneId)
+void Model::ConnectionRelation::SetToLaneId(std::int8_t aToLaneId)
 {
     mToLaneId = aToLaneId;
 }

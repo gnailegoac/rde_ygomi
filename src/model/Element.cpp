@@ -13,7 +13,7 @@
 
 #include "Element.h"
 
-Element::Element(bool aIsEditable, bool aIsEdited):
+Model::Element::Element(bool aIsEditable, bool aIsEdited):
     mIsEditable(aIsEditable),
     mIsEdited(aIsEdited),
     mBox(nullptr)
@@ -21,37 +21,37 @@ Element::Element(bool aIsEditable, bool aIsEdited):
 
 }
 
-Element::~Element()
+Model::Element::~Element()
 {
 
 }
 
-bool Element::IsEditable() const
+bool Model::Element::IsEditable() const
 {
     return mIsEditable;
 }
 
-void Element::SetEditable(bool aIsEditable)
+void Model::Element::SetEditable(bool aIsEditable)
 {
     mIsEditable = aIsEditable;
 }
 
-bool Element::IsEdited() const
+bool Model::Element::IsEdited() const
 {
     return mIsEdited;
 }
 
-void Element::SetEdited(bool aIsEdited)
+void Model::Element::SetEdited(bool aIsEdited)
 {
     mIsEdited = aIsEdited;
 }
 
-std::shared_ptr<BoundingBox> Element::GetBox()
+std::shared_ptr<Model::BoundingBox> Model::Element::GetBox()
 {
     return mBox;
 }
 
-void Element::SetBox(std::shared_ptr<BoundingBox> aBox)
+void Model::Element::SetBox(std::shared_ptr<BoundingBox> aBox)
 {
     mBox = aBox;
 }

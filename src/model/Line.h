@@ -17,6 +17,9 @@
 #include "Point3D.h"
 #include "Curve.h"
 
+namespace Model
+{
+
 class Lane;
 
 class Line : public Element
@@ -54,3 +57,5 @@ private:
     std::shared_ptr<Lane> mLane;
     std::unordered_map<std::uint8_t, std::vector<Point3D>> mPointListMap;
 };
+
+}

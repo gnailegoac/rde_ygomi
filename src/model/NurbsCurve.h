@@ -17,6 +17,9 @@
 #include "Point3D.h"
 #include "Curve.h"
 
+namespace Model
+{
+
 class NurbsCurve : public Curve
 {
 public:
@@ -49,3 +52,5 @@ private:
     double mPaintTotalLength;
     double mLineLength;
 };
+
+}

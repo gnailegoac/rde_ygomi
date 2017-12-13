@@ -13,7 +13,7 @@
 
 #include "Poly3Curve.h"
 
-Poly3Curve::Poly3Curve():
+Model::Poly3Curve::Poly3Curve():
     Curve()
 {
     memset(mX, 0, 4 * sizeof(double));
@@ -21,12 +21,12 @@ Poly3Curve::Poly3Curve():
     memset(mZ, 0, 4 * sizeof(double));
 }
 
-Poly3Curve::~Poly3Curve()
+Model::Poly3Curve::~Poly3Curve()
 {
 
 }
 
-void Poly3Curve::SetX(double aX, size_t aIndex)
+void Model::Poly3Curve::SetX(double aX, size_t aIndex)
 {
     if (aIndex < 4)
     {
@@ -34,7 +34,7 @@ void Poly3Curve::SetX(double aX, size_t aIndex)
     }
 }
 
-double Poly3Curve::GetX(size_t aIndex) const
+double Model::Poly3Curve::GetX(size_t aIndex) const
 {
     if (aIndex < 4)
     {
@@ -44,7 +44,7 @@ double Poly3Curve::GetX(size_t aIndex) const
     return DBL_NAN;
 }
 
-void Poly3Curve::SetY(double aY, size_t aIndex)
+void Model::Poly3Curve::SetY(double aY, size_t aIndex)
 {
     if (aIndex < 4)
     {
@@ -52,7 +52,7 @@ void Poly3Curve::SetY(double aY, size_t aIndex)
     }
 }
 
-double Poly3Curve::GetY(size_t aIndex) const
+double Model::Poly3Curve::GetY(size_t aIndex) const
 {
     if (aIndex < 4)
     {
@@ -62,7 +62,7 @@ double Poly3Curve::GetY(size_t aIndex) const
     return DBL_NAN;
 }
 
-void Poly3Curve::SetZ(double aZ, size_t aIndex)
+void Model::Poly3Curve::SetZ(double aZ, size_t aIndex)
 {
     if (aIndex < 4)
     {
@@ -70,7 +70,7 @@ void Poly3Curve::SetZ(double aZ, size_t aIndex)
     }
 }
 
-double Poly3Curve::GetZ(size_t aIndex) const
+double Model::Poly3Curve::GetZ(size_t aIndex) const
 {
     if (aIndex < 4)
     {

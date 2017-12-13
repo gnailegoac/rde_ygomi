@@ -13,7 +13,7 @@
 
 #include "NurbsCurve.h"
 
-NurbsCurve::NurbsCurve():
+Model::NurbsCurve::NurbsCurve():
     Curve(),
     mControlPoints(),
     mKnots(),
@@ -23,10 +23,10 @@ NurbsCurve::NurbsCurve():
 
 }
 
-NurbsCurve::NurbsCurve(std::vector<Point3D>& aControlPoints,
-                       std::vector<double>& aKnots,
-                       double aPaintTotalLength,
-                       double aLineLength):
+Model::NurbsCurve::NurbsCurve(std::vector<Model::Point3D>& aControlPoints,
+                              std::vector<double>& aKnots,
+                              double aPaintTotalLength,
+                              double aLineLength):
     Curve(),
     mPaintTotalLength(aPaintTotalLength),
     mLineLength(aLineLength)
@@ -35,27 +35,27 @@ NurbsCurve::NurbsCurve(std::vector<Point3D>& aControlPoints,
     mKnots.insert(mKnots.begin(), aKnots.begin(), aKnots.end());
 }
 
-NurbsCurve::~NurbsCurve()
+Model::NurbsCurve::~NurbsCurve()
 {
 
 }
 
-const std::vector<Point3D> NurbsCurve::GetControlPoints() const
+const std::vector<Model::Point3D> Model::NurbsCurve::GetControlPoints() const
 {
     return mControlPoints;
 }
 
-std::vector<Point3D>* NurbsCurve::GetMutableControlPoints()
+std::vector<Model::Point3D>* Model::NurbsCurve::GetMutableControlPoints()
 {
     return &mControlPoints;
 }
 
-size_t NurbsCurve::GetControlPointsSize() const
+size_t Model::NurbsCurve::GetControlPointsSize() const
 {
     return mControlPoints.size();
 }
 
-Point3D NurbsCurve::GetControlPoint(size_t aIndex) const
+Model::Point3D Model::NurbsCurve::GetControlPoint(size_t aIndex) const
 {
     if (aIndex < mControlPoints.size())
     {
@@ -65,22 +65,22 @@ Point3D NurbsCurve::GetControlPoint(size_t aIndex) const
     return Point3D(DBL_NAN, DBL_NAN, DBL_NAN);
 }
 
-const std::vector<double> NurbsCurve::GetKnots() const
+const std::vector<double> Model::NurbsCurve::GetKnots() const
 {
     return mKnots;
 }
 
-std::vector<double>* NurbsCurve::GetMutableKnots()
+std::vector<double>* Model::NurbsCurve::GetMutableKnots()
 {
     return &mKnots;
 }
 
-size_t NurbsCurve::GetKnotsSize() const
+size_t Model::NurbsCurve::GetKnotsSize() const
 {
     return mKnots.size();
 }
 
-double NurbsCurve::GetKnot(size_t aIndex) const
+double Model::NurbsCurve::GetKnot(size_t aIndex) const
 {
     if (aIndex < mKnots.size())
     {
@@ -90,22 +90,22 @@ double NurbsCurve::GetKnot(size_t aIndex) const
     return DBL_NAN;
 }
 
-double NurbsCurve::GetPaintTotalLength() const
+double Model::NurbsCurve::GetPaintTotalLength() const
 {
     return mPaintTotalLength;
 }
 
-void NurbsCurve::SetPaintTotalLength(double aPaintTotalLength)
+void Model::NurbsCurve::SetPaintTotalLength(double aPaintTotalLength)
 {
     mPaintTotalLength = aPaintTotalLength;
 }
 
-double NurbsCurve::GetLineLength() const
+double Model::NurbsCurve::GetLineLength() const
 {
     return mLineLength;
 }
 
-void NurbsCurve::SetLineLength(double aLineLength)
+void Model::NurbsCurve::SetLineLength(double aLineLength)
 {
     mLineLength = aLineLength;
 }

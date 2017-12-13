@@ -16,6 +16,9 @@
 #include "Common.h"
 #include "Curve.h"
 
+namespace Model
+{
+
 class Poly3Curve : public Curve
 {
 public:
@@ -36,3 +39,5 @@ private:
     double mY[4];
     double mZ[4];
 };
+
+}

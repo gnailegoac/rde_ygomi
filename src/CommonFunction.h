@@ -6,18 +6,20 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    FileOpenCommand.h
+ * @file    CommonFunction.h
+ * @brief   To handle pick event
  *******************************************************************************
  */
 
 #pragma once
 
-namespace Controller
-{
-class FileOpenCommand
+class CommonFunction
 {
 public:
-    FileOpenCommand();
+    template<typename T>
+    static T* ConvertToNonConstType(const void* aValue)
+    {
+        T* result = static_cast<T*>(const_cast<void*>(aValue));
+        return result;
+    }
 };
-}
-
