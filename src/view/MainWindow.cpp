@@ -15,15 +15,15 @@
 
 #include "OsgWidget.h"
 
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
+View::MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setCentralWidget(new Render::OsgWidget(this));
+    this->setCentralWidget(new View::OsgWidget(this));
 }
 
-MainWindow::~MainWindow()
+View::MainWindow::~MainWindow()
 {
     delete ui;
 }

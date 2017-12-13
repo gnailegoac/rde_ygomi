@@ -12,7 +12,7 @@
 
 #include "FileOpenCommand.h"
 
-FileOpenCommand::FileOpenCommand()
+Controller::FileOpenCommand::FileOpenCommand()
 {
 
 }

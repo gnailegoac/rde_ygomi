@@ -31,7 +31,11 @@ SOURCES +=\
     facade/ApplicationFacade.cpp \
     proxy/MainProxy.cpp \
     model/MemoryModel.cpp \
-    control/FileOpenCommand.cpp
+    control/FileOpenCommand.cpp \
+    control/StartUpCommand.cpp \
+    control/BasicCommand.cpp \
+    view/MainWindowMediator.cpp \
+    CommonFunction.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -39,6 +43,10 @@ HEADERS  += view/MainWindow.h \
     facade/ApplicationFacade.h \
     proxy/MainProxy.h \
     model/MemoryModel.h \
-    control/FileOpenCommand.h
+    control/FileOpenCommand.h \
+    control/StartUpCommand.h \
+    control/BasicCommand.h \
+    view/MainWindowMediator.h \
+    CommonFunction.h
 
 FORMS    += view/MainWindow.ui

@@ -12,8 +12,11 @@
 
 #pragma once
 
-class MainProxy
+#include <PureMVC/PureMVC.hpp>
+
+class MainProxy : public PureMVC::Patterns::Proxy
 {
 public:
     MainProxy();
+    MainProxy(const std::string& aName);
 };

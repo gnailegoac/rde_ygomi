@@ -6,18 +6,9 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    FileOpenCommand.h
+ * @file    CommonFunction.cpp
+ * @brief   To handle pick event
  *******************************************************************************
  */
 
-#pragma once
-
-namespace Controller
-{
-class FileOpenCommand
-{
-public:
-    FileOpenCommand();
-};
-}
-
+#include "CommonFunction.h"

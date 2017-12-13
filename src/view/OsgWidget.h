@@ -21,7 +21,7 @@
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/GraphicsWindow>
 
-namespace Render
+namespace View
 {
 //! The subclass of osgViewer::CompositeViewer we use
 /*!
