@@ -31,7 +31,7 @@ SOURCES +=\
     facade/ApplicationFacade.cpp \
     proxy/MainProxy.cpp \
     model/MemoryModel.cpp \
-    control/FileOpenCommand.cpp \
+    control/FileParseCommand.cpp \
     control/StartUpCommand.cpp \
     control/BasicCommand.cpp \
     view/MainWindowMediator.cpp \
@@ -43,7 +43,7 @@ HEADERS  += view/MainWindow.h \
     facade/ApplicationFacade.h \
     proxy/MainProxy.h \
     model/MemoryModel.h \
-    control/FileOpenCommand.h \
+    control/FileParseCommand.h \
     control/StartUpCommand.h \
     control/BasicCommand.h \
     view/MainWindowMediator.h \
