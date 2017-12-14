@@ -13,6 +13,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QString>
 
 namespace Ui {
 class MainWindow;
@@ -27,11 +28,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
+    void PopupWarningMessage(const QString& aWarning);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
+    void setupConnections();
     Ui::MainWindow *ui;
 };
 }

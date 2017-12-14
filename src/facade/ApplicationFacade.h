@@ -28,6 +28,10 @@ class ApplicationFacade : public PureMVC::Patterns::Facade
 public:
     static const std::string NAME;
     static const std::string START_UP;
+    static const std::string FILE_OPEN;
+    static const std::string FOLDER_OPEN;
+    static const std::string FILE_OPEN_SUCCESS;
+    static const std::string FOLDER_OPEN_SUCCESS;
 
     static ApplicationFacade* GetInstance();
 
