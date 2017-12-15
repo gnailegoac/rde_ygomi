@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include "view/MainWindow.h"
+#include "view/NetworkPreferenceDialog.h"
 #include "ui_MainWindow.h"
 
 #include "OsgWidget.h"
@@ -53,6 +54,12 @@ void View::MainWindow::setupConnections()
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN, &folderPath);
         }
+    });
+
+    connect(ui->actionPreference, &QAction::triggered, [=]()
+    {
+        View::NetworkPreferenceDialog networkPreferenceDialog;
+        networkPreferenceDialog.exec();
     });
 }
 

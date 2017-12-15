@@ -11,7 +11,7 @@
  */
 
 #pragma once
-
+#include <memory>
 #include <QNetworkProxy>
 
 namespace Service
@@ -20,17 +20,21 @@ namespace Service
 class NetworkPreferenceProvider
 {
 public:
-    NetworkPreferenceProvider();
-
+    static const std::shared_ptr<NetworkPreferenceProvider> &Instance();
     const QNetworkProxy& GetNetworkProxy() const;
+    const QString& GetWebServer() const;
     void SetNetworkProxy(const QNetworkProxy& aNetworkProxy);
-
+    void SetWebServer(const QString& aWebServer);
     void SetCurrentApplicationProxy();
 
 private:
+    NetworkPreferenceProvider();
     QNetworkProxy readProxySetting();
+    QString readWebServerSetting();
     void writeProxySetting(const QNetworkProxy& aNetworkProxy);
+    void writeWebServerSetting(const QString& aWebServer);
 
+    QString mWebServer;
     QNetworkProxy mNetworkProxy;
 };
 

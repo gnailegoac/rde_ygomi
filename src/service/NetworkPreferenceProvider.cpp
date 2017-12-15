@@ -17,11 +17,23 @@
 Service::NetworkPreferenceProvider::NetworkPreferenceProvider()
 {
     mNetworkProxy = readProxySetting();
+    mWebServer = readWebServerSetting();
+}
+
+const std::shared_ptr<Service::NetworkPreferenceProvider> &Service::NetworkPreferenceProvider::Instance()
+{
+    static std::shared_ptr<Service::NetworkPreferenceProvider> networkPreferenceProvider(new Service::NetworkPreferenceProvider());
+    return networkPreferenceProvider;
 }
 
 const QNetworkProxy& Service::NetworkPreferenceProvider::GetNetworkProxy() const
 {
     return mNetworkProxy;
+}
+
+const QString &Service::NetworkPreferenceProvider::GetWebServer() const
+{
+    return mWebServer;
 }
 
 void Service::NetworkPreferenceProvider::SetNetworkProxy(const QNetworkProxy& aNetworkProxy)
@@ -30,6 +42,12 @@ void Service::NetworkPreferenceProvider::SetNetworkProxy(const QNetworkProxy& aN
 
     SetCurrentApplicationProxy();
     writeProxySetting(mNetworkProxy);
+}
+
+void Service::NetworkPreferenceProvider::SetWebServer(const QString& aWebServer)
+{
+    mWebServer = aWebServer;
+    writeWebServerSetting(mWebServer);
 }
 
 void Service::NetworkPreferenceProvider::SetCurrentApplicationProxy()
@@ -51,10 +69,10 @@ QNetworkProxy Service::NetworkPreferenceProvider::readProxySetting()
     QSettings settings;
     settings.beginGroup("proxy");
     QString proxyType = settings.value("proxyType").toString();
-    QString hostName = settings.value("hostName").toString();
-    quint16 port = quint16(settings.value("port", 0).toUInt());
+    QString hostName = settings.value("proxyServer").toString();
+    quint16 port = quint16(settings.value("proxyPort", 0).toUInt());
     bool useCrendetial = settings.value("useCredential", false).toBool();
-    QString username = settings.value("user").toString();
+    QString username = settings.value("username").toString();
     QString password = settings.value("password").toString();
     settings.endGroup();
 
@@ -82,6 +100,14 @@ QNetworkProxy Service::NetworkPreferenceProvider::readProxySetting()
     return networkProxy;
 }
 
+QString Service::NetworkPreferenceProvider::readWebServerSetting()
+{
+    QSettings settings;
+    settings.beginGroup("WebServer");
+    mWebServer = settings.value("webServer").toString();
+    return mWebServer;
+}
+
 void Service::NetworkPreferenceProvider::writeProxySetting(const QNetworkProxy& aNetworkProxy)
 {
     QString proxyType = "NoProxy";
@@ -103,18 +129,26 @@ void Service::NetworkPreferenceProvider::writeProxySetting(const QNetworkProxy& 
 
     if (aNetworkProxy.type() == QNetworkProxy::HttpProxy)
     {
-        settings.setValue("hostName", aNetworkProxy.hostName());
-        settings.setValue("port", aNetworkProxy.port());
+        settings.setValue("proxyServer", aNetworkProxy.hostName());
+        settings.setValue("proxyPort", aNetworkProxy.port());
         bool useCredential = !aNetworkProxy.user().isEmpty() &&
                              !aNetworkProxy.password().isEmpty();
 
         settings.setValue("useCredential", useCredential);
         if (useCredential)
         {
-            settings.setValue("user", aNetworkProxy.user());
+            settings.setValue("username", aNetworkProxy.user());
             settings.setValue("password", aNetworkProxy.password());
         }
     }
 
+    settings.endGroup();
+}
+
+void Service::NetworkPreferenceProvider::writeWebServerSetting(const QString& aWebServer)
+{
+    QSettings settings;
+    settings.beginGroup("WebServer");
+    settings.setValue("webServer", aWebServer);
     settings.endGroup();
 }
