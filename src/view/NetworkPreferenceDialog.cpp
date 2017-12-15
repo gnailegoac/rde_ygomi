@@ -51,9 +51,23 @@ View::NetworkPreferenceDialog::NetworkPreferenceDialog(QWidget *parent) :
 
     connect(mUi->proxyServer, &QLineEdit::textChanged, valueChanged);
     connect(mUi->proxyPort, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), valueChanged);
-    connect(mUi->credential, &QCheckBox::stateChanged, valueChanged);
+    connect(mUi->credential, &QCheckBox::stateChanged, [=]
+    {
+        mSettingChanged = true;
+        mUi->username->setEnabled(mUi->credential->isChecked());
+        mUi->password->setEnabled(mUi->credential->isChecked());
+    });
     connect(mUi->username, &QLineEdit::textChanged, valueChanged);
     connect(mUi->password, &QLineEdit::textChanged, valueChanged);
+    connect(mUi->cancelBtn, &QPushButton::clicked, this, &QDialog::close);
+    connect(mUi->okBtn, &QPushButton::clicked, [=]
+    {
+        if (mSettingChanged)
+        {
+            SaveSettings();
+        }
+        accept();
+    });
 
     populateSettings();
 }

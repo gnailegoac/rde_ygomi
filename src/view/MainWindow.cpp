@@ -12,6 +12,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+
+#include "service/NetworkPreferenceProvider.h"
 #include "view/MainWindow.h"
 #include "view/NetworkPreferenceDialog.h"
 #include "ui_MainWindow.h"
@@ -28,7 +30,8 @@ View::MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
     this->setCentralWidget(new View::OsgWidget(this));
     restoreSettings();
     setupConnections();
-    ui->webRoadEditor->load(QUrl("https://www.google.com/maps"));
+    auto networkSettings = Service::NetworkPreferenceProvider::Instance();
+    ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
