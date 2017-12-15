@@ -32,8 +32,11 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void closeEvent(QCloseEvent *aEvent) override;
 
 private:
+    void restoreSettings();
+    void writeSettings();
     void setupConnections();
     Ui::MainWindow *ui;
 };

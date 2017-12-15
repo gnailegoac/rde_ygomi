@@ -11,6 +11,7 @@
  */
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 #include "view/MainWindow.h"
 #include "ui_MainWindow.h"
 
@@ -24,7 +25,9 @@ View::MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
+    restoreSettings();
     setupConnections();
+    ui->webRoadEditor->load(QUrl("https://www.google.com/maps"));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -61,4 +64,30 @@ View::MainWindow::~MainWindow()
 void View::MainWindow::resizeEvent(QResizeEvent *event)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
+}
+
+void View::MainWindow::closeEvent(QCloseEvent *aEvent)
+{
+    writeSettings();
+    QMainWindow::closeEvent(aEvent);
+}
+
+void View::MainWindow::restoreSettings()
+{
+    QSettings settings;
+    settings.beginGroup("ui");
+    const QByteArray mainWindowGeometry = settings.value("mainwindow/geometry").toByteArray();
+    settings.endGroup();
+    if (!mainWindowGeometry.isEmpty())
+    {
+        restoreGeometry(mainWindowGeometry);
+    }
+}
+
+void View::MainWindow::writeSettings()
+{
+    QSettings settings;
+    settings.beginGroup("ui");
+    settings.setValue("mainwindow/geometry", saveGeometry());
+    settings.endGroup();
 }
