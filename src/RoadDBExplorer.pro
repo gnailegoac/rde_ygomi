@@ -44,7 +44,7 @@ SOURCES +=\
     model/TrafficSign.cpp \
     model/Tile.cpp \
     model/Point3D.cpp \
-    control/FileOpenCommand.cpp \
+    control/FileParseCommand.cpp \
     control/StartUpCommand.cpp \
     control/BasicCommand.cpp \
     view/MainWindowMediator.cpp \
@@ -73,7 +73,7 @@ HEADERS  += view/MainWindow.h \
     model/Tile.h \
     model/TrafficSign.h \
     model/BoundingBox.h \
-    control/FileOpenCommand.h \
+    control/FileParseCommand.h \
     control/StartUpCommand.h \
     control/BasicCommand.h \
     view/MainWindowMediator.h \
