@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl webenginewidgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = RoadDBExplorer
@@ -35,7 +35,10 @@ SOURCES +=\
     control/StartUpCommand.cpp \
     control/BasicCommand.cpp \
     view/MainWindowMediator.cpp \
-    CommonFunction.cpp
+    CommonFunction.cpp \
+    service/NetworkPreferenceProvider.cpp \
+    view/WebRoadEditor.cpp \
+    view/NetworkPreferenceDialog.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -47,6 +50,10 @@ HEADERS  += view/MainWindow.h \
     control/StartUpCommand.h \
     control/BasicCommand.h \
     view/MainWindowMediator.h \
-    CommonFunction.h
+    CommonFunction.h \
+    service/NetworkPreferenceProvider.h \
+    view/WebRoadEditor.h \
+    view/NetworkPreferenceDialog.h
 
-FORMS    += view/MainWindow.ui
+FORMS    += view/MainWindow.ui \
+    view/NetworkPreferenceDialog.ui
