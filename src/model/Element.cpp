@@ -13,10 +13,12 @@
 
 #include "Element.h"
 
+#include "BoundingBox.h"
+
 Model::Element::Element(bool aIsEditable, bool aIsEdited):
     mIsEditable(aIsEditable),
     mIsEdited(aIsEdited),
-    mBox(nullptr)
+    mBox(std::make_shared<BoundingBox>())
 {
 
 }
@@ -46,12 +48,12 @@ void Model::Element::SetEdited(bool aIsEdited)
     mIsEdited = aIsEdited;
 }
 
-std::shared_ptr<Model::BoundingBox> Model::Element::GetBox()
+Model::BoundingBoxPtr Model::Element::GetBox()
 {
     return mBox;
 }
 
-void Model::Element::SetBox(std::shared_ptr<BoundingBox> aBox)
+void Model::Element::SetBox(Model::BoundingBoxPtr aBox)
 {
     mBox = aBox;
 }

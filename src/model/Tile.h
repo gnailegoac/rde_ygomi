@@ -32,33 +32,39 @@ public:
     std::int64_t GetTileId() const;
     void SetTileId(std::int64_t aTileId);
 
-    const std::unordered_map<std::uint64_t, std::shared_ptr<TrafficSign>>& GetTrafficSignMap() const;
-    std::unordered_map<std::uint64_t, std::shared_ptr<TrafficSign>>* GetMutableTrafficSignMap();
-    std::shared_ptr<TrafficSign> GetTrafficSign(std::uint64_t aId);
+    TrafficSignMapConstPtr GetTrafficSignMap() const;
+    TrafficSignMapPtr GetMutableTrafficSignMap();
+    TrafficSignPtr GetTrafficSign(std::uint64_t aId);
 
-    const std::unordered_map<std::uint64_t, std::shared_ptr<Road>>& GetRoadMap() const;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Road>>* GetMutableRoadMap();
-    std::shared_ptr<Road> GetRoad(std::uint64_t aId);
+    RoadMapConstPtr GetRoadMap() const;
+    RoadMapPtr GetMutableRoadMap();
+    RoadPtr GetRoad(std::uint64_t aId);
 
-    const std::unordered_map<std::uint64_t, std::shared_ptr<Lane>>& GetLaneMap() const;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Lane>>* GetMutableLaneMap();
-    std::shared_ptr<Lane> GetLane(std::uint64_t aId);
+    LaneMapConstPtr GetLaneMap() const;
+    LaneMapPtr GetMutableLaneMap();
+    LanePtr GetLane(std::uint64_t aId);
 
-    const std::unordered_map<std::uint64_t, std::shared_ptr<Line>>& GetLineMap() const;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Line>>* GetMutableLineMap();
-    std::shared_ptr<Line> GetLine(std::uint64_t aId);
+    LineMapConstPtr GetLineMap() const;
+    LineMapPtr GetMutableLineMap();
+    LinePtr GetLine(std::uint64_t aId);
 
-    const std::unordered_map<std::uint64_t, std::shared_ptr<Junction>>& GetJunctionMap() const;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Junction>>* GetMutableJunctionMap();
-    std::shared_ptr<Junction> GetJunction(std::uint64_t aId);
+    JunctionMapConstPtr GetJunctionMap() const;
+    JunctionMapPtr GetMutableJunctionMap();
+    JunctionPtr GetJunction(std::uint64_t aId);
 
 private:
     std::int64_t mTileId;
-    std::unordered_map<std::uint64_t, std::shared_ptr<TrafficSign>> mTrafficSignMap;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Road>> mRoadMap;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Lane>> mLaneMap;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Line>> mLineMap;
-    std::unordered_map<std::uint64_t, std::shared_ptr<Junction>> mJunctionMap;
+    TrafficSignMapPtr mTrafficSignMap;
+    RoadMapPtr mRoadMap;
+    LaneMapPtr mLaneMap;
+    LineMapPtr mLineMap;
+    JunctionMapPtr mJunctionMap;
 };
+
+typedef std::shared_ptr<Tile> TilePtr;
+typedef std::shared_ptr<const Tile> TileConstPtr;
+typedef std::vector<TilePtr> TileList;
+typedef std::shared_ptr<TileList> TileListPtr;
+typedef std::shared_ptr<const TileList> TileListConstPtr;
 
 }

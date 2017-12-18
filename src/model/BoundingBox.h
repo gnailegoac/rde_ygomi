@@ -23,15 +23,15 @@ class BoundingBox
 {
 public:
     BoundingBox();
-    BoundingBox(Point3D aPosition,
+    BoundingBox(Point3DPtr aPosition,
                 double aHeading,
                 float aWidth,
                 float aLength,
                 float aHeight);
     ~BoundingBox();
 
-    Point3D GetPosition() const;
-    void SetPosition(Point3D aPosition);
+    Point3DPtr GetPosition() const;
+    void SetPosition(Point3DPtr aPosition);
 
     double GetHeading() const;
     void SetHeading(double aHeading);
@@ -46,11 +46,17 @@ public:
     void SetHeight(float aHeight);
 
 private:
-    Point3D mPosition;
+    Point3DPtr mPosition;
     double mHeading;
     float mWidth;
     float mLength;
     float mHeight;
 };
+
+typedef std::shared_ptr<BoundingBox> BoundingBoxPtr;
+typedef std::shared_ptr<const BoundingBox> BoundingBoxConstPtr;
+typedef std::vector<BoundingBoxPtr> BoundingBoxList;
+typedef std::shared_ptr<BoundingBoxList> BoundingBoxListPtr;
+typedef std::shared_ptr<const BoundingBoxList> BoundingBoxListConstPtr;
 
 }

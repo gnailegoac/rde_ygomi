@@ -15,12 +15,18 @@
 
 #include "Common.h"
 #include "Element.h"
-#include "Line.h"
 
 namespace Model
 {
 
 class Road;
+class Line;
+
+typedef std::shared_ptr<Road> RoadPtr;
+typedef std::shared_ptr<Line> LinePtr;
+
+typedef std::shared_ptr<std::unordered_map<std::uint64_t, std::uint8_t>> ConnectionMapPtr;
+typedef std::shared_ptr<const std::unordered_map<std::uint64_t, std::uint8_t>> ConnectionMapConstPtr;
 
 class Lane : public Element
 {
@@ -31,29 +37,39 @@ public:
     std::uint64_t GetLaneId() const;
     void SetLaneId(std::uint64_t aLaneId);
 
-    std::shared_ptr<Line> GetLeftLine() const;
-    void SetLeftLine(std::shared_ptr<Line> aLeftLine);
+    LinePtr GetLeftLine() const;
+    void SetLeftLine(LinePtr aLeftLine);
 
-    std::shared_ptr<Line> GetRightLine() const;
-    void SetRightLine(std::shared_ptr<Line> aRightLine);
+    LinePtr GetRightLine() const;
+    void SetRightLine(LinePtr aRightLine);
 
-    std::shared_ptr<Line> GetCenterLine() const;
-    void SetCenterLine(std::shared_ptr<Line> aCenterLine);
+    LinePtr GetCenterLine() const;
+    void SetCenterLine(LinePtr aCenterLine);
 
-    const std::unordered_map<std::uint64_t, std::uint64_t>& GetConnectionMap();
-    std::unordered_map<std::uint64_t, std::uint64_t>* GetMutableConnectionMap();
-    std::uint64_t GetConnectionById(uint64_t aId);
+    RoadPtr GetRoad() const;
+    void SetRoad(RoadPtr aRoad);
 
-    std::shared_ptr<Road> GetRoad() const;
-    void SetRoad(std::shared_ptr<Road> aRoad);
+    ConnectionMapConstPtr GetConnectionMap();
+    ConnectionMapPtr GetMutableConnectionMap();
+    std::uint8_t GetConnectionById(uint64_t aId);
 
 private:
     std::uint64_t mLaneId;
-    std::shared_ptr<Line> mLeftLine;
-    std::shared_ptr<Line> mRightLine;
-    std::shared_ptr<Line> mCenterLine;
-    std::unordered_map<std::uint64_t, std::uint64_t> mConnectionMap;
-    std::shared_ptr<Road> mRoad;
+    LinePtr mLeftLine;
+    LinePtr mRightLine;
+    LinePtr mCenterLine;
+    RoadPtr mRoad;
+    ConnectionMapPtr mConnectionMap;
 };
+
+typedef std::shared_ptr<Lane> LanePtr;
+typedef std::shared_ptr<const Lane> LaneConstPtr;
+typedef std::vector<LanePtr> LaneList;
+typedef std::shared_ptr<LaneList> LaneListPtr;
+typedef std::shared_ptr<const LaneList> LaneListConstPtr;
+
+typedef std::unordered_map<std::uint64_t, LanePtr> LaneMap;
+typedef std::shared_ptr<LaneMap> LaneMapPtr;
+typedef std::shared_ptr<const LaneMap> LaneMapConstPtr;
 
 }

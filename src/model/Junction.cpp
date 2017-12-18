@@ -15,14 +15,20 @@
 
 Model::Junction::Junction():
     Element(),
-    mJunctionId(0)
+    mJunctionId(0),
+    mPointListMap(std::make_shared<ViewPointMap>()),
+    mBorderLineList(std::make_shared<LineList>()),
+    mConnectionRelationList(std::make_shared<ConnectionRelationList>())
 {
 
 }
 
 Model::Junction::Junction(std::uint64_t aJunctionId):
     Element(),
-    mJunctionId(aJunctionId)
+    mJunctionId(aJunctionId),
+    mPointListMap(std::make_shared<ViewPointMap>()),
+    mBorderLineList(std::make_shared<LineList>()),
+    mConnectionRelationList(std::make_shared<ConnectionRelationList>())
 {
 
 }
@@ -42,72 +48,71 @@ void Model::Junction::SetJunctionId(std::uint64_t aJunctionId)
     mJunctionId = aJunctionId;
 }
 
-
-const std::unordered_map<uint8_t, std::vector<Model::Point3D>>& Model::Junction::GetPointListMap() const
+Model::ViewPointMapConstPtr Model::Junction::GetPointListMap() const
 {
     return mPointListMap;
 }
 
-std::unordered_map<uint8_t, std::vector<Model::Point3D>>* Model::Junction::GetMutablePointListMap()
+Model::ViewPointMapPtr Model::Junction::GetMutablePointListMap()
 {
-    return &mPointListMap;
+    return mPointListMap;
 }
 
-std::vector<Model::Point3D>* Model::Junction::GetPointListByLevel(uint8_t aLevel)
+Model::Point3DListPtr Model::Junction::GetPointListByLevel(uint8_t aLevel)
 {
-    if (0 != mPointListMap.count(aLevel))
+    if (0 != mPointListMap->count(aLevel))
     {
-        return &(mPointListMap[aLevel]);
+        return mPointListMap->at(aLevel);
     }
 
     return nullptr;
 }
 
-const std::vector<std::shared_ptr<Model::Line>>& Model::Junction::GetBorderLineList() const
+Model::LineListConstPtr Model::Junction::GetBorderLineList() const
 {
     return mBorderLineList;
 }
 
-std::vector<std::shared_ptr<Model::Line>>* Model::Junction::GetMutableBorderLineList()
+Model::LineListPtr Model::Junction::GetMutableBorderLineList()
 {
-    return &mBorderLineList;
+    return mBorderLineList;
 }
 
 size_t Model::Junction::GetBorderLineListSize() const
 {
-    return mBorderLineList.size();
+    return mBorderLineList->size();
 }
 
-std::shared_ptr<Model::Line> Model::Junction::GetBorderLine(size_t aIndex)
+Model::LinePtr Model::Junction::GetBorderLine(size_t aIndex)
 {
-    if (aIndex < mBorderLineList.size())
+    if (aIndex < mBorderLineList->size())
     {
-        return mBorderLineList[aIndex];
+        return mBorderLineList->at(aIndex);
     }
 
     return nullptr;
 }
 
-const std::vector<std::shared_ptr<Model::ConnectionRelation>>& Model::Junction::GetConnectionRelationList() const
+Model::ConnectionRelationListConstPtr Model::Junction::GetConnectionRelationList() const
 {
     return mConnectionRelationList;
 }
 
-std::vector<std::shared_ptr<Model::ConnectionRelation>>* Model::Junction::GetMutableConnectionRelationList()
+Model::ConnectionRelationListPtr Model::Junction::GetMutableConnectionRelationList()
 {
-    return &mConnectionRelationList;
+    return mConnectionRelationList;
 }
 
 size_t Model::Junction::GetConnectionRelationListSize() const
 {
-    return mConnectionRelationList.size();
+    return mConnectionRelationList->size();
 }
 
-std::shared_ptr<Model::ConnectionRelation> Model::Junction::GetConnectionRelation(size_t aIndex)
+Model::ConnectionRelationPtr Model::Junction::GetConnectionRelation(size_t aIndex)
 {
-    if (aIndex < mConnectionRelationList.size())
+    if (aIndex < mConnectionRelationList->size())
     {
-        return mConnectionRelationList[aIndex];
+        return mConnectionRelationList->at(aIndex);
     }
 
     return nullptr;

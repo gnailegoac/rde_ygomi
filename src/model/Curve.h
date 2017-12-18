@@ -18,6 +18,9 @@
 namespace Model
 {
 
+typedef std::shared_ptr<std::vector<std::pair<double, double>>> PaintRangePtr;
+typedef std::shared_ptr<const std::vector<std::pair<double, double>>> PaintRangeConstPtr;
+
 enum class CurveType : std::uint8_t
 {
     Solid = 0,
@@ -25,7 +28,7 @@ enum class CurveType : std::uint8_t
     Imputed = 2,
     SlamTrace = 3,
     UnKnown = 200,
-    UnDefine = 201
+    UnDefined = 201
 };
 
 class Curve
@@ -49,8 +52,8 @@ public:
     float GetWidth() const;
     void SetWidth(float aWidth);
 
-    const std::vector<std::pair<double, double>>& GetPaintRange() const;
-    std::vector<std::pair<double, double>>* GetMutablePaintRange();
+    PaintRangeConstPtr GetPaintRange();
+    PaintRangePtr GetMutablePaintRange();
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(size_t aIndex) const;
 
@@ -60,7 +63,13 @@ protected:
     CurveType mCurveType;
     std::int8_t mIndexInLine;
     float mWidth;
-    std::vector<std::pair<double, double>> mPaintRange;
+    PaintRangePtr mPaintRange;
 };
+
+typedef std::shared_ptr<Curve> CurvePtr;
+typedef std::shared_ptr<const Curve> CurveConstPtr;
+typedef std::vector<CurvePtr> CurveList;
+typedef std::shared_ptr<CurveList> CurveListPtr;
+typedef std::shared_ptr<const CurveList> CurveListConstPtr;
 
 }

@@ -22,6 +22,8 @@ namespace Model
 
 class Lane;
 
+typedef std::shared_ptr<Lane> LanePtr;
+
 class Line : public Element
 {
 public:
@@ -31,10 +33,10 @@ public:
     std::uint64_t GetLineId() const;
     void SetLineId(std::uint64_t aLineId);
 
-    const std::vector<std::shared_ptr<Curve>> GetCurveList() const;
-    std::vector<std::shared_ptr<Curve>>* GetMutableCurveList();
+    CurveListConstPtr GetCurveList() const;
+    CurveListPtr GetMutableCurveList();
     size_t GetCurveListSize() const;
-    std::shared_ptr<Curve> GetCurve(size_t aIndex);
+    CurvePtr GetCurve(size_t aIndex);
 
     float GetConfidence() const;
     void SetConfidence(float aConfidence);
@@ -42,20 +44,30 @@ public:
     float GetLength() const;
     void SetLength(float aLength);
 
-    std::shared_ptr<Lane> GetLane() const;
-    void SetLane(std::shared_ptr<Lane> aLane);
+    LanePtr GetLane() const;
+    void SetLane(LanePtr aLane);
 
-    const std::unordered_map<std::uint8_t, std::vector<Point3D>> GetPointListMap() const;
-    std::unordered_map<std::uint8_t, std::vector<Point3D>>* GetMutablePointListMap();
-    std::vector<Point3D>* GetPointListByLevel(std::uint8_t aLevel);
+    ViewPointMapConstPtr GetPointListMap() const;
+    ViewPointMapPtr GetMutablePointListMap();
+    Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
 
 private:
     std::uint64_t mLineId;
-    std::vector<std::shared_ptr<Curve>> mCurveList;
+    CurveListPtr mCurveList;
     float mConfidence;
     float mLength;
-    std::shared_ptr<Lane> mLane;
-    std::unordered_map<std::uint8_t, std::vector<Point3D>> mPointListMap;
+    LanePtr mLane;
+    ViewPointMapPtr mPointListMap;
 };
+
+typedef std::shared_ptr<Line> LinePtr;
+typedef std::shared_ptr<const Line> LineConstPtr;
+typedef std::vector<LinePtr> LineList;
+typedef std::shared_ptr<LineList> LineListPtr;
+typedef std::shared_ptr<const LineList> LineListConstPtr;
+
+typedef std::unordered_map<std::uint64_t, LinePtr> LineMap;
+typedef std::shared_ptr<LineMap> LineMapPtr;
+typedef std::shared_ptr<const LineMap> LineMapConstPtr;
 
 }

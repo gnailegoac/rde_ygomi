@@ -15,11 +15,11 @@
 
 Model::Tile::Tile():
     mTileId(0),
-    mTrafficSignMap(),
-    mRoadMap(),
-    mLaneMap(),
-    mLineMap(),
-    mJunctionMap()
+    mTrafficSignMap(std::make_shared<TrafficSignMap>()),
+    mRoadMap(std::make_shared<RoadMap>()),
+    mLaneMap(std::make_shared<LaneMap>()),
+    mLineMap(std::make_shared<LineMap>()),
+    mJunctionMap(std::make_shared<JunctionMap>())
 {
 
 }
@@ -39,101 +39,101 @@ void Model::Tile::SetTileId(std::int64_t aTileId)
     mTileId = aTileId;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Model::TrafficSign>>& Model::Tile::GetTrafficSignMap() const
+Model::TrafficSignMapConstPtr Model::Tile::GetTrafficSignMap() const
 {
     return mTrafficSignMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Model::TrafficSign>>* Model::Tile::GetMutableTrafficSignMap()
+Model::TrafficSignMapPtr Model::Tile::GetMutableTrafficSignMap()
 {
-    return &mTrafficSignMap;
+    return mTrafficSignMap;
 }
 
-std::shared_ptr<Model::TrafficSign> Model::Tile::GetTrafficSign(std::uint64_t aId)
+Model::TrafficSignPtr Model::Tile::GetTrafficSign(std::uint64_t aId)
 {
-    if (0 != mTrafficSignMap.count(aId))
+    if (0 != mTrafficSignMap->count(aId))
     {
-        return mTrafficSignMap[aId];
+        return mTrafficSignMap->at(aId);
     }
 
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Road>>& Model::Tile::GetRoadMap() const
+Model::RoadMapConstPtr Model::Tile::GetRoadMap() const
 {
     return mRoadMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Model::Road>>* Model::Tile::GetMutableRoadMap()
+Model::RoadMapPtr Model::Tile::GetMutableRoadMap()
 {
-    return &mRoadMap;
+    return mRoadMap;
 }
 
-std::shared_ptr<Model::Road> Model::Tile::GetRoad(std::uint64_t aId)
+Model::RoadPtr Model::Tile::GetRoad(std::uint64_t aId)
 {
-    if (0 != mRoadMap.count(aId))
+    if (0 != mRoadMap->count(aId))
     {
-        return mRoadMap[aId];
+        return mRoadMap->at(aId);
     }
 
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Lane>>& Model::Tile::GetLaneMap() const
+Model::LaneMapConstPtr Model::Tile::GetLaneMap() const
 {
     return mLaneMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Model::Lane>>* Model::Tile::GetMutableLaneMap()
+Model::LaneMapPtr Model::Tile::GetMutableLaneMap()
 {
-    return &mLaneMap;
+    return mLaneMap;
 }
 
-std::shared_ptr<Model::Lane> Model::Tile::GetLane(std::uint64_t aId)
+Model::LanePtr Model::Tile::GetLane(std::uint64_t aId)
 {
-    if (0 != mLaneMap.count(aId))
+    if (0 != mLaneMap->count(aId))
     {
-        return mLaneMap[aId];
+        return mLaneMap->at(aId);
     }
 
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Line>>& Model::Tile::GetLineMap() const
+Model::LineMapConstPtr Model::Tile::GetLineMap() const
 {
     return mLineMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Model::Line>>* Model::Tile::GetMutableLineMap()
+Model::LineMapPtr Model::Tile::GetMutableLineMap()
 {
-    return &mLineMap;
+    return mLineMap;
 }
 
-std::shared_ptr<Model::Line> Model::Tile::GetLine(std::uint64_t aId)
+Model::LinePtr Model::Tile::GetLine(std::uint64_t aId)
 {
-    if (0 != mLineMap.count(aId))
+    if (0 != mLineMap->count(aId))
     {
-        return mLineMap[aId];
+        return mLineMap->at(aId);
     }
 
     return nullptr;
 }
 
-const std::unordered_map<std::uint64_t, std::shared_ptr<Model::Junction>>& Model::Tile::GetJunctionMap() const
+Model::JunctionMapConstPtr Model::Tile::GetJunctionMap() const
 {
     return mJunctionMap;
 }
 
-std::unordered_map<std::uint64_t, std::shared_ptr<Model::Junction>>* Model::Tile::GetMutableJunctionMap()
+Model::JunctionMapPtr Model::Tile::GetMutableJunctionMap()
 {
-    return &mJunctionMap;
+    return mJunctionMap;
 }
 
-std::shared_ptr<Model::Junction> Model::Tile::GetJunction(std::uint64_t aId)
+Model::JunctionPtr Model::Tile::GetJunction(std::uint64_t aId)
 {
-    if (0 != mJunctionMap.count(aId))
+    if (0 != mJunctionMap->count(aId))
     {
-        return mJunctionMap[aId];
+        return mJunctionMap->at(aId);
     }
 
     return nullptr;

@@ -32,26 +32,35 @@ public:
     std::uint64_t GetJunctionId() const;
     void SetJunctionId(std::uint64_t aJunctionId);
 
-    const std::unordered_map<uint8_t, std::vector<Point3D>>& GetPointListMap() const;
-    std::unordered_map<uint8_t, std::vector<Point3D>>* GetMutablePointListMap();
-    std::vector<Point3D>* GetPointListByLevel(uint8_t aLevel);
+    ViewPointMapConstPtr GetPointListMap() const;
+    ViewPointMapPtr GetMutablePointListMap();
+    Point3DListPtr GetPointListByLevel(uint8_t aLevel);
 
-    const std::vector<std::shared_ptr<Line>>& GetBorderLineList() const;
-    std::vector<std::shared_ptr<Line>>* GetMutableBorderLineList();
+    LineListConstPtr GetBorderLineList() const;
+    LineListPtr GetMutableBorderLineList();
     size_t GetBorderLineListSize() const;
-    std::shared_ptr<Line> GetBorderLine(size_t aIndex);
+    LinePtr GetBorderLine(size_t aIndex);
 
-    const std::vector<std::shared_ptr<ConnectionRelation>>& GetConnectionRelationList() const;
-    std::vector<std::shared_ptr<ConnectionRelation>>* GetMutableConnectionRelationList();
+    ConnectionRelationListConstPtr GetConnectionRelationList() const;
+    ConnectionRelationListPtr GetMutableConnectionRelationList();
     size_t GetConnectionRelationListSize() const;
-    std::shared_ptr<ConnectionRelation> GetConnectionRelation(size_t aIndex);
-
+    ConnectionRelationPtr GetConnectionRelation(size_t aIndex);
 
 private:
     std::uint64_t mJunctionId;
-    std::unordered_map<uint8_t, std::vector<Point3D>> mPointListMap;
-    std::vector<std::shared_ptr<Line>> mBorderLineList;
-    std::vector<std::shared_ptr<ConnectionRelation>> mConnectionRelationList;
+    ViewPointMapPtr mPointListMap;
+    LineListPtr mBorderLineList;
+    ConnectionRelationListPtr mConnectionRelationList;
 };
+
+typedef std::shared_ptr<Junction> JunctionPtr;
+typedef std::shared_ptr<const Junction> JunctionConstPtr;
+typedef std::vector<JunctionPtr> JunctionList;
+typedef std::shared_ptr<JunctionList> JunctionListPtr;
+typedef std::shared_ptr<const JunctionList> JunctionListConstPtr;
+
+typedef std::unordered_map<std::uint64_t, JunctionPtr> JunctionMap;
+typedef std::shared_ptr<JunctionMap> JunctionMapPtr;
+typedef std::shared_ptr<const JunctionMap> JunctionMapConstPtr;
 
 }

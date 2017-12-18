@@ -18,18 +18,21 @@
 namespace Model
 {
 
+typedef std::shared_ptr<std::unordered_map<std::int64_t, std::shared_ptr<Tile>>> TileMapPtr;
+typedef std::shared_ptr<const std::unordered_map<std::int64_t, std::shared_ptr<Tile>>> TileMapConstPtr;
+
 class MemoryModel
 {
 public:
     MemoryModel();
     ~MemoryModel();
 
-    const std::unordered_map<std::int64_t, std::shared_ptr<Tile>>& GetTileMap() const;
-    std::unordered_map<std::int64_t, std::shared_ptr<Tile>>* GetMutableTileMap();
-    std::shared_ptr<Tile> GetTile(std::int64_t aId);
+    TileMapConstPtr GetTileMap() const;
+    TileMapPtr GetMutableTileMap();
+    TilePtr GetTile(std::int64_t aId);
 
 private:
-    std::unordered_map<std::int64_t, std::shared_ptr<Tile>> mTileMap;
+    TileMapPtr mTileMap;
 };
 
 }

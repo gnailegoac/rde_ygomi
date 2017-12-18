@@ -14,10 +14,13 @@
 #pragma once
 
 #include "Common.h"
-#include "BoundingBox.h"
 
 namespace Model
 {
+
+class BoundingBox;
+
+typedef std::shared_ptr<BoundingBox> BoundingBoxPtr;
 
 class Element
 {
@@ -31,13 +34,19 @@ public:
     bool IsEdited() const;
     void SetEdited(bool aIsEdited);
 
-    std::shared_ptr<BoundingBox> GetBox();
-    void SetBox(std::shared_ptr<BoundingBox> aBox);
+    BoundingBoxPtr GetBox();
+    void SetBox(BoundingBoxPtr aBox);
 
 protected:
     bool mIsEditable;
     bool mIsEdited;
-    std::shared_ptr<BoundingBox> mBox;
+    BoundingBoxPtr mBox;
 };
+
+typedef std::shared_ptr<Element> ElementPtr;
+typedef std::shared_ptr<const Element> ElementConstPtr;
+typedef std::vector<ElementPtr> ElementList;
+typedef std::shared_ptr<ElementList> ElementListPtr;
+typedef std::shared_ptr<const ElementList> ElementListConstPtr;
 
 }

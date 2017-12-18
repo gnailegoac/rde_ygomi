@@ -14,7 +14,7 @@
 #include "BoundingBox.h"
 
 Model::BoundingBox::BoundingBox():
-    mPosition(),
+    mPosition(std::make_shared<Point3D>()),
     mHeading(0.),
     mWidth(0.),
     mLength(0.),
@@ -23,7 +23,7 @@ Model::BoundingBox::BoundingBox():
 
 }
 
-Model::BoundingBox::BoundingBox(Point3D aPosition,
+Model::BoundingBox::BoundingBox(Point3DPtr aPosition,
                          double aHeading,
                          float aWidth,
                          float aLength,
@@ -42,12 +42,12 @@ Model::BoundingBox::~BoundingBox()
 
 }
 
-Model::Point3D Model::BoundingBox::GetPosition() const
+Model::Point3DPtr Model::BoundingBox::GetPosition() const
 {
     return mPosition;
 }
 
-void Model::BoundingBox::SetPosition(Point3D aPosition)
+void Model::BoundingBox::SetPosition(Point3DPtr aPosition)
 {
     mPosition = aPosition;
 }

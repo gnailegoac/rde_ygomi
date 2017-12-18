@@ -40,4 +40,10 @@ private:
     double mZ[4];
 };
 
+typedef std::shared_ptr<Poly3Curve> Poly3CurvePtr;
+typedef std::shared_ptr<const Poly3Curve> Poly3CurveConstPtr;
+typedef std::vector<Poly3CurvePtr> Poly3CurveList;
+typedef std::shared_ptr<Poly3CurveList> Poly3CurveListPtr;
+typedef std::shared_ptr<const Poly3CurveList> Poly3CurveListConstPtr;
+
 }

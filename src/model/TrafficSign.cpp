@@ -20,7 +20,7 @@ Model::TrafficSign::TrafficSign():
     mShapeWidth(0.0),
     mShapeHeight(0.0),
     mConfidence(0.0),
-    mPosition()
+    mPosition(std::make_shared<Point3D>())
 {
 
 }
@@ -28,6 +28,16 @@ Model::TrafficSign::TrafficSign():
 Model::TrafficSign::~TrafficSign()
 {
 
+}
+
+std::uint64_t Model::TrafficSign::GetTrafficSignId() const
+{
+    return mTrafficSignId;
+}
+
+void Model::TrafficSign::SetTrafficSignId(std::uint64_t aTrafficSignId)
+{
+    mTrafficSignId = aTrafficSignId;
 }
 
 std::uint64_t Model::TrafficSign::GetTrafficSignType() const
@@ -40,12 +50,12 @@ void Model::TrafficSign::SetTrafficSignType(std::uint64_t aTrafficSignType)
     mTrafficSignType = aTrafficSignType;
 }
 
-std::int8_t Model::TrafficSign::GetOrientation() const
+std::int32_t Model::TrafficSign::GetOrientation() const
 {
     return mOrientation;
 }
 
-void Model::TrafficSign::SetOrientation(std::int8_t aOrientation)
+void Model::TrafficSign::SetOrientation(std::int32_t aOrientation)
 {
     mOrientation = aOrientation;
 }
@@ -80,12 +90,12 @@ void Model::TrafficSign::SetConfidence(double aConfidence)
     mConfidence = aConfidence;
 }
 
-Model::Point3D Model::TrafficSign::GetPosition() const
+Model::Point3DConstPtr Model::TrafficSign::GetPosition() const
 {
     return mPosition;
 }
 
-void Model::TrafficSign::SetPosition(Point3D aPosition)
+void Model::TrafficSign::SetPosition(Point3DPtr aPosition)
 {
     mPosition = aPosition;
 }

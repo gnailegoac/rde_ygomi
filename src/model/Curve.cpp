@@ -16,10 +16,10 @@
 Model::Curve::Curve():
     mCurveId(0),
     mLength(0.0),
-    mCurveType(CurveType::UnDefine),
+    mCurveType(CurveType::UnDefined),
     mIndexInLine(-1),
     mWidth(0.0),
-    mPaintRange()
+    mPaintRange(std::make_shared<std::vector<std::pair<double, double>>>())
 {
 
 }
@@ -79,26 +79,26 @@ void Model::Curve::SetWidth(float aWidth)
     mWidth = aWidth;
 }
 
-const std::vector<std::pair<double, double>>& Model::Curve::GetPaintRange() const
+Model::PaintRangeConstPtr Model::Curve::GetPaintRange()
 {
     return mPaintRange;
 }
 
-std::vector<std::pair<double, double>>* Model::Curve::GetMutablePaintRange()
+Model::PaintRangePtr Model::Curve::GetMutablePaintRange()
 {
-    return &mPaintRange;
+    return mPaintRange;
 }
 
 size_t Model::Curve::GetPaintRangeSize() const
 {
-    return mPaintRange.size();
+    return mPaintRange->size();
 }
 
 std::pair<double, double> Model::Curve::GetPaintRange(size_t aIndex) const
 {
-    if (aIndex < mPaintRange.size())
+    if (aIndex < mPaintRange->size())
     {
-        return mPaintRange[aIndex];
+        return mPaintRange->at(aIndex);
     }
 
     return std::make_pair(DBL_NAN, DBL_NAN);

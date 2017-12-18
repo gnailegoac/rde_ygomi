@@ -22,6 +22,8 @@ namespace Model
 
 class Tile;
 
+typedef std::shared_ptr<Tile> TilePtr;
+
 class Road : public Element
 {
 public:
@@ -31,26 +33,36 @@ public:
     std::uint64_t GetRoadId() const;
     void SetRoadId(std::uint64_t aRoadId);
 
-    const std::vector<std::shared_ptr<Lane>>& GetLaneList() const;
-    std::vector<std::shared_ptr<Lane>>* GetMutableLaneList();
+    LaneListConstPtr GetLaneList() const;
+    LaneListPtr GetMutableLaneList();
     size_t GetLaneListSize() const;
-    std::shared_ptr<Lane> GetLane(size_t aIndex);
+    LanePtr GetLane(size_t aIndex);
 
-    std::shared_ptr<Element> GetPredecessor() const;
-    void SetPredecessor(std::shared_ptr<Element> aPredecessor);
+    ElementPtr GetPredecessor() const;
+    void SetPredecessor(ElementPtr aPredecessor);
 
-    std::shared_ptr<Element> GetSuccessor() const;
-    void SetSuccessor(std::shared_ptr<Element> aSuccessor);
+    ElementPtr GetSuccessor() const;
+    void SetSuccessor(ElementPtr aSuccessor);
 
-    std::shared_ptr<Tile> GetTile() const;
-    void SetTile(std::shared_ptr<Tile> aTile);
+    TilePtr GetTile() const;
+    void SetTile(TilePtr aTile);
 
 private:
     std::uint64_t mRoadId;
-    std::vector<std::shared_ptr<Lane>> mLaneList;
-    std::shared_ptr<Element> mPredecessor;
-    std::shared_ptr<Element> mSuccessor;
-    std::shared_ptr<Tile> mTile;
+    LaneListPtr mLaneList;
+    ElementPtr mPredecessor;
+    ElementPtr mSuccessor;
+    TilePtr mTile;
 };
+
+typedef std::shared_ptr<Road> RoadPtr;
+typedef std::shared_ptr<const Road> RoadConstPtr;
+typedef std::vector<RoadPtr> RoadList;
+typedef std::shared_ptr<RoadList> RoadListPtr;
+typedef std::shared_ptr<const RoadList> RoadListConstPtr;
+
+typedef std::unordered_map<std::uint64_t, RoadPtr> RoadMap;
+typedef std::shared_ptr<RoadMap> RoadMapPtr;
+typedef std::shared_ptr<const RoadMap> RoadMapConstPtr;
 
 }

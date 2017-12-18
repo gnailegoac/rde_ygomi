@@ -1,23 +1,34 @@
 /**
  *******************************************************************************
  *                       Continental Confidential
- *                  Copyright (c) Continental AG. %YEAR%
+ *                  Copyright (c) Continental AG. 2017
  *
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    FileOpenCommand.h
+ * @file    WebRoadEditor.h
+ * @brief
  *******************************************************************************
  */
 
 #pragma once
+#include <QWebChannel>
+#include <QWebEngineView>
 
-namespace Controller
-{
-class FileOpenCommand
+class WebGlobeChannelObject : public QObject
 {
 public:
-    FileOpenCommand();
+    explicit WebGlobeChannelObject(QObject* aParent = nullptr);
+    ~WebGlobeChannelObject();
 };
-}
+
+class WebRoadEditor : public QWebEngineView
+{
+public:
+    WebRoadEditor();
+
+private:
+    QWebChannel mWebChannel;
+    QScopedPointer<WebGlobeChannelObject> mWebChannelObject;
+};
 

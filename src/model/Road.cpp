@@ -16,7 +16,7 @@
 Model::Road::Road():
     Element(),
     mRoadId(0),
-    mLaneList(),
+    mLaneList(std::make_shared<LaneList>()),
     mPredecessor(nullptr),
     mSuccessor(nullptr),
     mTile(nullptr)
@@ -39,57 +39,57 @@ void Model::Road::SetRoadId(std::uint64_t aRoadId)
     mRoadId = aRoadId;
 }
 
-const std::vector<std::shared_ptr<Model::Lane>>& Model::Road::GetLaneList() const
+Model::LaneListConstPtr Model::Road::GetLaneList() const
 {
     return mLaneList;
 }
 
-std::vector<std::shared_ptr<Model::Lane>>* Model::Road::GetMutableLaneList()
+Model::LaneListPtr Model::Road::GetMutableLaneList()
 {
-    return &mLaneList;
+    return mLaneList;
 }
 
 size_t Model::Road::GetLaneListSize() const
 {
-    return mLaneList.size();
+    return mLaneList->size();
 }
 
-std::shared_ptr<Model::Lane> Model::Road::GetLane(size_t aIndex)
+Model::LanePtr Model::Road::GetLane(size_t aIndex)
 {
-    if (aIndex < mLaneList.size())
+    if (aIndex < mLaneList->size())
     {
-        return mLaneList[aIndex];
+        return mLaneList->at(aIndex);
     }
 
     return nullptr;
 }
 
-std::shared_ptr<Model::Element> Model::Road::GetPredecessor() const
+Model::ElementPtr Model::Road::GetPredecessor() const
 {
     return mPredecessor;
 }
 
-void Model::Road::SetPredecessor(std::shared_ptr<Model::Element> aPredecessor)
+void Model::Road::SetPredecessor(Model::ElementPtr aPredecessor)
 {
     mPredecessor = aPredecessor;
 }
 
-std::shared_ptr<Model::Element> Model::Road::GetSuccessor() const
+Model::ElementPtr Model::Road::GetSuccessor() const
 {
     return mSuccessor;
 }
 
-void Model::Road::SetSuccessor(std::shared_ptr<Model::Element> aSuccessor)
+void Model::Road::SetSuccessor(Model::ElementPtr aSuccessor)
 {
     mSuccessor = aSuccessor;
 }
 
-std::shared_ptr<Model::Tile> Model::Road::GetTile() const
+Model::TilePtr Model::Road::GetTile() const
 {
     return mTile;
 }
 
-void Model::Road::SetTile(std::shared_ptr<Model::Tile> aTile)
+void Model::Road::SetTile(Model::TilePtr aTile)
 {
     mTile = aTile;
 }

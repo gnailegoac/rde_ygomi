@@ -26,11 +26,14 @@ public:
     TrafficSign();
     ~TrafficSign();
 
+    std::uint64_t GetTrafficSignId() const;
+    void SetTrafficSignId(std::uint64_t aTrafficSignId);
+
     std::uint64_t GetTrafficSignType() const;
     void SetTrafficSignType(std::uint64_t aTrafficSignType);
 
-    std::int8_t GetOrientation() const;
-    void SetOrientation(std::int8_t aOrientation);
+    std::int32_t GetOrientation() const;
+    void SetOrientation(std::int32_t aOrientation);
 
     double GetShapeWidth() const;
     void SetShapeWidth(double aShapeWidth);
@@ -41,16 +44,27 @@ public:
     float GetConfidence() const;
     void SetConfidence(double aConfidence);
 
-    Point3D GetPosition() const;
-    void SetPosition(Point3D aPosition);
+    Point3DConstPtr GetPosition() const;
+    void SetPosition(Point3DPtr aPosition);
 
 private:
+    std::uint64_t mTrafficSignId;
     std::uint64_t mTrafficSignType;
-    std::int8_t mOrientation;
+    std::int32_t mOrientation;
     double mShapeWidth;
     double mShapeHeight;
     float mConfidence;
-    Point3D mPosition;
+    Point3DPtr mPosition;
 };
+
+typedef std::shared_ptr<TrafficSign> TrafficSignPtr;
+typedef std::shared_ptr<const TrafficSign> TrafficSignConstPtr;
+typedef std::vector<TrafficSignPtr> TrafficSignList;
+typedef std::shared_ptr<TrafficSignList> TrafficSignListPtr;
+typedef std::shared_ptr<const TrafficSignList> TrafficSignListConstPtr;
+
+typedef std::unordered_map<std::uint64_t, TrafficSignPtr> TrafficSignMap;
+typedef std::shared_ptr<TrafficSignMap> TrafficSignMapPtr;
+typedef std::shared_ptr<const TrafficSignMap> TrafficSignMapConstPtr;
 
 }

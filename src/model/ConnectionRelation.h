@@ -23,28 +23,34 @@ class ConnectionRelation
 public:
     ConnectionRelation();
     ConnectionRelation(std::uint64_t aFromRoadId,
-                       std::int8_t aFromLaneId,
+                       std::uint64_t aFromLaneId,
                        std::uint64_t aToRoadId,
-                       std::int8_t aToLaneId);
+                       std::uint64_t aToLaneId);
     ~ConnectionRelation();
 
     std::uint64_t GetFromRoadId() const;
     void SetFromRoadId(std::uint64_t aFromRoadId);
 
-    std::int8_t GetFromLaneId() const;
-    void SetFromLaneId(std::int8_t aFromLaneId);
+    std::uint64_t GetFromLaneId() const;
+    void SetFromLaneId(std::uint64_t aFromLaneId);
 
     std::uint64_t GetToRoadId() const;
     void SetToRoadId(std::uint64_t aToRoadId);
 
-    std::int8_t GetToLaneId() const;
-    void SetToLaneId(std::int8_t aToLaneId);
+    std::uint64_t GetToLaneId() const;
+    void SetToLaneId(std::uint64_t aToLaneId);
 
 private:
     std::uint64_t mFromRoadId;
-    std::int8_t mFromLaneId;
+    std::uint64_t mFromLaneId;
     std::uint64_t mToRoadId;
-    std::int8_t mToLaneId;
+    std::uint64_t mToLaneId;
 };
+
+typedef std::shared_ptr<ConnectionRelation> ConnectionRelationPtr;
+typedef std::shared_ptr<const ConnectionRelation> ConnectionRelationConstPtr;
+typedef std::vector<ConnectionRelationPtr> ConnectionRelationList;
+typedef std::shared_ptr<ConnectionRelationList> ConnectionRelationListPtr;
+typedef std::shared_ptr<const ConnectionRelationList> ConnectionRelationListConstPtr;
 
 }

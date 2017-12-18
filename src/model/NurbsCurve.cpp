@@ -15,24 +15,12 @@
 
 Model::NurbsCurve::NurbsCurve():
     Curve(),
-    mControlPoints(),
-    mKnots(),
+    mControlPoints(std::make_shared<Point3DList>()),
+    mKnots(std::make_shared<std::vector<double>>()),
     mPaintTotalLength(0.0),
     mLineLength(0.0)
 {
 
-}
-
-Model::NurbsCurve::NurbsCurve(std::vector<Model::Point3D>& aControlPoints,
-                              std::vector<double>& aKnots,
-                              double aPaintTotalLength,
-                              double aLineLength):
-    Curve(),
-    mPaintTotalLength(aPaintTotalLength),
-    mLineLength(aLineLength)
-{
-    mControlPoints.insert(mControlPoints.begin(), aControlPoints.begin(), aControlPoints.end());
-    mKnots.insert(mKnots.begin(), aKnots.begin(), aKnots.end());
 }
 
 Model::NurbsCurve::~NurbsCurve()
@@ -40,51 +28,51 @@ Model::NurbsCurve::~NurbsCurve()
 
 }
 
-const std::vector<Model::Point3D> Model::NurbsCurve::GetControlPoints() const
+Model::Point3DListConstPtr Model::NurbsCurve::GetControlPoints() const
 {
     return mControlPoints;
 }
 
-std::vector<Model::Point3D>* Model::NurbsCurve::GetMutableControlPoints()
+Model::Point3DListPtr Model::NurbsCurve::GetMutableControlPoints()
 {
-    return &mControlPoints;
+    return mControlPoints;
 }
 
 size_t Model::NurbsCurve::GetControlPointsSize() const
 {
-    return mControlPoints.size();
+    return mControlPoints->size();
 }
 
-Model::Point3D Model::NurbsCurve::GetControlPoint(size_t aIndex) const
+Model::Point3DPtr Model::NurbsCurve::GetControlPoint(size_t aIndex) const
 {
-    if (aIndex < mControlPoints.size())
+    if (aIndex < mControlPoints->size())
     {
-        return mControlPoints[aIndex];
+        return mControlPoints->at(aIndex);
     }
 
-    return Point3D(DBL_NAN, DBL_NAN, DBL_NAN);
+    return std::make_shared<Point3D>(DBL_NAN, DBL_NAN, DBL_NAN);
 }
 
-const std::vector<double> Model::NurbsCurve::GetKnots() const
+Model::KnotListConstPtr Model::NurbsCurve::GetKnots() const
 {
     return mKnots;
 }
 
-std::vector<double>* Model::NurbsCurve::GetMutableKnots()
+Model::KnotListPtr Model::NurbsCurve::GetMutableKnots()
 {
-    return &mKnots;
+    return mKnots;
 }
 
 size_t Model::NurbsCurve::GetKnotsSize() const
 {
-    return mKnots.size();
+    return mKnots->size();
 }
 
 double Model::NurbsCurve::GetKnot(size_t aIndex) const
 {
-    if (aIndex < mKnots.size())
+    if (aIndex < mKnots->size())
     {
-        return mKnots[aIndex];
+        return mKnots->at(aIndex);
     }
 
     return DBL_NAN;

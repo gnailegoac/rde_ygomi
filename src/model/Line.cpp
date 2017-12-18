@@ -16,11 +16,11 @@
 Model::Line::Line():
     Element(),
     mLineId(0),
-    mCurveList(),
+    mCurveList(std::make_shared<CurveList>()),
     mConfidence(0.0),
     mLength(0.0),
     mLane(nullptr),
-    mPointListMap()
+    mPointListMap(std::make_shared<ViewPointMap>())
 {
 
 }
@@ -40,26 +40,26 @@ void Model::Line::SetLineId(std::uint64_t aLineId)
     mLineId = aLineId;
 }
 
-const std::vector<std::shared_ptr<Model::Curve>> Model::Line::GetCurveList() const
+Model::CurveListConstPtr Model::Line::GetCurveList() const
 {
     return mCurveList;
 }
 
-std::vector<std::shared_ptr<Model::Curve>>* Model::Line::GetMutableCurveList()
+Model::CurveListPtr Model::Line::GetMutableCurveList()
 {
-    return &mCurveList;
+    return mCurveList;
 }
 
 size_t Model::Line::GetCurveListSize() const
 {
-    return mCurveList.size();
+    return mCurveList->size();
 }
 
-std::shared_ptr<Model::Curve> Model::Line::GetCurve(size_t aIndex)
+Model::CurvePtr Model::Line::GetCurve(size_t aIndex)
 {
-    if (aIndex < mCurveList.size())
+    if (aIndex < mCurveList->size())
     {
-        return mCurveList[aIndex];
+        return mCurveList->at(aIndex);
     }
 
     return nullptr;
@@ -95,21 +95,21 @@ void Model::Line::SetLane(std::shared_ptr<Model::Lane> aLane)
     mLane = aLane;
 }
 
-const std::unordered_map<std::uint8_t, std::vector<Model::Point3D>> Model::Line::GetPointListMap() const
+Model::ViewPointMapConstPtr Model::Line::GetPointListMap() const
 {
     return mPointListMap;
 }
 
-std::unordered_map<std::uint8_t, std::vector<Model::Point3D>>* Model::Line::GetMutablePointListMap()
+Model::ViewPointMapPtr Model::Line::GetMutablePointListMap()
 {
-    return &mPointListMap;
+    return mPointListMap;
 }
 
-std::vector<Model::Point3D>* Model::Line::GetPointListByLevel(std::uint8_t aLevel)
+Model::Point3DListPtr Model::Line::GetPointListByLevel(std::uint8_t aLevel)
 {
-    if (0 != mPointListMap.count(aLevel))
+    if (0 != mPointListMap->count(aLevel))
     {
-        return &(mPointListMap[aLevel]);
+        return mPointListMap->at(aLevel);
     }
 
     return nullptr;

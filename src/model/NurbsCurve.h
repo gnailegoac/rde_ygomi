@@ -20,23 +20,22 @@
 namespace Model
 {
 
+typedef std::shared_ptr<std::vector<double>> KnotListPtr;
+typedef std::shared_ptr<const std::vector<double>> KnotListConstPtr;
+
 class NurbsCurve : public Curve
 {
 public:
     NurbsCurve();
-    NurbsCurve(std::vector<Point3D>& aControlPoints,
-               std::vector<double>& aKnots,
-               double aPaintTotalLength,
-               double aLineLength);
     ~NurbsCurve();
 
-    const std::vector<Point3D> GetControlPoints() const;
-    std::vector<Point3D>* GetMutableControlPoints();
+    Point3DListConstPtr GetControlPoints() const;
+    Point3DListPtr GetMutableControlPoints();
     size_t GetControlPointsSize() const;
-    Point3D GetControlPoint(size_t aIndex) const;
+    Point3DPtr GetControlPoint(size_t aIndex) const;
 
-    const std::vector<double> GetKnots() const;
-    std::vector<double>* GetMutableKnots();
+    KnotListConstPtr GetKnots() const;
+    KnotListPtr GetMutableKnots();
     size_t GetKnotsSize() const;
     double GetKnot(size_t aIndex) const;
 
@@ -47,10 +46,16 @@ public:
     void SetLineLength(double aLineLength);
 
 private:
-    std::vector<Point3D> mControlPoints;
-    std::vector<double> mKnots;
+    Point3DListPtr mControlPoints;
+    KnotListPtr mKnots;
     double mPaintTotalLength;
     double mLineLength;
 };
+
+typedef std::shared_ptr<NurbsCurve> NurbsCurvePtr;
+typedef std::shared_ptr<const NurbsCurve> NurbsCurveConstPtr;
+typedef std::vector<NurbsCurvePtr> NurbsCurveList;
+typedef std::shared_ptr<NurbsCurveList> NurbsCurveListPtr;
+typedef std::shared_ptr<const NurbsCurveList> NurbsCurveListConstPtr;
 
 }

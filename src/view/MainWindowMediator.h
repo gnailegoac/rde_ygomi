@@ -14,7 +14,11 @@
 
 #include <PureMVC/PureMVC.hpp>
 
+namespace View
+{
 class MainWindow;
+}
+
 class MainProxy;
 
 namespace View
@@ -24,12 +28,14 @@ class MainWindowMediator: public PureMVC::Patterns::Mediator
 public:
     static const std::string NAME;
     MainWindowMediator(const void* aViewComponent);
-    NotificationNames listNotificationInterests() const;
+    Mediator::NotificationNames listNotificationInterests(void) const override;
     void handleNotification(PureMVC::Patterns::INotification const& aNotification);
     void onRegister();
     void onRemove();
 private:
-    MainWindow* getMainWindow();
+    std::vector<std::string> searchDatabaseFileList(const QString& aFolderpath);
+
+    View::MainWindow* getMainWindow();
     MainProxy* getMainProxy();
 };
 }
