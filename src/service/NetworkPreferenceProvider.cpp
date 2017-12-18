@@ -20,7 +20,7 @@ Service::NetworkPreferenceProvider::NetworkPreferenceProvider()
     mWebServer = readWebServerSetting();
 }
 
-const std::shared_ptr<Service::NetworkPreferenceProvider> &Service::NetworkPreferenceProvider::Instance()
+const std::shared_ptr<Service::NetworkPreferenceProvider>& Service::NetworkPreferenceProvider::Instance()
 {
     static std::shared_ptr<Service::NetworkPreferenceProvider> networkPreferenceProvider(new Service::NetworkPreferenceProvider());
     return networkPreferenceProvider;
@@ -31,7 +31,7 @@ const QNetworkProxy& Service::NetworkPreferenceProvider::GetNetworkProxy() const
     return mNetworkProxy;
 }
 
-const QString &Service::NetworkPreferenceProvider::GetWebServer() const
+const QString& Service::NetworkPreferenceProvider::GetWebServer() const
 {
     return mWebServer;
 }

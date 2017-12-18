@@ -26,13 +26,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
-    void closeEvent(QCloseEvent *aEvent) override;
+    void resizeEvent(QResizeEvent* aEvent) override;
+    void closeEvent(QCloseEvent* aEvent) override;
 
 private:
     void restoreSettings();

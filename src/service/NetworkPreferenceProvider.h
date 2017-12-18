@@ -20,7 +20,7 @@ namespace Service
 class NetworkPreferenceProvider
 {
 public:
-    static const std::shared_ptr<NetworkPreferenceProvider> &Instance();
+    static const std::shared_ptr<NetworkPreferenceProvider>& Instance();
     const QNetworkProxy& GetNetworkProxy() const;
     const QString& GetWebServer() const;
     void SetNetworkProxy(const QNetworkProxy& aNetworkProxy);

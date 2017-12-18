@@ -13,7 +13,7 @@
 
 #include "WebRoadEditor.h"
 
-WebGlobeChannelObject::WebGlobeChannelObject(QObject *aParent) :
+WebGlobeChannelObject::WebGlobeChannelObject(QObject* aParent) :
     QObject(aParent)
 {
 
@@ -24,7 +24,7 @@ WebGlobeChannelObject::~WebGlobeChannelObject()
 
 }
 
-WebRoadEditor::WebRoadEditor():
+WebRoadEditor::WebRoadEditor() :
     mWebChannelObject(new WebGlobeChannelObject())
 {
     page()->setWebChannel(&mWebChannel);

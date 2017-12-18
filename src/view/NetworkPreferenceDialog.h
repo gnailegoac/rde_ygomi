@@ -27,7 +27,7 @@ class NetworkPreferenceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NetworkPreferenceDialog(QWidget *parent = 0);
+    explicit NetworkPreferenceDialog(QWidget* aParent = 0);
     ~NetworkPreferenceDialog();
 
     void SaveSettings();
@@ -37,6 +37,6 @@ private:
     QNetworkProxy::ProxyType currentProxyType();
 
     bool mSettingChanged;
-    Ui::NetworkPreferenceDialog *mUi;
+    Ui::NetworkPreferenceDialog* mUi;
 };
 }

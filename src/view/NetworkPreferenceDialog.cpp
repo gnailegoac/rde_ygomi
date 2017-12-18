@@ -18,8 +18,8 @@
 
 Q_DECLARE_METATYPE(QNetworkProxy::ProxyType)
 
-View::NetworkPreferenceDialog::NetworkPreferenceDialog(QWidget *parent) :
-    QDialog(parent),
+View::NetworkPreferenceDialog::NetworkPreferenceDialog(QWidget* aParent) :
+    QDialog(aParent),
     mSettingChanged(false),
     mUi(new Ui::NetworkPreferenceDialog)
 {

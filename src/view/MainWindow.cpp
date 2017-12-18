@@ -22,8 +22,8 @@
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
 
-View::MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) :
-    QMainWindow(parent, flags),
+View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
+    QMainWindow(aParent, flags),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -71,12 +71,12 @@ View::MainWindow::~MainWindow()
     delete ui;
 }
 
-void View::MainWindow::resizeEvent(QResizeEvent *event)
+void View::MainWindow::resizeEvent(QResizeEvent* aEvent)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
 }
 
-void View::MainWindow::closeEvent(QCloseEvent *aEvent)
+void View::MainWindow::closeEvent(QCloseEvent* aEvent)
 {
     writeSettings();
     QMainWindow::closeEvent(aEvent);
