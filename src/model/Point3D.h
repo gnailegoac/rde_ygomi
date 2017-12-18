@@ -22,18 +22,18 @@ class Point3D
 {
 public:
     Point3D();
-    Point3D(double aX, double aY, double aZ);
+    Point3D(const double& aX, const double& aY, const double& aZ);
     Point3D(const Point3D& aPoint);
     ~Point3D();
 
-    double GetX() const;
-    void SetX(double aX);
+    const double& GetX() const;
+    void SetX(const double& aX);
 
-    double GetY() const;
-    void SetY(double aY);
+    const double& GetY() const;
+    void SetY(const double& aY);
 
-    double GetZ() const;
-    void SetZ(double aZ);
+    const double& GetZ() const;
+    void SetZ(const double& aZ);
 
 private:
     double mX;

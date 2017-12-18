@@ -35,7 +35,7 @@ public:
     void SetEdited(bool aIsEdited);
 
     BoundingBoxPtr GetBox();
-    void SetBox(BoundingBoxPtr aBox);
+    void SetBox(const BoundingBoxPtr& aBox);
 
 protected:
     bool mIsEditable;

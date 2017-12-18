@@ -29,7 +29,7 @@ Model::Curve::~Curve()
 
 }
 
-std::uint64_t Model::Curve::GetCurveId() const
+const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;
 }
@@ -94,7 +94,7 @@ size_t Model::Curve::GetPaintRangeSize() const
     return mPaintRange->size();
 }
 
-std::pair<double, double> Model::Curve::GetPaintRange(size_t aIndex) const
+std::pair<double, double> Model::Curve::GetPaintRange(const size_t& aIndex) const
 {
     if (aIndex < mPaintRange->size())
     {

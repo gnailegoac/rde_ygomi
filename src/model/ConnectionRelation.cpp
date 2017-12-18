@@ -22,10 +22,10 @@ Model::ConnectionRelation::ConnectionRelation():
 
 }
 
-Model::ConnectionRelation::ConnectionRelation(std::uint64_t aFromRoadId,
-                                       std::uint64_t aFromLaneId,
-                                       std::uint64_t aToRoadId,
-                                       std::uint64_t aToLaneId):
+Model::ConnectionRelation::ConnectionRelation(const std::uint64_t& aFromRoadId,
+                                              const std::uint64_t& aFromLaneId,
+                                              const std::uint64_t& aToRoadId,
+                                              const std::uint64_t& aToLaneId):
     mFromRoadId(aFromRoadId),
     mFromLaneId(aFromLaneId),
     mToRoadId(aToRoadId),
@@ -39,7 +39,7 @@ Model::ConnectionRelation::~ConnectionRelation()
 
 }
 
-std::uint64_t Model::ConnectionRelation::GetFromRoadId() const
+const uint64_t& Model::ConnectionRelation::GetFromRoadId() const
 {
     return mFromRoadId;
 }
@@ -49,7 +49,7 @@ void Model::ConnectionRelation::SetFromRoadId(std::uint64_t aFromRoadId)
     mFromRoadId = aFromRoadId;
 }
 
-std::uint64_t Model::ConnectionRelation::GetFromLaneId() const
+const std::uint64_t& Model::ConnectionRelation::GetFromLaneId() const
 {
     return mFromLaneId;
 }
@@ -59,7 +59,7 @@ void Model::ConnectionRelation::SetFromLaneId(std::uint64_t aFromLaneId)
     mFromLaneId = aFromLaneId;
 }
 
-std::uint64_t Model::ConnectionRelation::GetToRoadId() const
+const uint64_t& Model::ConnectionRelation::GetToRoadId() const
 {
     return mToRoadId;
 }
@@ -69,7 +69,7 @@ void Model::ConnectionRelation::SetToRoadId(std::uint64_t aToRoadId)
     mToRoadId = aToRoadId;
 }
 
-std::uint64_t Model::ConnectionRelation::GetToLaneId() const
+const uint64_t& Model::ConnectionRelation::GetToLaneId() const
 {
     return mToLaneId;
 }

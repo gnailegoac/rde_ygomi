@@ -29,28 +29,28 @@ public:
     Tile();
     ~Tile();
 
-    std::int64_t GetTileId() const;
-    void SetTileId(std::int64_t aTileId);
+    const std::int64_t& GetTileId() const;
+    void SetTileId(const std::int64_t& aTileId);
 
     TrafficSignMapConstPtr GetTrafficSignMap() const;
     TrafficSignMapPtr GetMutableTrafficSignMap();
-    TrafficSignPtr GetTrafficSign(std::uint64_t aId);
+    TrafficSignPtr GetTrafficSign(const std::uint64_t& aId);
 
     RoadMapConstPtr GetRoadMap() const;
     RoadMapPtr GetMutableRoadMap();
-    RoadPtr GetRoad(std::uint64_t aId);
+    RoadPtr GetRoad(const std::uint64_t& aId);
 
     LaneMapConstPtr GetLaneMap() const;
     LaneMapPtr GetMutableLaneMap();
-    LanePtr GetLane(std::uint64_t aId);
+    LanePtr GetLane(const std::uint64_t& aId);
 
     LineMapConstPtr GetLineMap() const;
     LineMapPtr GetMutableLineMap();
-    LinePtr GetLine(std::uint64_t aId);
+    LinePtr GetLine(const std::uint64_t& aId);
 
     JunctionMapConstPtr GetJunctionMap() const;
     JunctionMapPtr GetMutableJunctionMap();
-    JunctionPtr GetJunction(std::uint64_t aId);
+    JunctionPtr GetJunction(const std::uint64_t& aId);
 
 private:
     std::int64_t mTileId;

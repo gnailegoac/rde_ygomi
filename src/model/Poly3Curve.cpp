@@ -26,7 +26,7 @@ Model::Poly3Curve::~Poly3Curve()
 
 }
 
-void Model::Poly3Curve::SetX(double aX, size_t aIndex)
+void Model::Poly3Curve::SetX(const double& aX, const size_t& aIndex)
 {
     if (aIndex < 4)
     {
@@ -34,7 +34,7 @@ void Model::Poly3Curve::SetX(double aX, size_t aIndex)
     }
 }
 
-double Model::Poly3Curve::GetX(size_t aIndex) const
+const double& Model::Poly3Curve::GetX(const size_t& aIndex) const
 {
     if (aIndex < 4)
     {
@@ -44,7 +44,7 @@ double Model::Poly3Curve::GetX(size_t aIndex) const
     return DBL_NAN;
 }
 
-void Model::Poly3Curve::SetY(double aY, size_t aIndex)
+void Model::Poly3Curve::SetY(const double& aY, const size_t& aIndex)
 {
     if (aIndex < 4)
     {
@@ -52,7 +52,7 @@ void Model::Poly3Curve::SetY(double aY, size_t aIndex)
     }
 }
 
-double Model::Poly3Curve::GetY(size_t aIndex) const
+const double& Model::Poly3Curve::GetY(const size_t& aIndex) const
 {
     if (aIndex < 4)
     {
@@ -62,7 +62,7 @@ double Model::Poly3Curve::GetY(size_t aIndex) const
     return DBL_NAN;
 }
 
-void Model::Poly3Curve::SetZ(double aZ, size_t aIndex)
+void Model::Poly3Curve::SetZ(const double& aZ, const size_t& aIndex)
 {
     if (aIndex < 4)
     {
@@ -70,7 +70,7 @@ void Model::Poly3Curve::SetZ(double aZ, size_t aIndex)
     }
 }
 
-double Model::Poly3Curve::GetZ(size_t aIndex) const
+const double& Model::Poly3Curve::GetZ(const size_t& aIndex) const
 {
     if (aIndex < 4)
     {

@@ -23,7 +23,7 @@ Model::Junction::Junction():
 
 }
 
-Model::Junction::Junction(std::uint64_t aJunctionId):
+Model::Junction::Junction(const std::uint64_t& aJunctionId):
     Element(),
     mJunctionId(aJunctionId),
     mPointListMap(std::make_shared<ViewPointMap>()),
@@ -38,12 +38,12 @@ Model::Junction::~Junction()
 
 }
 
-std::uint64_t Model::Junction::GetJunctionId() const
+const uint64_t& Model::Junction::GetJunctionId() const
 {
     return mJunctionId;
 }
 
-void Model::Junction::SetJunctionId(std::uint64_t aJunctionId)
+void Model::Junction::SetJunctionId(const std::uint64_t& aJunctionId)
 {
     mJunctionId = aJunctionId;
 }
@@ -83,7 +83,7 @@ size_t Model::Junction::GetBorderLineListSize() const
     return mBorderLineList->size();
 }
 
-Model::LinePtr Model::Junction::GetBorderLine(size_t aIndex)
+Model::LinePtr Model::Junction::GetBorderLine(const size_t& aIndex)
 {
     if (aIndex < mBorderLineList->size())
     {
@@ -108,7 +108,7 @@ size_t Model::Junction::GetConnectionRelationListSize() const
     return mConnectionRelationList->size();
 }
 
-Model::ConnectionRelationPtr Model::Junction::GetConnectionRelation(size_t aIndex)
+Model::ConnectionRelationPtr Model::Junction::GetConnectionRelation(const size_t& aIndex)
 {
     if (aIndex < mConnectionRelationList->size())
     {

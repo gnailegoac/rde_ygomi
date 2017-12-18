@@ -30,13 +30,13 @@ public:
     Line();
     ~Line();
 
-    std::uint64_t GetLineId() const;
-    void SetLineId(std::uint64_t aLineId);
+    const std::uint64_t& GetLineId() const;
+    void SetLineId(const std::uint64_t& aLineId);
 
     CurveListConstPtr GetCurveList() const;
     CurveListPtr GetMutableCurveList();
     size_t GetCurveListSize() const;
-    CurvePtr GetCurve(size_t aIndex);
+    CurvePtr GetCurve(const size_t& aIndex);
 
     float GetConfidence() const;
     void SetConfidence(float aConfidence);

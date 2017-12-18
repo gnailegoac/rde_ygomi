@@ -33,42 +33,42 @@ Model::Lane::~Lane()
 
 }
 
-std::uint64_t Model::Lane::GetLaneId() const
+const std::uint64_t& Model::Lane::GetLaneId() const
 {
     return mLaneId;
 }
 
-void Model::Lane::SetLaneId(std::uint64_t aLaneId)
+void Model::Lane::SetLaneId(const uint64_t& aLaneId)
 {
     mLaneId = aLaneId;
 }
 
-std::shared_ptr<Model::Line> Model::Lane::GetLeftLine() const
+Model::LinePtr Model::Lane::GetLeftLine() const
 {
     return mLeftLine;
 }
 
-void Model::Lane::SetLeftLine(std::shared_ptr<Model::Line> aLeftLine)
+void Model::Lane::SetLeftLine(Model::LinePtr aLeftLine)
 {
     mLeftLine = aLeftLine;
 }
 
-std::shared_ptr<Model::Line> Model::Lane::GetRightLine() const
+Model::LinePtr Model::Lane::GetRightLine() const
 {
     return mRightLine;
 }
 
-void Model::Lane::SetRightLine(std::shared_ptr<Model::Line> aRightLine)
+void Model::Lane::SetRightLine(Model::LinePtr aRightLine)
 {
     mRightLine = aRightLine;
 }
 
-std::shared_ptr<Model::Line> Model::Lane::GetCenterLine() const
+Model::LinePtr Model::Lane::GetCenterLine() const
 {
     return mCenterLine;
 }
 
-void Model::Lane::SetCenterLine(std::shared_ptr<Model::Line> aCenterLine)
+void Model::Lane::SetCenterLine(Model::LinePtr aCenterLine)
 {
     mCenterLine = aCenterLine;
 }
@@ -83,7 +83,7 @@ Model::ConnectionMapPtr Model::Lane::GetMutableConnectionMap()
     return mConnectionMap;
 }
 
-std::uint8_t Model::Lane::GetConnectionById(uint64_t aId)
+std::uint8_t Model::Lane::GetConnectionById(const uint64_t& aId)
 {
     if (0 != mConnectionMap->count(aId))
     {
@@ -93,12 +93,12 @@ std::uint8_t Model::Lane::GetConnectionById(uint64_t aId)
     return 0;
 }
 
-std::shared_ptr<Model::Road> Model::Lane::GetRoad() const
+Model::RoadPtr Model::Lane::GetRoad() const
 {
     return mRoad;
 }
 
-void Model::Lane::SetRoad(std::shared_ptr<Model::Road> aRoad)
+void Model::Lane::SetRoad(Model::RoadPtr aRoad)
 {
     mRoad = aRoad;
 }

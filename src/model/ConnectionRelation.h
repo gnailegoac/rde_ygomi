@@ -22,22 +22,22 @@ class ConnectionRelation
 {
 public:
     ConnectionRelation();
-    ConnectionRelation(std::uint64_t aFromRoadId,
-                       std::uint64_t aFromLaneId,
-                       std::uint64_t aToRoadId,
-                       std::uint64_t aToLaneId);
+    ConnectionRelation(const std::uint64_t& aFromRoadId,
+                       const std::uint64_t& aFromLaneId,
+                       const std::uint64_t& aToRoadId,
+                       const std::uint64_t& aToLaneId);
     ~ConnectionRelation();
 
-    std::uint64_t GetFromRoadId() const;
+    const std::uint64_t& GetFromRoadId() const;
     void SetFromRoadId(std::uint64_t aFromRoadId);
 
-    std::uint64_t GetFromLaneId() const;
+    const std::uint64_t& GetFromLaneId() const;
     void SetFromLaneId(std::uint64_t aFromLaneId);
 
-    std::uint64_t GetToRoadId() const;
+    const std::uint64_t& GetToRoadId() const;
     void SetToRoadId(std::uint64_t aToRoadId);
 
-    std::uint64_t GetToLaneId() const;
+    const std::uint64_t& GetToLaneId() const;
     void SetToLaneId(std::uint64_t aToLaneId);
 
 private:

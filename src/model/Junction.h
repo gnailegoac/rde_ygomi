@@ -26,11 +26,11 @@ class Junction : public Element
 {
 public:
     Junction();
-    Junction(std::uint64_t aJunctionId);
+    Junction(const std::uint64_t& aJunctionId);
     ~Junction();
 
-    std::uint64_t GetJunctionId() const;
-    void SetJunctionId(std::uint64_t aJunctionId);
+    const std::uint64_t& GetJunctionId() const;
+    void SetJunctionId(const std::uint64_t& aJunctionId);
 
     ViewPointMapConstPtr GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
@@ -39,12 +39,12 @@ public:
     LineListConstPtr GetBorderLineList() const;
     LineListPtr GetMutableBorderLineList();
     size_t GetBorderLineListSize() const;
-    LinePtr GetBorderLine(size_t aIndex);
+    LinePtr GetBorderLine(const size_t& aIndex);
 
     ConnectionRelationListConstPtr GetConnectionRelationList() const;
     ConnectionRelationListPtr GetMutableConnectionRelationList();
     size_t GetConnectionRelationListSize() const;
-    ConnectionRelationPtr GetConnectionRelation(size_t aIndex);
+    ConnectionRelationPtr GetConnectionRelation(const size_t& aIndex);
 
 private:
     std::uint64_t mJunctionId;

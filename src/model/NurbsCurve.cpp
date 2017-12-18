@@ -43,7 +43,7 @@ size_t Model::NurbsCurve::GetControlPointsSize() const
     return mControlPoints->size();
 }
 
-Model::Point3DPtr Model::NurbsCurve::GetControlPoint(size_t aIndex) const
+Model::Point3DPtr Model::NurbsCurve::GetControlPoint(const size_t& aIndex) const
 {
     if (aIndex < mControlPoints->size())
     {
@@ -68,7 +68,7 @@ size_t Model::NurbsCurve::GetKnotsSize() const
     return mKnots->size();
 }
 
-double Model::NurbsCurve::GetKnot(size_t aIndex) const
+double Model::NurbsCurve::GetKnot(const size_t& aIndex) const
 {
     if (aIndex < mKnots->size())
     {
@@ -78,22 +78,22 @@ double Model::NurbsCurve::GetKnot(size_t aIndex) const
     return DBL_NAN;
 }
 
-double Model::NurbsCurve::GetPaintTotalLength() const
+const double& Model::NurbsCurve::GetPaintTotalLength() const
 {
     return mPaintTotalLength;
 }
 
-void Model::NurbsCurve::SetPaintTotalLength(double aPaintTotalLength)
+void Model::NurbsCurve::SetPaintTotalLength(const double& aPaintTotalLength)
 {
     mPaintTotalLength = aPaintTotalLength;
 }
 
-double Model::NurbsCurve::GetLineLength() const
+const double& Model::NurbsCurve::GetLineLength() const
 {
     return mLineLength;
 }
 
-void Model::NurbsCurve::SetLineLength(double aLineLength)
+void Model::NurbsCurve::SetLineLength(const double& aLineLength)
 {
     mLineLength = aLineLength;
 }

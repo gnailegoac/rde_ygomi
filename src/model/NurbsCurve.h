@@ -32,18 +32,18 @@ public:
     Point3DListConstPtr GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();
     size_t GetControlPointsSize() const;
-    Point3DPtr GetControlPoint(size_t aIndex) const;
+    Point3DPtr GetControlPoint(const size_t& aIndex) const;
 
     KnotListConstPtr GetKnots() const;
     KnotListPtr GetMutableKnots();
     size_t GetKnotsSize() const;
-    double GetKnot(size_t aIndex) const;
+    double GetKnot(const size_t& aIndex) const;
 
-    double GetPaintTotalLength() const;
-    void SetPaintTotalLength(double aPaintTotalLength);
+    const double& GetPaintTotalLength() const;
+    void SetPaintTotalLength(const double& aPaintTotalLength);
 
-    double GetLineLength() const;
-    void SetLineLength(double aLineLength);
+    const double& GetLineLength() const;
+    void SetLineLength(const double& aLineLength);
 
 private:
     Point3DListPtr mControlPoints;

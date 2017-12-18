@@ -29,12 +29,12 @@ Model::Road::~Road()
 
 }
 
-std::uint64_t Model::Road::GetRoadId() const
+const uint64_t& Model::Road::GetRoadId() const
 {
     return mRoadId;
 }
 
-void Model::Road::SetRoadId(std::uint64_t aRoadId)
+void Model::Road::SetRoadId(const uint64_t& aRoadId)
 {
     mRoadId = aRoadId;
 }
@@ -54,7 +54,7 @@ size_t Model::Road::GetLaneListSize() const
     return mLaneList->size();
 }
 
-Model::LanePtr Model::Road::GetLane(size_t aIndex)
+Model::LanePtr Model::Road::GetLane(const size_t& aIndex)
 {
     if (aIndex < mLaneList->size())
     {

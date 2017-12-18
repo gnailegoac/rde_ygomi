@@ -29,12 +29,12 @@ Model::Tile::~Tile()
 
 }
 
-std::int64_t Model::Tile::GetTileId() const
+const int64_t& Model::Tile::GetTileId() const
 {
     return mTileId;
 }
 
-void Model::Tile::SetTileId(std::int64_t aTileId)
+void Model::Tile::SetTileId(const int64_t& aTileId)
 {
     mTileId = aTileId;
 }
@@ -49,7 +49,7 @@ Model::TrafficSignMapPtr Model::Tile::GetMutableTrafficSignMap()
     return mTrafficSignMap;
 }
 
-Model::TrafficSignPtr Model::Tile::GetTrafficSign(std::uint64_t aId)
+Model::TrafficSignPtr Model::Tile::GetTrafficSign(const uint64_t& aId)
 {
     if (0 != mTrafficSignMap->count(aId))
     {
@@ -69,7 +69,7 @@ Model::RoadMapPtr Model::Tile::GetMutableRoadMap()
     return mRoadMap;
 }
 
-Model::RoadPtr Model::Tile::GetRoad(std::uint64_t aId)
+Model::RoadPtr Model::Tile::GetRoad(const uint64_t& aId)
 {
     if (0 != mRoadMap->count(aId))
     {
@@ -89,7 +89,7 @@ Model::LaneMapPtr Model::Tile::GetMutableLaneMap()
     return mLaneMap;
 }
 
-Model::LanePtr Model::Tile::GetLane(std::uint64_t aId)
+Model::LanePtr Model::Tile::GetLane(const uint64_t& aId)
 {
     if (0 != mLaneMap->count(aId))
     {
@@ -109,7 +109,7 @@ Model::LineMapPtr Model::Tile::GetMutableLineMap()
     return mLineMap;
 }
 
-Model::LinePtr Model::Tile::GetLine(std::uint64_t aId)
+Model::LinePtr Model::Tile::GetLine(const uint64_t& aId)
 {
     if (0 != mLineMap->count(aId))
     {
@@ -129,7 +129,7 @@ Model::JunctionMapPtr Model::Tile::GetMutableJunctionMap()
     return mJunctionMap;
 }
 
-Model::JunctionPtr Model::Tile::GetJunction(std::uint64_t aId)
+Model::JunctionPtr Model::Tile::GetJunction(const uint64_t& aId)
 {
     if (0 != mJunctionMap->count(aId))
     {

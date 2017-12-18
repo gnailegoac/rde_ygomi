@@ -34,8 +34,8 @@ public:
     Lane();
     ~Lane();
 
-    std::uint64_t GetLaneId() const;
-    void SetLaneId(std::uint64_t aLaneId);
+    const std::uint64_t& GetLaneId() const;
+    void SetLaneId(const std::uint64_t& aLaneId);
 
     LinePtr GetLeftLine() const;
     void SetLeftLine(LinePtr aLeftLine);
@@ -51,7 +51,7 @@ public:
 
     ConnectionMapConstPtr GetConnectionMap();
     ConnectionMapPtr GetMutableConnectionMap();
-    std::uint8_t GetConnectionById(uint64_t aId);
+    std::uint8_t GetConnectionById(const uint64_t& aId);
 
 private:
     std::uint64_t mLaneId;

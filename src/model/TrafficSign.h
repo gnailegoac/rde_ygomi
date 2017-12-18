@@ -26,26 +26,26 @@ public:
     TrafficSign();
     ~TrafficSign();
 
-    std::uint64_t GetTrafficSignId() const;
-    void SetTrafficSignId(std::uint64_t aTrafficSignId);
+    const std::uint64_t& GetTrafficSignId() const;
+    void SetTrafficSignId(const std::uint64_t& aTrafficSignId);
 
-    std::uint64_t GetTrafficSignType() const;
-    void SetTrafficSignType(std::uint64_t aTrafficSignType);
+    const std::uint64_t& GetTrafficSignType() const;
+    void SetTrafficSignType(const std::uint64_t& aTrafficSignType);
 
     std::int32_t GetOrientation() const;
     void SetOrientation(std::int32_t aOrientation);
 
-    double GetShapeWidth() const;
-    void SetShapeWidth(double aShapeWidth);
+    const double& GetShapeWidth() const;
+    void SetShapeWidth(const double& aShapeWidth);
 
-    double GetShapeHeight() const;
-    void SetShapeHeight(double aShapeHeight);
+    const double& GetShapeHeight() const;
+    void SetShapeHeight(const double& aShapeHeight);
 
     float GetConfidence() const;
-    void SetConfidence(double aConfidence);
+    void SetConfidence(float aConfidence);
 
     Point3DConstPtr GetPosition() const;
-    void SetPosition(Point3DPtr aPosition);
+    void SetPosition(const Point3DPtr& aPosition);
 
 private:
     std::uint64_t mTrafficSignId;

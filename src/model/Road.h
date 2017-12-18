@@ -30,13 +30,13 @@ public:
     Road();
     ~Road();
 
-    std::uint64_t GetRoadId() const;
-    void SetRoadId(std::uint64_t aRoadId);
+    const std::uint64_t& GetRoadId() const;
+    void SetRoadId(const uint64_t& aRoadId);
 
     LaneListConstPtr GetLaneList() const;
     LaneListPtr GetMutableLaneList();
     size_t GetLaneListSize() const;
-    LanePtr GetLane(size_t aIndex);
+    LanePtr GetLane(const size_t& aIndex);
 
     ElementPtr GetPredecessor() const;
     void SetPredecessor(ElementPtr aPredecessor);

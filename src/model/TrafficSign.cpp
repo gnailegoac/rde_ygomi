@@ -30,22 +30,22 @@ Model::TrafficSign::~TrafficSign()
 
 }
 
-std::uint64_t Model::TrafficSign::GetTrafficSignId() const
+const uint64_t& Model::TrafficSign::GetTrafficSignId() const
 {
     return mTrafficSignId;
 }
 
-void Model::TrafficSign::SetTrafficSignId(std::uint64_t aTrafficSignId)
+void Model::TrafficSign::SetTrafficSignId(const uint64_t& aTrafficSignId)
 {
     mTrafficSignId = aTrafficSignId;
 }
 
-std::uint64_t Model::TrafficSign::GetTrafficSignType() const
+const uint64_t& Model::TrafficSign::GetTrafficSignType() const
 {
     return mTrafficSignType;
 }
 
-void Model::TrafficSign::SetTrafficSignType(std::uint64_t aTrafficSignType)
+void Model::TrafficSign::SetTrafficSignType(const uint64_t& aTrafficSignType)
 {
     mTrafficSignType = aTrafficSignType;
 }
@@ -60,22 +60,22 @@ void Model::TrafficSign::SetOrientation(std::int32_t aOrientation)
     mOrientation = aOrientation;
 }
 
-double Model::TrafficSign::GetShapeWidth() const
+const double& Model::TrafficSign::GetShapeWidth() const
 {
     return mShapeWidth;
 }
 
-void Model::TrafficSign::SetShapeWidth(double aShapeWidth)
+void Model::TrafficSign::SetShapeWidth(const double& aShapeWidth)
 {
     mShapeWidth = aShapeWidth;
 }
 
-double Model::TrafficSign::GetShapeHeight() const
+const double& Model::TrafficSign::GetShapeHeight() const
 {
     return mShapeHeight;
 }
 
-void Model::TrafficSign::SetShapeHeight(double aShapeHeight)
+void Model::TrafficSign::SetShapeHeight(const double& aShapeHeight)
 {
     mShapeHeight = aShapeHeight;
 }
@@ -85,7 +85,7 @@ float Model::TrafficSign::GetConfidence() const
     return mConfidence;
 }
 
-void Model::TrafficSign::SetConfidence(double aConfidence)
+void Model::TrafficSign::SetConfidence(float aConfidence)
 {
     mConfidence = aConfidence;
 }
@@ -95,7 +95,9 @@ Model::Point3DConstPtr Model::TrafficSign::GetPosition() const
     return mPosition;
 }
 
-void Model::TrafficSign::SetPosition(Point3DPtr aPosition)
+void Model::TrafficSign::SetPosition(const Point3DPtr& aPosition)
 {
-    mPosition = aPosition;
+    mPosition->SetX(aPosition->GetX());
+    mPosition->SetY(aPosition->GetY());
+    mPosition->SetZ(aPosition->GetZ());
 }

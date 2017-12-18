@@ -35,7 +35,7 @@ Model::TileMapPtr Model::MemoryModel::GetMutableTileMap()
     return mTileMap;
 }
 
-Model::TilePtr Model::MemoryModel::GetTile(std::int64_t aId)
+Model::TilePtr Model::MemoryModel::GetTile(const std::int64_t& aId)
 {
     if (0 != mTileMap->count(aId))
     {

@@ -53,7 +53,11 @@ Model::BoundingBoxPtr Model::Element::GetBox()
     return mBox;
 }
 
-void Model::Element::SetBox(Model::BoundingBoxPtr aBox)
+void Model::Element::SetBox(const Model::BoundingBoxPtr& aBox)
 {
-    mBox = aBox;
+    mBox->SetHeading(aBox->GetHeading());
+    mBox->SetHeight(aBox->GetHeight());
+    mBox->SetLength(aBox->GetLength());
+    mBox->SetPosition(aBox->GetPosition());
+    mBox->SetWidth(aBox->GetWidth());
 }

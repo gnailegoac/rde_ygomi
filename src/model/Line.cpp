@@ -30,12 +30,12 @@ Model::Line::~Line()
 
 }
 
-std::uint64_t Model::Line::GetLineId() const
+const uint64_t& Model::Line::GetLineId() const
 {
     return mLineId;
 }
 
-void Model::Line::SetLineId(std::uint64_t aLineId)
+void Model::Line::SetLineId(const uint64_t& aLineId)
 {
     mLineId = aLineId;
 }
@@ -55,7 +55,7 @@ size_t Model::Line::GetCurveListSize() const
     return mCurveList->size();
 }
 
-Model::CurvePtr Model::Line::GetCurve(size_t aIndex)
+Model::CurvePtr Model::Line::GetCurve(const size_t& aIndex)
 {
     if (aIndex < mCurveList->size())
     {
@@ -85,12 +85,12 @@ void Model::Line::SetLength(float aLength)
     mLength = aLength;
 }
 
-std::shared_ptr<Model::Lane> Model::Line::GetLane() const
+Model::LanePtr Model::Line::GetLane() const
 {
     return mLane;
 }
 
-void Model::Line::SetLane(std::shared_ptr<Model::Lane> aLane)
+void Model::Line::SetLane(Model::LanePtr aLane)
 {
     mLane = aLane;
 }

@@ -29,7 +29,7 @@ public:
 
     TileMapConstPtr GetTileMap() const;
     TileMapPtr GetMutableTileMap();
-    TilePtr GetTile(std::int64_t aId);
+    TilePtr GetTile(const std::int64_t& aId);
 
 private:
     TileMapPtr mTileMap;

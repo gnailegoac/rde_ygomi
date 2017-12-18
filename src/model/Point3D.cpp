@@ -21,7 +21,7 @@ Model::Point3D::Point3D():
 
 }
 
-Model::Point3D::Point3D(double aX, double aY, double aZ):
+Model::Point3D::Point3D(const double& aX, const double& aY, const double& aZ):
     mX(aX),
     mY(aY),
     mZ(aZ)
@@ -41,32 +41,32 @@ Model::Point3D::~Point3D()
 
 }
 
-double Model::Point3D::GetX() const
+const double& Model::Point3D::GetX() const
 {
     return mX;
 }
 
-void Model::Point3D::SetX(double aX)
+void Model::Point3D::SetX(const double& aX)
 {
     mX = aX;
 }
 
-double Model::Point3D::GetY() const
+const double& Model::Point3D::GetY() const
 {
     return mY;
 }
 
-void Model::Point3D::SetY(double aY)
+void Model::Point3D::SetY(const double& aY)
 {
     mY = aY;
 }
 
-double Model::Point3D::GetZ() const
+const double& Model::Point3D::GetZ() const
 {
     return mZ;
 }
 
-void Model::Point3D::SetZ(double aZ)
+void Model::Point3D::SetZ(const double& aZ)
 {
     mZ = aZ;
 }
