@@ -25,7 +25,7 @@ Model::MemoryModel::~MemoryModel()
 
 }
 
-Model::TileMapConstPtr Model::MemoryModel::GetTileMap() const
+const Model::TileMapPtr& Model::MemoryModel::GetTileMap() const
 {
     return mTileMap;
 }

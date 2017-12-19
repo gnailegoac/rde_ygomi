@@ -48,7 +48,7 @@ void Model::Junction::SetJunctionId(const std::uint64_t& aJunctionId)
     mJunctionId = aJunctionId;
 }
 
-Model::ViewPointMapConstPtr Model::Junction::GetPointListMap() const
+const Model::ViewPointMapPtr& Model::Junction::GetPointListMap() const
 {
     return mPointListMap;
 }
@@ -68,7 +68,7 @@ Model::Point3DListPtr Model::Junction::GetPointListByLevel(uint8_t aLevel)
     return nullptr;
 }
 
-Model::LineListConstPtr Model::Junction::GetBorderLineList() const
+const Model::LineListPtr& Model::Junction::GetBorderLineList() const
 {
     return mBorderLineList;
 }
@@ -93,7 +93,7 @@ Model::LinePtr Model::Junction::GetBorderLine(const size_t& aIndex)
     return nullptr;
 }
 
-Model::ConnectionRelationListConstPtr Model::Junction::GetConnectionRelationList() const
+const Model::ConnectionRelationListPtr& Model::Junction::GetConnectionRelationList() const
 {
     return mConnectionRelationList;
 }

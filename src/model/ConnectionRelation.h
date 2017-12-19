@@ -29,16 +29,16 @@ public:
     ~ConnectionRelation();
 
     const std::uint64_t& GetFromRoadId() const;
-    void SetFromRoadId(std::uint64_t aFromRoadId);
+    void SetFromRoadId(const std::uint64_t& aFromRoadId);
 
     const std::uint64_t& GetFromLaneId() const;
-    void SetFromLaneId(std::uint64_t aFromLaneId);
+    void SetFromLaneId(const std::uint64_t& aFromLaneId);
 
     const std::uint64_t& GetToRoadId() const;
-    void SetToRoadId(std::uint64_t aToRoadId);
+    void SetToRoadId(const std::uint64_t& aToRoadId);
 
     const std::uint64_t& GetToLaneId() const;
-    void SetToLaneId(std::uint64_t aToLaneId);
+    void SetToLaneId(const std::uint64_t& aToLaneId);
 
 private:
     std::uint64_t mFromRoadId;

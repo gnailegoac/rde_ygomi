@@ -38,7 +38,7 @@ public:
     ~Curve();
 
     const std::uint64_t& GetCurveId() const;
-    void SetCurveId(std::uint64_t aCurveId);
+    void SetCurveId(const std::uint64_t& aCurveId);
 
     float GetLength() const;
     void SetLength(float aLength);
@@ -52,7 +52,7 @@ public:
     float GetWidth() const;
     void SetWidth(float aWidth);
 
-    PaintRangeConstPtr GetPaintRange();
+    const PaintRangePtr& GetPaintRange() const;
     PaintRangePtr GetMutablePaintRange();
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(const size_t& aIndex) const;

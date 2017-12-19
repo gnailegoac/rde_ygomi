@@ -32,16 +32,16 @@ public:
     const std::uint64_t& GetJunctionId() const;
     void SetJunctionId(const std::uint64_t& aJunctionId);
 
-    ViewPointMapConstPtr GetPointListMap() const;
+    const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(uint8_t aLevel);
 
-    LineListConstPtr GetBorderLineList() const;
+    const LineListPtr& GetBorderLineList() const;
     LineListPtr GetMutableBorderLineList();
     size_t GetBorderLineListSize() const;
     LinePtr GetBorderLine(const size_t& aIndex);
 
-    ConnectionRelationListConstPtr GetConnectionRelationList() const;
+    const ConnectionRelationListPtr& GetConnectionRelationList() const;
     ConnectionRelationListPtr GetMutableConnectionRelationList();
     size_t GetConnectionRelationListSize() const;
     ConnectionRelationPtr GetConnectionRelation(const size_t& aIndex);

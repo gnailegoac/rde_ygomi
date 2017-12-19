@@ -29,12 +29,12 @@ public:
     NurbsCurve();
     ~NurbsCurve();
 
-    Point3DListConstPtr GetControlPoints() const;
+    const Point3DListPtr& GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();
     size_t GetControlPointsSize() const;
     Point3DPtr GetControlPoint(const size_t& aIndex) const;
 
-    KnotListConstPtr GetKnots() const;
+    const KnotListPtr& GetKnots() const;
     KnotListPtr GetMutableKnots();
     size_t GetKnotsSize() const;
     double GetKnot(const size_t& aIndex) const;

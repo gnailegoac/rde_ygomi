@@ -23,11 +23,11 @@ Model::BoundingBox::BoundingBox():
 
 }
 
-Model::BoundingBox::BoundingBox(Point3DPtr aPosition,
-                         const double &aHeading,
-                         float aWidth,
-                         float aLength,
-                         float aHeight):
+Model::BoundingBox::BoundingBox(const Point3DPtr& aPosition,
+                                const double &aHeading,
+                                float aWidth,
+                                float aLength,
+                                float aHeight):
     mPosition(aPosition),
     mHeading(aHeading),
     mWidth(aWidth),
@@ -49,17 +49,15 @@ const Model::Point3DPtr& Model::BoundingBox::GetPosition() const
 
 void Model::BoundingBox::SetPosition(const Point3DPtr& aPosition)
 {
-    mPosition->SetX(aPosition->GetX());
-    mPosition->SetY(aPosition->GetY());
-    mPosition->SetZ(aPosition->GetZ());
+    mPosition = aPosition;
 }
 
-const double &Model::BoundingBox::GetHeading() const
+const double& Model::BoundingBox::GetHeading() const
 {
     return mHeading;
 }
 
-void Model::BoundingBox::SetHeading(double aHeading)
+void Model::BoundingBox::SetHeading(const double& aHeading)
 {
     mHeading = aHeading;
 }

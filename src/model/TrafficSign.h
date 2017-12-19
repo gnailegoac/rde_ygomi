@@ -44,7 +44,7 @@ public:
     float GetConfidence() const;
     void SetConfidence(float aConfidence);
 
-    Point3DConstPtr GetPosition() const;
+    const Point3DPtr& GetPosition() const;
     void SetPosition(const Point3DPtr& aPosition);
 
 private:

@@ -23,7 +23,7 @@ class BoundingBox
 {
 public:
     BoundingBox();
-    BoundingBox(Point3DPtr aPosition,
+    BoundingBox(const Point3DPtr& aPosition,
                 const double& aHeading,
                 float aWidth,
                 float aLength,
@@ -34,7 +34,7 @@ public:
     void SetPosition(const Point3DPtr& aPosition);
 
     const double& GetHeading() const;
-    void SetHeading(double aHeading);
+    void SetHeading(const double& aHeading);
 
     float GetWidth() const;
     void SetWidth(float aWidth);

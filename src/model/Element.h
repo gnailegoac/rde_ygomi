@@ -21,6 +21,7 @@ namespace Model
 class BoundingBox;
 
 typedef std::shared_ptr<BoundingBox> BoundingBoxPtr;
+typedef std::shared_ptr<const BoundingBox> BoundingBoxConstPtr;
 
 class Element
 {
@@ -34,7 +35,8 @@ public:
     bool IsEdited() const;
     void SetEdited(bool aIsEdited);
 
-    BoundingBoxPtr GetBox();
+    const BoundingBoxPtr& GetBox() const;
+    BoundingBoxPtr GetMutableBox();
     void SetBox(const BoundingBoxPtr& aBox);
 
 protected:

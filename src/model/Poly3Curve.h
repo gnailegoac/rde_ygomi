@@ -26,13 +26,13 @@ public:
     ~Poly3Curve();
 
     void SetX(const double& aX, const size_t& aIndex);
-    const double& GetX(const size_t& aIndex) const;
+    double GetX(const size_t& aIndex) const;
 
     void SetY(const double& aY, const size_t& aIndex);
-    const double& GetY(const size_t& aIndex) const;
+    double GetY(const size_t& aIndex) const;
 
     void SetZ(const double& aZ, const size_t& aIndex);
-    const double& GetZ(const size_t& aIndex) const;
+    double GetZ(const size_t& aIndex) const;
 
 private:
     double mX[4];

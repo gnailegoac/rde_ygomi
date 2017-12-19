@@ -23,6 +23,7 @@ namespace Model
 class Lane;
 
 typedef std::shared_ptr<Lane> LanePtr;
+typedef std::shared_ptr<const Lane> LaneConstPtr;
 
 class Line : public Element
 {
@@ -33,7 +34,7 @@ public:
     const std::uint64_t& GetLineId() const;
     void SetLineId(const std::uint64_t& aLineId);
 
-    CurveListConstPtr GetCurveList() const;
+    const CurveListPtr& GetCurveList() const;
     CurveListPtr GetMutableCurveList();
     size_t GetCurveListSize() const;
     CurvePtr GetCurve(const size_t& aIndex);
@@ -44,10 +45,10 @@ public:
     float GetLength() const;
     void SetLength(float aLength);
 
-    LanePtr GetLane() const;
-    void SetLane(LanePtr aLane);
+    const LanePtr& GetLane() const;
+    void SetLane(const LanePtr& aLane);
 
-    ViewPointMapConstPtr GetPointListMap() const;
+    const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
 

@@ -73,7 +73,7 @@ void Model::Lane::SetCenterLine(Model::LinePtr aCenterLine)
     mCenterLine = aCenterLine;
 }
 
-Model::ConnectionMapConstPtr Model::Lane::GetConnectionMap()
+const Model::ConnectionMapPtr& Model::Lane::GetConnectionMap() const
 {
     return mConnectionMap;
 }
@@ -93,7 +93,12 @@ std::uint8_t Model::Lane::GetConnectionById(const uint64_t& aId)
     return 0;
 }
 
-Model::RoadPtr Model::Lane::GetRoad() const
+const Model::RoadPtr& Model::Lane::GetRoad() const
+{
+    return mRoad;
+}
+
+Model::RoadPtr Model::Lane::GetMutableRoad()
 {
     return mRoad;
 }

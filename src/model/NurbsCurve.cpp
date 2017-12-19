@@ -28,7 +28,7 @@ Model::NurbsCurve::~NurbsCurve()
 
 }
 
-Model::Point3DListConstPtr Model::NurbsCurve::GetControlPoints() const
+const Model::Point3DListPtr& Model::NurbsCurve::GetControlPoints() const
 {
     return mControlPoints;
 }
@@ -53,7 +53,7 @@ Model::Point3DPtr Model::NurbsCurve::GetControlPoint(const size_t& aIndex) const
     return std::make_shared<Point3D>(DBL_NAN, DBL_NAN, DBL_NAN);
 }
 
-Model::KnotListConstPtr Model::NurbsCurve::GetKnots() const
+const Model::KnotListPtr& Model::NurbsCurve::GetKnots() const
 {
     return mKnots;
 }

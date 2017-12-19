@@ -33,19 +33,19 @@ public:
     const std::uint64_t& GetRoadId() const;
     void SetRoadId(const uint64_t& aRoadId);
 
-    LaneListConstPtr GetLaneList() const;
+    const LaneListPtr& GetLaneList() const;
     LaneListPtr GetMutableLaneList();
     size_t GetLaneListSize() const;
     LanePtr GetLane(const size_t& aIndex);
 
-    ElementPtr GetPredecessor() const;
-    void SetPredecessor(ElementPtr aPredecessor);
+    const ElementPtr& GetPredecessor() const;
+    void SetPredecessor(const ElementPtr& aPredecessor);
 
-    ElementPtr GetSuccessor() const;
-    void SetSuccessor(ElementPtr aSuccessor);
+    const ElementPtr& GetSuccessor() const;
+    void SetSuccessor(const ElementPtr& aSuccessor);
 
-    TilePtr GetTile() const;
-    void SetTile(TilePtr aTile);
+    const TilePtr& GetTile() const;
+    void SetTile(const TilePtr& aTile);
 
 private:
     std::uint64_t mRoadId;

@@ -39,7 +39,7 @@ void Model::Tile::SetTileId(const int64_t& aTileId)
     mTileId = aTileId;
 }
 
-Model::TrafficSignMapConstPtr Model::Tile::GetTrafficSignMap() const
+const Model::TrafficSignMapPtr& Model::Tile::GetTrafficSignMap() const
 {
     return mTrafficSignMap;
 }
@@ -59,7 +59,7 @@ Model::TrafficSignPtr Model::Tile::GetTrafficSign(const uint64_t& aId)
     return nullptr;
 }
 
-Model::RoadMapConstPtr Model::Tile::GetRoadMap() const
+const Model::RoadMapPtr& Model::Tile::GetRoadMap() const
 {
     return mRoadMap;
 }
@@ -79,7 +79,7 @@ Model::RoadPtr Model::Tile::GetRoad(const uint64_t& aId)
     return nullptr;
 }
 
-Model::LaneMapConstPtr Model::Tile::GetLaneMap() const
+const Model::LaneMapPtr& Model::Tile::GetLaneMap() const
 {
     return mLaneMap;
 }
@@ -99,7 +99,7 @@ Model::LanePtr Model::Tile::GetLane(const uint64_t& aId)
     return nullptr;
 }
 
-Model::LineMapConstPtr Model::Tile::GetLineMap() const
+const Model::LineMapPtr& Model::Tile::GetLineMap() const
 {
     return mLineMap;
 }
@@ -119,7 +119,7 @@ Model::LinePtr Model::Tile::GetLine(const uint64_t& aId)
     return nullptr;
 }
 
-Model::JunctionMapConstPtr Model::Tile::GetJunctionMap() const
+const Model::JunctionMapPtr& Model::Tile::GetJunctionMap() const
 {
     return mJunctionMap;
 }

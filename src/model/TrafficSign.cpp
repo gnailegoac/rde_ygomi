@@ -90,7 +90,7 @@ void Model::TrafficSign::SetConfidence(float aConfidence)
     mConfidence = aConfidence;
 }
 
-Model::Point3DConstPtr Model::TrafficSign::GetPosition() const
+const Model::Point3DPtr& Model::TrafficSign::GetPosition() const
 {
     return mPosition;
 }

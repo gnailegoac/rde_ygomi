@@ -48,7 +48,12 @@ void Model::Element::SetEdited(bool aIsEdited)
     mIsEdited = aIsEdited;
 }
 
-Model::BoundingBoxPtr Model::Element::GetBox()
+const Model::BoundingBoxPtr& Model::Element::GetBox() const
+{
+    return mBox;
+}
+
+Model::BoundingBoxPtr Model::Element::GetMutableBox()
 {
     return mBox;
 }

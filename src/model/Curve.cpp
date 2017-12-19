@@ -34,7 +34,7 @@ const uint64_t& Model::Curve::GetCurveId() const
     return mCurveId;
 }
 
-void Model::Curve::SetCurveId(std::uint64_t aCurveId)
+void Model::Curve::SetCurveId(const uint64_t& aCurveId)
 {
     mCurveId = aCurveId;
 }
@@ -79,7 +79,7 @@ void Model::Curve::SetWidth(float aWidth)
     mWidth = aWidth;
 }
 
-Model::PaintRangeConstPtr Model::Curve::GetPaintRange()
+const Model::PaintRangePtr& Model::Curve::GetPaintRange() const
 {
     return mPaintRange;
 }

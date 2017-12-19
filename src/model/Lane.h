@@ -46,10 +46,11 @@ public:
     LinePtr GetCenterLine() const;
     void SetCenterLine(LinePtr aCenterLine);
 
-    RoadPtr GetRoad() const;
+    const RoadPtr& GetRoad() const;
+    RoadPtr GetMutableRoad();
     void SetRoad(RoadPtr aRoad);
 
-    ConnectionMapConstPtr GetConnectionMap();
+    const ConnectionMapPtr& GetConnectionMap() const;
     ConnectionMapPtr GetMutableConnectionMap();
     std::uint8_t GetConnectionById(const uint64_t& aId);
 

@@ -40,7 +40,7 @@ void Model::Line::SetLineId(const uint64_t& aLineId)
     mLineId = aLineId;
 }
 
-Model::CurveListConstPtr Model::Line::GetCurveList() const
+const Model::CurveListPtr& Model::Line::GetCurveList() const
 {
     return mCurveList;
 }
@@ -85,17 +85,17 @@ void Model::Line::SetLength(float aLength)
     mLength = aLength;
 }
 
-Model::LanePtr Model::Line::GetLane() const
+const Model::LanePtr& Model::Line::GetLane() const
 {
     return mLane;
 }
 
-void Model::Line::SetLane(Model::LanePtr aLane)
+void Model::Line::SetLane(const Model::LanePtr& aLane)
 {
     mLane = aLane;
 }
 
-Model::ViewPointMapConstPtr Model::Line::GetPointListMap() const
+const Model::ViewPointMapPtr& Model::Line::GetPointListMap() const
 {
     return mPointListMap;
 }

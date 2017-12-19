@@ -39,7 +39,7 @@ void Model::Road::SetRoadId(const uint64_t& aRoadId)
     mRoadId = aRoadId;
 }
 
-Model::LaneListConstPtr Model::Road::GetLaneList() const
+const Model::LaneListPtr& Model::Road::GetLaneList() const
 {
     return mLaneList;
 }
@@ -64,32 +64,32 @@ Model::LanePtr Model::Road::GetLane(const size_t& aIndex)
     return nullptr;
 }
 
-Model::ElementPtr Model::Road::GetPredecessor() const
+const Model::ElementPtr& Model::Road::GetPredecessor() const
 {
     return mPredecessor;
 }
 
-void Model::Road::SetPredecessor(Model::ElementPtr aPredecessor)
+void Model::Road::SetPredecessor(const Model::ElementPtr& aPredecessor)
 {
     mPredecessor = aPredecessor;
 }
 
-Model::ElementPtr Model::Road::GetSuccessor() const
+const Model::ElementPtr& Model::Road::GetSuccessor() const
 {
     return mSuccessor;
 }
 
-void Model::Road::SetSuccessor(Model::ElementPtr aSuccessor)
+void Model::Road::SetSuccessor(const Model::ElementPtr& aSuccessor)
 {
     mSuccessor = aSuccessor;
 }
 
-Model::TilePtr Model::Road::GetTile() const
+const Model::TilePtr& Model::Road::GetTile() const
 {
     return mTile;
 }
 
-void Model::Road::SetTile(Model::TilePtr aTile)
+void Model::Road::SetTile(const TilePtr& aTile)
 {
     mTile = aTile;
 }

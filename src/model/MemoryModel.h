@@ -18,8 +18,9 @@
 namespace Model
 {
 
-typedef std::shared_ptr<std::unordered_map<std::int64_t, std::shared_ptr<Tile>>> TileMapPtr;
-typedef std::shared_ptr<const std::unordered_map<std::int64_t, std::shared_ptr<Tile>>> TileMapConstPtr;
+typedef std::unordered_map<std::int64_t, std::shared_ptr<Tile>> TileMap;
+typedef std::shared_ptr<TileMap> TileMapPtr;
+typedef std::shared_ptr<const TileMap> TileMapConstPtr;
 
 class MemoryModel
 {
@@ -27,7 +28,7 @@ public:
     MemoryModel();
     ~MemoryModel();
 
-    TileMapConstPtr GetTileMap() const;
+    const TileMapPtr& GetTileMap() const;
     TileMapPtr GetMutableTileMap();
     TilePtr GetTile(const std::int64_t& aId);
 
