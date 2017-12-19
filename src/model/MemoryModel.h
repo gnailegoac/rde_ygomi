@@ -12,12 +12,29 @@
 
 #pragma once
 
+#include "Common.h"
+#include "Tile.h"
+
 namespace Model
 {
+
+typedef std::unordered_map<std::int64_t, std::shared_ptr<Tile>> TileMap;
+typedef std::shared_ptr<TileMap> TileMapPtr;
+typedef std::shared_ptr<const TileMap> TileMapConstPtr;
+
 class MemoryModel
 {
 public:
     MemoryModel();
+    ~MemoryModel();
+
+    const TileMapPtr& GetTileMap() const;
+    TileMapPtr GetMutableTileMap();
+    TilePtr GetTile(const std::int64_t& aId);
+
+private:
+    TileMapPtr mTileMap;
 };
+
 }
 
