@@ -32,6 +32,7 @@ public:
     static const std::string FOLDER_OPEN;
     static const std::string FILE_OPEN_SUCCESS;
     static const std::string FOLDER_OPEN_SUCCESS;
+    static const std::string INIT_SCENE;
 
     static ApplicationFacade* GetInstance();
 
