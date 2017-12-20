@@ -20,6 +20,7 @@ Model::Line::Line():
     mConfidence(0.0),
     mLength(0.0),
     mLane(nullptr),
+    mGeodeticPoints(std::make_shared<Point3DList>()),
     mPointListMap(std::make_shared<ViewPointMap>())
 {
 
@@ -95,6 +96,21 @@ void Model::Line::SetLane(const Model::LanePtr& aLane)
     mLane = aLane;
 }
 
+const Model::Point3DListPtr& Model::Line::GetGeodeticPoints() const
+{
+    return mGeodeticPoints;
+}
+
+Model::Point3DListPtr Model::Line::GetMutableGeodeticPoints()
+{
+    return mGeodeticPoints;
+}
+
+void Model::Line::SetGeodeticPoints(const Model::Point3DListPtr& aGeodeticPoints)
+{
+    mGeodeticPoints = aGeodeticPoints;
+}
+
 const Model::ViewPointMapPtr& Model::Line::GetPointListMap() const
 {
     return mPointListMap;
@@ -113,4 +129,13 @@ Model::Point3DListPtr Model::Line::GetPointListByLevel(std::uint8_t aLevel)
     }
 
     return nullptr;
+}
+
+void Model::Line::GenerateViewPointMap()
+{
+    // Convert geodetic coordinates into UTM coordinates
+
+
+    // Down-sample points with Douglas-Peucker algorithm
+
 }

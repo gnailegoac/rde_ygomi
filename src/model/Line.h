@@ -48,9 +48,14 @@ public:
     const LanePtr& GetLane() const;
     void SetLane(const LanePtr& aLane);
 
+    const Point3DListPtr& GetGeodeticPoints() const;
+    Point3DListPtr GetMutableGeodeticPoints();
+    void SetGeodeticPoints(const Point3DListPtr& aGeodeticPoints);
+
     const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
+    void GenerateViewPointMap();
 
 private:
     std::uint64_t mLineId;
@@ -58,6 +63,7 @@ private:
     float mConfidence;
     float mLength;
     LanePtr mLane;
+    Point3DListPtr mGeodeticPoints;
     ViewPointMapPtr mPointListMap;
 };
 

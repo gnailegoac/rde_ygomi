@@ -7,7 +7,9 @@ CONFIG += conan_basic_setup
 include(../build_ut/conanbuildinfo.pri)
 
 SOURCES += \
-    UtTemplate.cpp
+    UtDouglasPeucker.cpp \
+    ../src/model/Point3D.cpp \
+    ../src/model/DouglasPeucker.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
