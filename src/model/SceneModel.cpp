@@ -69,12 +69,39 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
 {
     osg::ref_ptr<osg::Group> roadNode(new osg::Group);
     Model::LaneListPtr laneListptr = aRoad->GetLaneList();
+    std::set<std::uint64_t> lineIdSet;
     for(const auto& lane : *laneListptr.get())
     {
-        osg::Group* laneNode = new osg::Group;
-        laneNode->addChild(buildLineNode(lane->GetRightLine()));
-        laneNode->addChild(buildLineNode(lane->GetLeftLine()));
-        roadNode->addChild(laneNode);
+        Model::LinePtr rightLine = lane->GetRightLine();
+        Model::LinePtr leftLine = lane->GetLeftLine();
+        osg::Group* laneNode = nullptr;
+
+        if(lineIdSet.find(leftLine->GetLineId()) != lineIdSet.end())
+        {
+            if(laneNode == nullptr)
+            {
+                laneNode = new osg::Group;
+            }
+
+            laneNode->addChild(buildLineNode(leftLine));
+            lineIdSet.insert(leftLine->GetLineId());
+        }
+
+        if(lineIdSet.find(rightLine->GetLineId()) != lineIdSet.end())
+        {
+            if(laneNode == nullptr)
+            {
+                laneNode = new osg::Group;
+            }
+
+            laneNode->addChild(buildLineNode(rightLine));
+            lineIdSet.insert(rightLine->GetLineId());
+        }
+
+        if(laneNode != nullptr)
+        {
+            roadNode->addChild(laneNode);
+        }
     }
 
     return roadNode;
