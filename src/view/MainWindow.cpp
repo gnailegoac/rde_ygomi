@@ -39,6 +39,18 @@ void View::MainWindow::PopupWarningMessage(const QString& aWarning)
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
 }
 
+osg::Polytope View::MainWindow::GetPolytope()
+{
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    return viewer->GetPolytope();
+}
+
+void View::MainWindow::UpdateScene()
+{
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    viewer->Refresh();
+}
+
 void View::MainWindow::setupConnections()
 {
     connect(ui->actionOpen, &QAction::triggered, [=]()

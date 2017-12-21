@@ -23,7 +23,6 @@
 #include <QPainter>
 #include <QWheelEvent>
 
-#include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
 #include <osg/Material>
@@ -43,6 +42,10 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include "PickHandler.h"
+
+#include "facade/ApplicationFacade.h"
+#include "model/SceneModel.h"
+#include "proxy/MainProxy.h"
 
 namespace
 {
@@ -104,35 +107,35 @@ void View::Viewer::setupThreading()
     }
 }
 
-View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
-  : QOpenGLWidget(aParent, aFlag)
-  , mGraphicsWindow(new osgViewer::GraphicsWindowEmbedded(this->x(),
+View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
+    QOpenGLWidget(aParent, aFlag),
+    mGraphicsWindow(new osgViewer::GraphicsWindowEmbedded(this->x(),
                                                           this->y(),
                                                           this->width(),
-                                                          this->height()))
-  , mViewer(new View::Viewer)
-  , mSelectionActive(false)
-  , mSelectionFinished(true)
+                                                          this->height())),
+    mView(new osgViewer::View),
+    mViewer(new View::Viewer),
+    mCamera(new osg::Camera),
+    mSelectionActive(false),
+    mSelectionFinished(true)
 {
     float aAspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
     auto aPixelRatio = this->devicePixelRatio();
 
-    osg::Camera* aCamera = new osg::Camera;
-    aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
-    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
-    aCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
-    aCamera->setGraphicsContext(mGraphicsWindow);
+    mCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
+    mCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
+    mCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
+    mCamera->setGraphicsContext(mGraphicsWindow);
 
-    osgViewer::View* aView = new osgViewer::View;
-    aView->setCamera(aCamera);
-    aView->addEventHandler(new osgViewer::StatsHandler);
+    mView->setCamera(mCamera);
+    mView->addEventHandler(new osgViewer::StatsHandler);
 
     osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
 
-    aView->setCameraManipulator(aManipulator);
+    mView->setCameraManipulator(aManipulator);
 
-    mViewer->addView(aView);
+    mViewer->addView(mView);
     mViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
     mViewer->realize();
 
@@ -150,6 +153,28 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag)
 
 View::OsgWidget::~OsgWidget()
 {
+}
+
+osg::Polytope View::OsgWidget::GetPolytope()
+{
+    osg::Matrixd viewMatrix = mCamera->getViewMatrix();
+    osg::Matrixd projectionMatrix = mCamera->getProjectionMatrix();
+    osg::Matrixd viewProjectMatrix = viewMatrix * projectionMatrix;
+    osg::Polytope frustum;
+    frustum.setToUnitFrustum();
+    frustum.transformProvidingInverse(viewProjectMatrix);
+    return frustum;
+}
+
+void View::OsgWidget::Refresh()
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    if (sceneModel)
+    {
+        mView->setSceneData(sceneModel->GetSceneModelRoot());
+    }
+    paintGL();
 }
 
 void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
@@ -362,10 +387,8 @@ void View::OsgWidget::onHome()
 
 void View::OsgWidget::onResize(int aWidth, int aHeight)
 {
-    std::vector<osg::Camera*> aCameras;
-    mViewer->getCameras(aCameras);
     auto aPixelRatio = this->devicePixelRatio();
-    aCameras[0]->setViewport(0, 0, aWidth * aPixelRatio, aHeight * aPixelRatio);
+    mCamera->setViewport(0, 0, aWidth * aPixelRatio, aHeight * aPixelRatio);
 }
 
 osgGA::EventQueue* View::OsgWidget::getEventQueue() const
