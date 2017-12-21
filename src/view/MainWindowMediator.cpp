@@ -104,7 +104,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if(noteName == ApplicationFacade::REFRESH_WINDOW)
     {
         View::MainWindow* mainWindow = getMainWindow();
-        mainWindow->UpdateScene();
+        mainWindow->UpdateView();
     }
 }
 

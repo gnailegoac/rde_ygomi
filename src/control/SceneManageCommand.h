@@ -26,7 +26,7 @@ public:
     static std::string GetCommandName();
 private:
     void constructScene(osg::Polytope &aPolytope);
-    void convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox, osg::BoundingBox& aResult);
+    void convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox, osg::BoundingBox& aOutBoundingBox);
 };
 }
 
