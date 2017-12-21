@@ -23,11 +23,6 @@
 
 void Controller::SceneManageCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
-    /*if (aNotification.getName() == ApplicationFacade::INIT_SCENE)
-    {
-        //use memory model create quadtree
-    }
-    else */
     if (aNotification.getName() == ApplicationFacade::REFRESH_SCENE)
     {
         // Add roads in view to mainViewer.
