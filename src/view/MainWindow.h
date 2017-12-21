@@ -32,7 +32,7 @@ public:
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
     osg::Polytope GetPolytope();
-    void UpdateScene();
+    void UpdateView();
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;

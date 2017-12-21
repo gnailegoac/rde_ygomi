@@ -23,11 +23,6 @@
 
 void Controller::SceneManageCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
-    /*if (aNotification.getName() == ApplicationFacade::INIT_SCENE)
-    {
-        //use memory model create quadtree
-    }
-    else */
     if (aNotification.getName() == ApplicationFacade::REFRESH_SCENE)
     {
         // Add roads in view to mainViewer.
@@ -68,11 +63,30 @@ void Controller::SceneManageCommand::constructScene(osg::Polytope& aPolytope)
     }
 }
 
-void Controller::SceneManageCommand::convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox, osg::BoundingBox& aResult)
+void Controller::SceneManageCommand::convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox,
+                                                        osg::BoundingBox& aOutBoundingBox)
 {
     const double heading = aBoundingBox->GetHeading();
-    float width = aBoundingBox->GetWidth(); // along the heading direction
-    float length = aBoundingBox->GetLength();   // perpendicular with the heading direction
-    float height = aBoundingBox->GetHeight();
-    const Model::Point3DPtr& center = aBoundingBox->GetPosition();
+    float width = aBoundingBox->GetWidth() / 2; // along the heading direction
+    float length = aBoundingBox->GetLength() / 2;   // perpendicular with the heading direction
+    float height = aBoundingBox->GetHeight() / 2;
+    const Model::Point3DPtr& centerPtr = aBoundingBox->GetPosition();
+    std::vector<double> xVector;
+    xVector.push_back(centerPtr->GetX() + width * std::cos(heading));
+    xVector.push_back(centerPtr->GetX() + width * std::sin(heading));
+    xVector.push_back(centerPtr->GetX() - width * std::sin(heading));
+    xVector.push_back(centerPtr->GetX() - width * std::cos(heading));
+    std::sort(xVector.begin(), xVector.end());
+    std::vector<double> yVector;
+    yVector.push_back(centerPtr->GetY() + length * std::sin(heading));
+    yVector.push_back(centerPtr->GetY() - length * std::cos(heading));
+    yVector.push_back(centerPtr->GetY() + length * std::cos(heading));
+    yVector.push_back(centerPtr->GetY() - length * std::sin(heading));
+    std::sort(yVector.begin(), yVector.end());
+    aOutBoundingBox.xMin() = xVector.front();
+    aOutBoundingBox.xMax() = xVector.back();
+    aOutBoundingBox.yMin() = yVector.front();
+    aOutBoundingBox.yMax() = yVector.back();
+    aOutBoundingBox.zMin() = centerPtr->GetZ() - height;
+    aOutBoundingBox.zMax() = centerPtr->GetZ() + height;
 }
