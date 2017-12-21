@@ -20,8 +20,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+
 include(../external.pri)
-LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC
+
+LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl
 
 SOURCES +=\
     RoadDBExplorer.cpp \
@@ -52,6 +55,14 @@ SOURCES +=\
     service/NetworkPreferenceProvider.cpp \
     view/WebRoadEditor.cpp \
     view/NetworkPreferenceDialog.cpp \
+    model/data_handler/LogicDbFactory.cpp \
+    model/data_handler/LogicDbParser.cpp \
+    model/data_handler/DbRepository.cpp \
+    model/data_handler/DbParseException.cpp \
+    model/IdGenerator.cpp \
+    model/data_handler/Factory.cpp \
+    model/external/geo_alg.cpp \
+    model/Poly.cpp \
     model/SceneModel.cpp \
     control/SceneManageCommand.cpp
 
@@ -83,6 +94,18 @@ HEADERS  += view/MainWindow.h \
     service/NetworkPreferenceProvider.h \
     view/WebRoadEditor.h \
     view/NetworkPreferenceDialog.h \
+    model/data_handler/IFactory.h \
+    model/data_handler/IParser.h \
+    model/data_handler/ISerializer.h \
+    model/data_handler/LogicDbFactory.h \
+    model/data_handler/LogicDbParser.h \
+    model/data_handler/DbRepository.h \
+    model/Utilities.h \
+    model/data_handler/DbParseException.h \
+    model/IdGenerator.h \
+    model/data_handler/Factory.h \
+    model/external/geo_alg.h \
+    model/Poly.h \
     model/SceneModel.h \
     control/SceneManageCommand.h
 

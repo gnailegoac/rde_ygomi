@@ -16,6 +16,8 @@
 #include "view/MainWindow.h"
 #include "facade/ApplicationFacade.h"
 #include "CommonFunction.h"
+#include "model/data_handler/Factory.h"
+#include "model/MemoryModel.h"
 #include "model/SceneModel.h"
 
 void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
@@ -23,10 +25,12 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
     if (aNotification.getName() == ApplicationFacade::FILE_OPEN_SUCCESS)
     {
         std::string filePath = *CommonFunction::ConvertToNonConstType<std::string>(aNotification.getBody());
+        Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(filePath);
+        Model::IParserPtr parser = factory->CreateParser();
+        Model::MemoryModelPtr memoryModel = parser->Parse();
 
         //parse file
         //put the meomery model into MainProxy
-
         ceateSceneModel();
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
@@ -34,10 +38,12 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
     {
         std::vector<std::string> databaseFilePathList =
                 *CommonFunction::ConvertToNonConstType<std::vector<std::string>>(aNotification.getBody());
+        Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(databaseFilePathList);
+        Model::IParserPtr parser = factory->CreateParser();
+        Model::MemoryModelPtr memoryModel = parser->Parse();
 
         //parse file
         //put the meomery model into MainProxy
-
         ceateSceneModel();
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }

@@ -6,34 +6,32 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    LogicDbFactory.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
+#include "../Common.h"
+#include "IFactory.h"
 
 namespace Model
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+class LogicDbFactory : public IFactory
+{
+public:
+    LogicDbFactory(const PathListPtr& aInputPathList);
+    LogicDbFactory(const PathList& aInputPathList);
+    LogicDbFactory(const std::string& aInputPath);
+    ~LogicDbFactory();
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
+    IParserPtr CreateParser() override;
+    ISerializerPtr CreateSerializer() override;
 
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
-
+private:
+    PathListPtr mInputPathList;
+};
 
 }

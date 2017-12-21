@@ -6,34 +6,29 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    IParser.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
+#include "../Common.h"
 
 namespace Model
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+class MemoryModel;
+typedef std::shared_ptr<MemoryModel> MemoryModelPtr;
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
+class IParser
+{
+public:
+    virtual ~IParser() = default;
 
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
+    virtual MemoryModelPtr Parse() = 0;
+};
 
+typedef std::unique_ptr<IParser> IParserPtr;
 
 }

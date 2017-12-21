@@ -32,8 +32,8 @@ public:
     const std::uint64_t& GetTrafficSignType() const;
     void SetTrafficSignType(const std::uint64_t& aTrafficSignType);
 
-    std::int32_t GetOrientation() const;
-    void SetOrientation(std::int32_t aOrientation);
+    const double& GetOrientation() const;
+    void SetOrientation(const double& aOrientation);
 
     const double& GetShapeWidth() const;
     void SetShapeWidth(const double& aShapeWidth);
@@ -50,7 +50,7 @@ public:
 private:
     std::uint64_t mTrafficSignId;
     std::uint64_t mTrafficSignType;
-    std::int32_t mOrientation;
+    double mOrientation;
     double mShapeWidth;
     double mShapeHeight;
     float mConfidence;

@@ -32,9 +32,15 @@ public:
     const std::uint64_t& GetJunctionId() const;
     void SetJunctionId(const std::uint64_t& aJunctionId);
 
+    const Point3DListPtr& GetGeodeticPoints() const;
+    Point3DListPtr GetMutableGeodeticPoints();
+    void SetGeodeticPoints(const Point3DListPtr& aGeodeticPoints);
+    void CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval);
+
     const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(uint8_t aLevel);
+    Point3DListPtr GetMutablePointListByLevel(uint8_t aLevel);
 
     const LineListPtr& GetBorderLineList() const;
     LineListPtr GetMutableBorderLineList();
@@ -48,6 +54,7 @@ public:
 
 private:
     std::uint64_t mJunctionId;
+    Point3DListPtr mGeodeticPoints;
     ViewPointMapPtr mPointListMap;
     LineListPtr mBorderLineList;
     ConnectionRelationListPtr mConnectionRelationList;
