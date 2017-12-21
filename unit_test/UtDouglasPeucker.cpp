@@ -97,22 +97,22 @@ TEST_F(TestData, Farthest_Distance_Test)
 TEST_F(TestData, Simplify_Test)
 {
     double ZERO = 1e-6;
-    std::vector<std::shared_ptr<Model::Point3D>> points = mDouglas->Simplify(5);
-    EXPECT_EQ(points.size(), 5);
-    EXPECT_NEAR(points[0]->GetX(), 0, ZERO);
-    EXPECT_NEAR(points[1]->GetX(), 29.5, ZERO);
-    EXPECT_NEAR(points[2]->GetX(), 62.6, ZERO);
-    EXPECT_NEAR(points[3]->GetX(), 89.1, ZERO);
-    EXPECT_NEAR(points[4]->GetX(), 100, ZERO);
+    Model::Point3DListPtr points = mDouglas->Simplify(5);
+    EXPECT_EQ(points->size(), 5);
+    EXPECT_NEAR(points->at(0)->GetX(), 0, ZERO);
+    EXPECT_NEAR(points->at(1)->GetX(), 29.5, ZERO);
+    EXPECT_NEAR(points->at(2)->GetX(), 62.6, ZERO);
+    EXPECT_NEAR(points->at(3)->GetX(), 89.1, ZERO);
+    EXPECT_NEAR(points->at(4)->GetX(), 100, ZERO);
     points = mDouglas->Simplify(2);
-    EXPECT_EQ(points.size(), 9);
-    EXPECT_NEAR(points[0]->GetX(), 0, ZERO);
-    EXPECT_NEAR(points[1]->GetX(), 7.4, ZERO);
-    EXPECT_NEAR(points[2]->GetX(), 29.5, ZERO);
-    EXPECT_NEAR(points[3]->GetX(), 37.8, ZERO);
-    EXPECT_NEAR(points[4]->GetX(), 54.7, ZERO);
-    EXPECT_NEAR(points[5]->GetX(), 62.6, ZERO);
-    EXPECT_NEAR(points[6]->GetX(), 70.7, ZERO);
-    EXPECT_NEAR(points[7]->GetX(), 89.1, ZERO);
-    EXPECT_NEAR(points[8]->GetX(), 100, ZERO);
+    EXPECT_EQ(points->size(), 9);
+    EXPECT_NEAR(points->at(0)->GetX(), 0, ZERO);
+    EXPECT_NEAR(points->at(1)->GetX(), 7.4, ZERO);
+    EXPECT_NEAR(points->at(2)->GetX(), 29.5, ZERO);
+    EXPECT_NEAR(points->at(3)->GetX(), 37.8, ZERO);
+    EXPECT_NEAR(points->at(4)->GetX(), 54.7, ZERO);
+    EXPECT_NEAR(points->at(5)->GetX(), 62.6, ZERO);
+    EXPECT_NEAR(points->at(6)->GetX(), 70.7, ZERO);
+    EXPECT_NEAR(points->at(7)->GetX(), 89.1, ZERO);
+    EXPECT_NEAR(points->at(8)->GetX(), 100, ZERO);
 }

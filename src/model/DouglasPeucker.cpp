@@ -30,7 +30,7 @@ Model::DouglasPeucker::~DouglasPeucker()
 
 }
 
-std::vector<Model::Point3DPtr> Model::DouglasPeucker::Simplify(
+Model::Point3DListPtr Model::DouglasPeucker::Simplify(
                 const double& aThreshold) const
 {
     std::vector<Point3DPtr> simplified;
@@ -65,7 +65,7 @@ std::vector<Model::Point3DPtr> Model::DouglasPeucker::Simplify(
     {
         simplified.push_back(mPoints->at(idx));
     }
-    return simplified;
+    return std::make_shared<Point3DList>(simplified);
 }
 
 double Model::DouglasPeucker::pointToPointDistance(

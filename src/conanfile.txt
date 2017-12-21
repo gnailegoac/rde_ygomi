@@ -1,7 +1,7 @@
 [requires]
 PureMVC/1.0@RDE/stable
 osg/3.4.1@RDE/stable
-CoordinateTransform/0.1.20170629.fc7841a@peqi/devel
+CoordinateTransform/0.2.0.20171221135807.c542c2f@rde/devel
 
 [generators]
 qmake

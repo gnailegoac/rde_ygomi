@@ -23,7 +23,7 @@ public:
     DouglasPeucker(const Point3DListPtr& aPointList);
     ~DouglasPeucker();
 
-    std::vector<Point3DPtr> Simplify(const double& aThreshold) const;
+    Point3DListPtr Simplify(const double& aThreshold) const;
 
 private:
     double pointToPointDistance(const Point3DPtr& aLhs,

@@ -13,6 +13,9 @@
 
 #include "Line.h"
 
+#include "CoordinateTransform/Factory.h"
+#include "DouglasPeucker.h"
+
 Model::Line::Line():
     Element(),
     mLineId(0),
@@ -134,8 +137,24 @@ Model::Point3DListPtr Model::Line::GetPointListByLevel(std::uint8_t aLevel)
 void Model::Line::GenerateViewPointMap()
 {
     // Convert geodetic coordinates into UTM coordinates
-
+    auto utm = CRS::Factory().CreateProjectionTransform(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Utm,
+                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+    Point3DList points;
+    points.reserve(mGeodeticPoints->size());
+    for (auto& p : *mGeodeticPoints)
+    {
+        double lon = p->GetX();
+        double lat = p->GetY();
+        double ele = p->GetZ();
+        utm->Transform(lon, lat, ele);
+        points.push_back(std::make_shared<Point3D>(lon, lat, ele));
+    }
 
     // Down-sample points with Douglas-Peucker algorithm
-
+    Model::DouglasPeucker douglas(std::make_shared<Point3DList>(points));
+    mPointListMap->insert(std::make_pair(1, douglas.Simplify(1)));
+    mPointListMap->insert(std::make_pair(2, douglas.Simplify(0.5)));
+    mPointListMap->insert(std::make_pair(3, douglas.Simplify(0.1)));
 }

@@ -9,7 +9,11 @@ include(../build_ut/conanbuildinfo.pri)
 SOURCES += \
     UtDouglasPeucker.cpp \
     ../src/model/Point3D.cpp \
-    ../src/model/DouglasPeucker.cpp
+    ../src/model/DouglasPeucker.cpp \
+    UtLine.cpp \
+    ../src/model/Line.cpp \
+    ../src/model/Element.cpp \
+    ../src/model/BoundingBox.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
