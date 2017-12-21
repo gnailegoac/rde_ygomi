@@ -126,7 +126,6 @@ void Model::Line::SetGeodeticPoints(const Model::Point3DListPtr& aGeodeticPoints
 
 void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval)
 {
-
     std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
     std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
                     factory->CreateRelativeTransform(CRS::CoordinateType::Relative,

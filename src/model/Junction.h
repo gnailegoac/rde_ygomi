@@ -35,7 +35,7 @@ public:
     const Point3DListPtr& GetGeodeticPoints() const;
     Point3DListPtr GetMutableGeodeticPoints();
     void SetGeodeticPoints(const Point3DListPtr& aGeodeticPoints);
-    void CreateGeodeticPoints(const Point3DPtr&, const double& );
+    void CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval);
 
     const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();

@@ -6,7 +6,7 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    LogicDbParser.h
+ * @file    LogicDbFactory.h
  * @brief
  *******************************************************************************
  */
@@ -27,8 +27,8 @@ public:
     LogicDbFactory(const std::string& aInputPath);
     ~LogicDbFactory();
 
-    virtual IParserPtr CreateParser() override;
-    virtual ISerializerPtr CreateSerializer() override;
+    IParserPtr CreateParser() override;
+    ISerializerPtr CreateSerializer() override;
 
 private:
     PathListPtr mInputPathList;

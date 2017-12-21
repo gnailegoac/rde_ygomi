@@ -39,7 +39,7 @@ public:
     NurbsCurve();
     ~NurbsCurve();
 
-    virtual Point3DListPtr CalculatePointCloud(const double& aSamplingInterval) override;
+    Point3DListPtr CalculatePointCloud(const double& aSamplingInterval) override;
 
     bool Convert(const std::string& aStrExpr);
 

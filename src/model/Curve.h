@@ -61,7 +61,6 @@ public:
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(const size_t& aIndex) const;
 
-
 protected:
     std::uint64_t mCurveId;
     float mLength;

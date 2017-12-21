@@ -40,8 +40,8 @@ public:
     ~DbRepository();
 
     bool InitializeDataBase();
-    bool queryRoadElement(std::shared_ptr<MemoryModel>& aMemoryModel);
-    bool queryTopology(std::shared_ptr<MemoryModel>& aMemoryModel);
+    bool QueryRoadElement(std::shared_ptr<MemoryModel>& aMemoryModel);
+    bool QueryTopology(std::shared_ptr<MemoryModel>& aMemoryModel);
 
 private:
     void querySegments(std::shared_ptr<MemoryModel>& aMemoryModel) const;

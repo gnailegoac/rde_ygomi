@@ -66,7 +66,7 @@ bool Model::DbRepository::InitializeDataBase()
     return queryAllTables();
 }
 
-bool Model::DbRepository::queryRoadElement(std::shared_ptr<Model::MemoryModel>& aMemoryModel)
+bool Model::DbRepository::QueryRoadElement(std::shared_ptr<Model::MemoryModel>& aMemoryModel)
 {
     try
     {
@@ -83,7 +83,7 @@ bool Model::DbRepository::queryRoadElement(std::shared_ptr<Model::MemoryModel>& 
     return true;
 }
 
-bool Model::DbRepository::queryTopology(std::shared_ptr<Model::MemoryModel>& aMemoryModel)
+bool Model::DbRepository::QueryTopology(std::shared_ptr<Model::MemoryModel>& aMemoryModel)
 {
     try
     {
@@ -112,7 +112,6 @@ void Model::DbRepository::querySegments(std::shared_ptr<MemoryModel>& aMemoryMod
             {
                 std::int64_t tileId = query.getColumn(0).getInt64();
                 TilePtr tile = aMemoryModel->GetMutableTile(tileId);
-                tile->SetTileId(tileId);
                 tile->SetReferencePoint(parsePoint(query.getColumn(1).getString()));
             }
         }
@@ -261,8 +260,6 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
 
 void Model::DbRepository::queryTrafficSigns(std::shared_ptr<MemoryModel>& aMemoryModel) const
 {
-
-
     for (const std::string& trafficSignTable : *mTrafficSignTables)
     {
         const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(trafficSignTable, "_")[1]);

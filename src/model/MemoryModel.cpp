@@ -82,7 +82,7 @@ uint64_t Model::MemoryModel::GetTrafficSignIntId(const std::string& aId)
     return mTrafficSignIdMap->GetId(aId);
 }
 
-Model::TilePtr  Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
+Model::TilePtr Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
 {
     for (auto& itor : *mTileMap)
     {

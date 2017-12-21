@@ -25,7 +25,7 @@ public:
     Poly3Curve();
     ~Poly3Curve();
 
-    virtual Point3DListPtr CalculatePointCloud(const double&) override;
+    Point3DListPtr CalculatePointCloud(const double&) override;
 
     void SetX(const double& aX, const size_t& aIndex);
     double GetX(const size_t& aIndex) const;

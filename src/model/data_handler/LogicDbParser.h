@@ -30,7 +30,7 @@ public:
     LogicDbParser(const PathListPtr& aLogicDbFileList);
     ~LogicDbParser();
 
-    virtual MemoryModelPtr Parse() override;
+    MemoryModelPtr Parse() override;
 
 private:
     bool createTopology(MemoryModelPtr& aMemoryModel);

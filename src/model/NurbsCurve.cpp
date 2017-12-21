@@ -185,7 +185,7 @@ void Model::NurbsCurve::SetLineLength(const double& aLineLength)
 void Model::NurbsCurve::generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots)
 {
     std::vector<_vec3d> ctrls;
-    size_t controlPointSize = (size_t)aObjectCtrlPoints.size();
+    size_t controlPointSize = static_cast<size_t>(aObjectCtrlPoints.size());
 
     ctrls.reserve(controlPointSize);
     mControlPoints->clear();
@@ -204,7 +204,7 @@ void Model::NurbsCurve::generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoint
         mControlPoints->push_back(std::make_shared<Point3D>(point.x, point.y, point.z));
     }
 
-    size_t knotSize = (size_t)aObjectKnots.size();
+    size_t knotSize = static_cast<size_t>(aObjectKnots.size());
     mKnots->reserve(knotSize);
 
     for (size_t i = 0; i < knotSize; i++)
@@ -218,7 +218,7 @@ void Model::NurbsCurve::generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoint
 
 void Model::NurbsCurve::parsePaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints)
 {
-    size_t numPaint = (size_t)aObjectPaintEndPoints.size();
+    size_t numPaint = static_cast<size_t>(aObjectPaintEndPoints.size());
     mPaintRange->clear();
     mPaintRange->reserve(numPaint);
 
