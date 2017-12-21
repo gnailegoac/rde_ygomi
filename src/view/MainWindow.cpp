@@ -45,7 +45,7 @@ osg::Polytope View::MainWindow::GetPolytope()
     return viewer->GetPolytope();
 }
 
-void View::MainWindow::UpdateScene()
+void View::MainWindow::UpdateView()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     viewer->Refresh();
