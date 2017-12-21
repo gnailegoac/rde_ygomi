@@ -14,6 +14,8 @@
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
 
+const std::string MainProxy::NAME = "MainProxy";
+
 MainProxy::MainProxy():
     Proxy("MainProxy")
 {
