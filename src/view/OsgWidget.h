@@ -16,6 +16,7 @@
 #include <QOpenGLWidget>
 #include <QPoint>
 
+#include <osg/Camera>
 #include <osg/ref_ptr>
 
 #include <osgViewer/CompositeViewer>
@@ -45,6 +46,8 @@ public:
 
     virtual ~OsgWidget();
 
+    osg::Polytope GetPolytope();
+    void Refresh();
 protected:
 
     virtual void paintEvent(QPaintEvent* aPaintEvent);
@@ -69,7 +72,9 @@ private:
     osgGA::EventQueue* getEventQueue() const;
 
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
+    osg::ref_ptr<osgViewer::View> mView;
     osg::ref_ptr<Viewer> mViewer;
+    osg::ref_ptr<osg::Camera> mCamera;
 
     QPoint mSelectionStart;
     QPoint mSelectionEnd;
