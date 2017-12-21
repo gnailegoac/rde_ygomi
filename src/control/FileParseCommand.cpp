@@ -18,6 +18,7 @@
 #include "CommonFunction.h"
 #include "model/data_handler/Factory.h"
 #include "model/MemoryModel.h"
+#include "model/SceneModel.h"
 
 void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
@@ -27,6 +28,11 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(filePath);
         Model::IParserPtr parser = factory->CreateParser();
         Model::MemoryModelPtr memoryModel = parser->Parse();
+
+        //parse file
+        //put the meomery model into MainProxy
+        ceateSceneModel();
+        ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
     else if(aNotification.getName() == ApplicationFacade::FOLDER_OPEN_SUCCESS)
     {
@@ -35,7 +41,19 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(databaseFilePathList);
         Model::IParserPtr parser = factory->CreateParser();
         Model::MemoryModelPtr memoryModel = parser->Parse();
+
+        //parse file
+        //put the meomery model into MainProxy
+        ceateSceneModel();
+        ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
+}
+
+void Controller::FileParseCommand::ceateSceneModel()
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    std::shared_ptr<Model::SceneModel> sceneModel(new Model::SceneModel);
+    mainProxy.SetSceneModel(sceneModel);
 }
 
 std::string Controller::FileParseCommand::GetCommandName()

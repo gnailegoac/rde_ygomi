@@ -6,23 +6,22 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    FileParseCommand.h
+ * @file    SceneManageCommand.cpp
  *******************************************************************************
  */
 
-#pragma once
+#include "SceneManageCommand.h"
+#include "facade/ApplicationFacade.h"
 
-#include "BasicCommand.h"
-
-namespace Controller
+void Controller::SceneManageCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
-class FileParseCommand : public BasicCommand
-{
-public:
-    void execute(PureMVC::Interfaces::INotification const& aNotification) override;
-    static std::string GetCommandName();
-private:
-    void ceateSceneModel();
-};
+    if (aNotification.getName() == ApplicationFacade::INIT_SCENE)
+    {
+        //use memory model create quadtree
+    }
 }
 
+std::string Controller::SceneManageCommand::GetCommandName()
+{
+    return "SceneManageCommand";
+}

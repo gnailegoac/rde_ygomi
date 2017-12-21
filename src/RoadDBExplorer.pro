@@ -62,7 +62,9 @@ SOURCES +=\
     model/IdGenerator.cpp \
     model/data_handler/Factory.cpp \
     model/external/geo_alg.cpp \
-    model/Poly.cpp
+    model/Poly.cpp \
+    model/SceneModel.cpp \
+    control/SceneManageCommand.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -103,7 +105,9 @@ HEADERS  += view/MainWindow.h \
     model/IdGenerator.h \
     model/data_handler/Factory.h \
     model/external/geo_alg.h \
-    model/Poly.h
+    model/Poly.h \
+    model/SceneModel.h \
+    control/SceneManageCommand.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
