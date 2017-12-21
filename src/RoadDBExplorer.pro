@@ -51,7 +51,9 @@ SOURCES +=\
     CommonFunction.cpp \
     service/NetworkPreferenceProvider.cpp \
     view/WebRoadEditor.cpp \
-    view/NetworkPreferenceDialog.cpp
+    view/NetworkPreferenceDialog.cpp \
+    model/SceneModel.cpp \
+    control/SceneManageCommand.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -80,7 +82,9 @@ HEADERS  += view/MainWindow.h \
     CommonFunction.h \
     service/NetworkPreferenceProvider.h \
     view/WebRoadEditor.h \
-    view/NetworkPreferenceDialog.h
+    view/NetworkPreferenceDialog.h \
+    model/SceneModel.h \
+    control/SceneManageCommand.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
