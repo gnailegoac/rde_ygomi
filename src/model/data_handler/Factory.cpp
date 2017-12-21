@@ -6,34 +6,22 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    Factory.cpp
  * @brief
  *******************************************************************************
  */
 
-#pragma once
+#include "Factory.h"
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
+#include "../Common.h"
+#include "LogicDbFactory.h"
 
-namespace Model
+Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::vector<std::string>& aDbPathList)
 {
+   return std::unique_ptr<LogicDbFactory>(new LogicDbFactory(aDbPathList));
+}
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
-
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
-
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
-
-
+Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::string& aDbPath)
+{
+    return std::unique_ptr<LogicDbFactory>(new LogicDbFactory(aDbPath));
 }

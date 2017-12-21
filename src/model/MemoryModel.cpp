@@ -13,9 +13,14 @@
 #include "MemoryModel.h"
 
 #include "Tile.h"
+#include "IdGenerator.h"
 
 Model::MemoryModel::MemoryModel():
-    mTileMap(std::make_shared<std::unordered_map<std::int64_t, std::shared_ptr<Tile>>>())
+    mTileMap(std::make_shared<std::unordered_map<std::int64_t, std::shared_ptr<Tile>>>()),
+    mCurveIdMap(std::make_shared<IdGeneratorMap<Curve>>()),
+    mLineIdMap(std::make_shared<IdGeneratorMap<Line>>()),
+    mLaneIdMap(std::make_shared<IdGeneratorMap<Lane>>()),
+    mTrafficSignIdMap(std::make_shared<IdGeneratorMap<TrafficSign>>())
 {
 
 }
@@ -35,7 +40,7 @@ Model::TileMapPtr Model::MemoryModel::GetMutableTileMap()
     return mTileMap;
 }
 
-Model::TilePtr Model::MemoryModel::GetTile(const std::int64_t& aId)
+Model::TileConstPtr Model::MemoryModel::GetTile(const std::int64_t& aId)
 {
     if (0 != mTileMap->count(aId))
     {
@@ -44,3 +49,52 @@ Model::TilePtr Model::MemoryModel::GetTile(const std::int64_t& aId)
 
     return nullptr;
 }
+
+Model::TilePtr Model::MemoryModel::GetMutableTile(const std::int64_t& aId)
+{
+    if (0 == mTileMap->count(aId))
+    {
+        TilePtr tile = std::make_shared<Tile>();
+        tile->SetTileId(aId);
+        (*mTileMap)[aId] = tile;
+    }
+
+    return mTileMap->at(aId);
+}
+
+uint64_t Model::MemoryModel::GetCurveIntId(const std::string& aId)
+{
+    return mCurveIdMap->GetId(aId);
+}
+
+uint64_t Model::MemoryModel::GetLineIntId(const std::string& aId)
+{
+    return mLineIdMap->GetId(aId);
+}
+
+uint64_t Model::MemoryModel::GetLaneIntId(const std::string& aId)
+{
+    return mLaneIdMap->GetId(aId);
+}
+
+uint64_t Model::MemoryModel::GetTrafficSignIntId(const std::string& aId)
+{
+    return mTrafficSignIdMap->GetId(aId);
+}
+
+Model::TilePtr  Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
+{
+    for (auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const LaneMapPtr& laneMap = tile->GetLaneMap();
+
+        if (0 != laneMap->count(aLaneId))
+        {
+            return tile;
+        }
+    }
+
+    return nullptr;
+}
+

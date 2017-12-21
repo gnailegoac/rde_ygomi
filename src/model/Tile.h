@@ -32,28 +32,37 @@ public:
     const std::int64_t& GetTileId() const;
     void SetTileId(const std::int64_t& aTileId);
 
+    const Point3DPtr& GetReferencePoint() const;
+    void SetReferencePoint(const Point3DPtr& aReferencePoint);
+
     const TrafficSignMapPtr& GetTrafficSignMap() const;
     TrafficSignMapPtr GetMutableTrafficSignMap();
     TrafficSignPtr GetTrafficSign(const std::uint64_t& aId);
+    TrafficSignPtr GetMutableTrafficSign(const std::uint64_t& aId);
 
     const RoadMapPtr& GetRoadMap() const;
     RoadMapPtr GetMutableRoadMap();
     RoadPtr GetRoad(const std::uint64_t& aId);
+    RoadPtr GetMutableRoad(const std::uint64_t& aId);
 
     const LaneMapPtr& GetLaneMap() const;
     LaneMapPtr GetMutableLaneMap();
     LanePtr GetLane(const std::uint64_t& aId);
+    LanePtr GetMutableLane(const std::uint64_t& aId);
 
     const LineMapPtr& GetLineMap() const;
     LineMapPtr GetMutableLineMap();
     LinePtr GetLine(const std::uint64_t& aId);
+    LinePtr GetMutableLine(const std::uint64_t& aId);
 
     const JunctionMapPtr& GetJunctionMap() const;
     JunctionMapPtr GetMutableJunctionMap();
     JunctionPtr GetJunction(const std::uint64_t& aId);
+    JunctionPtr GetMutableJunction(const std::uint64_t& aId);
 
 private:
     std::int64_t mTileId;
+    Point3DPtr mReferencePoint;
     TrafficSignMapPtr mTrafficSignMap;
     RoadMapPtr mRoadMap;
     LaneMapPtr mLaneMap;

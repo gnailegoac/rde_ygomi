@@ -15,13 +15,15 @@
 
 #include "Common.h"
 
+#include "Point3D.h"
+
 namespace Model
 {
 
 typedef std::shared_ptr<std::vector<std::pair<double, double>>> PaintRangePtr;
 typedef std::shared_ptr<const std::vector<std::pair<double, double>>> PaintRangeConstPtr;
 
-enum class CurveType : std::uint8_t
+enum class CurveType : std::uint32_t
 {
     Solid = 0,
     Dashed = 1,
@@ -37,6 +39,8 @@ public:
     Curve();
     ~Curve();
 
+    virtual Point3DListPtr CalculatePointCloud(const double&);
+
     const std::uint64_t& GetCurveId() const;
     void SetCurveId(const std::uint64_t& aCurveId);
 
@@ -46,8 +50,8 @@ public:
     CurveType GetCurveType() const;
     void SetCurveType(CurveType aCurveType);
 
-    std::int8_t GetIndexInLine() const;
-    void SetIndexInLine(std::int8_t aIndexInLine);
+    std::uint32_t GetIndexInLine() const;
+    void SetIndexInLine(std::uint32_t aIndexInLine);
 
     float GetWidth() const;
     void SetWidth(float aWidth);
@@ -57,11 +61,12 @@ public:
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(const size_t& aIndex) const;
 
+
 protected:
     std::uint64_t mCurveId;
     float mLength;
     CurveType mCurveType;
-    std::int8_t mIndexInLine;
+    std::uint32_t mIndexInLine;
     float mWidth;
     PaintRangePtr mPaintRange;
 };

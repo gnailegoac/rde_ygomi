@@ -6,34 +6,24 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    Factory.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
+#include "IFactory.h"
 
 namespace Model
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+class Factory
+{
+public:
+    static IFactoryPtr CreateLogicDbFactory(const std::vector<std::string>& aDbPathList);
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
-
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
-
+    static IFactoryPtr CreateLogicDbFactory(const std::string& aDbPath);
+};
 
 }
