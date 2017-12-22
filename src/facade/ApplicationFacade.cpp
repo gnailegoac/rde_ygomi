@@ -31,6 +31,8 @@ const std::string ApplicationFacade::FOLDER_OPEN = "FolderOpen";
 const std::string ApplicationFacade::FILE_OPEN_SUCCESS = "FileOpenSuccess";
 const std::string ApplicationFacade::FOLDER_OPEN_SUCCESS = "FolderOpenSuccess";
 const std::string ApplicationFacade::INIT_SCENE = "InitScene";
+const std::string ApplicationFacade::REFRESH_SCENE = "RefreshScene";
+const std::string ApplicationFacade::REFRESH_WINDOW = "RefreshWindow";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -95,7 +97,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[START_UP] = Controller::StartUpCommand::GetCommandName();
     mMessageList[FOLDER_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
-    mMessageList[INIT_SCENE] = Controller::SceneManageCommand::GetCommandName();
+    mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

@@ -5,6 +5,7 @@ out/
 system_test/
 build*
 
+*.pri
 *.a
 *.so
 *.user*

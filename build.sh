@@ -24,13 +24,14 @@ ${make_tool} ../src
 make
 cd ..
 
-if [ -d "test" ]; then
+if [ -d "unit_test" ]; then
+    echo "build unit_test"
     cp ./ci.example.test.external.pri ./test.external.pri
-    mkdir -p build_test
-    cd build_test
+    mkdir -p build_ut
+    cd build_ut
     echo "===== start build unit test ====="
-    conan install ../test --build --update
-    ${make_tool} ../test
+    conan install ../unit_test --build --update
+    ${make_tool} ../unit_test
     make
     cd ..
 fi

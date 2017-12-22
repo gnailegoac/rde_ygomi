@@ -31,6 +31,8 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
             new PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>;
     result->get().push_back(ApplicationFacade::FILE_OPEN);
     result->get().push_back(ApplicationFacade::FOLDER_OPEN);
+    result->get().push_back(ApplicationFacade::INIT_SCENE);
+    result->get().push_back(ApplicationFacade::REFRESH_WINDOW);
     return NotificationNames(result);
 }
 
@@ -65,6 +67,12 @@ std::vector<std::string> View::MainWindowMediator::searchDatabaseFileList(const 
     return databaseFileList;
 }
 
+View::MainWindow* View::MainWindowMediator::getMainWindow()
+{
+    View::MainWindow* mainWindow = CommonFunction::ConvertToNonConstType<View::MainWindow>(getViewComponent());
+    return mainWindow;
+}
+
 void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotification const& aNotification)
 {
     std::string noteName = aNotification.getName();
@@ -83,9 +91,20 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         }
         else
         {
-            View::MainWindow* mainWindow = CommonFunction::ConvertToNonConstType<View::MainWindow>(getViewComponent());
+            View::MainWindow* mainWindow = getMainWindow();
             mainWindow->PopupWarningMessage("No DB file found!");
         }
+    }
+    else if(noteName == ApplicationFacade::INIT_SCENE)
+    {
+        View::MainWindow* mainWindow = getMainWindow();
+        osg::Polytope polytope = mainWindow->GetPolytope();
+        ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
+    }
+    else if(noteName == ApplicationFacade::REFRESH_WINDOW)
+    {
+        View::MainWindow* mainWindow = getMainWindow();
+        mainWindow->UpdateView();
     }
 }
 

@@ -17,7 +17,6 @@
 #include <QPoint>
 
 #include <osg/ref_ptr>
-
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/GraphicsWindow>
 
@@ -45,21 +44,23 @@ public:
 
     virtual ~OsgWidget();
 
+    osg::Polytope GetPolytope();
+    void Refresh();
 protected:
 
-    virtual void paintEvent(QPaintEvent* aPaintEvent);
-    virtual void paintGL();
-    virtual void resizeGL(int aWidth, int aHeight);
+    void paintEvent(QPaintEvent* aPaintEvent) override;
+    void paintGL() override;
+    void resizeGL(int aWidth, int aHeight) override;
 
-    virtual void keyPressEvent(QKeyEvent* aEvent);
-    virtual void keyReleaseEvent(QKeyEvent* aEvent);
+    void keyPressEvent(QKeyEvent* aEvent) override;
+    void keyReleaseEvent(QKeyEvent* aEvent) override;
 
-    virtual void mouseMoveEvent(QMouseEvent* aEvent);
-    virtual void mousePressEvent(QMouseEvent* aEvent);
-    virtual void mouseReleaseEvent(QMouseEvent* aEvent);
-    virtual void wheelEvent(QWheelEvent* aEvent);
+    void mouseMoveEvent(QMouseEvent* aEvent) override;
+    void mousePressEvent(QMouseEvent* aEvent) override;
+    void mouseReleaseEvent(QMouseEvent* aEvent) override;
+    void wheelEvent(QWheelEvent* aEvent) override;
 
-    virtual bool event(QEvent* aEvent);
+    bool event(QEvent* aEvent) override;
 
 private:
 
@@ -69,6 +70,7 @@ private:
     osgGA::EventQueue* getEventQueue() const;
 
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
+    osg::ref_ptr<osgViewer::View> mView;
     osg::ref_ptr<Viewer> mViewer;
 
     QPoint mSelectionStart;

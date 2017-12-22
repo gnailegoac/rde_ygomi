@@ -23,6 +23,7 @@ namespace Model
 class MainProxy : public PureMVC::Patterns::Proxy
 {
 public:
+    static const std::string NAME;
     MainProxy();
     MainProxy(const std::string& aName);
 

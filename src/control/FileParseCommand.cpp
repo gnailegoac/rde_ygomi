@@ -31,6 +31,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
 
         //parse file
         //put the meomery model into MainProxy
+        setMemoryModel(memoryModel);
         ceateSceneModel();
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
@@ -44,6 +45,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
 
         //parse file
         //put the meomery model into MainProxy
+        setMemoryModel(memoryModel);
         ceateSceneModel();
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
@@ -59,4 +61,10 @@ void Controller::FileParseCommand::ceateSceneModel()
 std::string Controller::FileParseCommand::GetCommandName()
 {
     return "FileParseCommand";
+}
+
+void Controller::FileParseCommand::setMemoryModel(const Model::MemoryModelPtr& aMemoryModel)
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    mainProxy.SetMemoryModel(aMemoryModel);
 }

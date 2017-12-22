@@ -15,6 +15,8 @@
 #include <QMainWindow>
 #include <QString>
 
+#include <osg/Polytope>
+
 namespace Ui {
 class MainWindow;
 }
@@ -29,6 +31,8 @@ public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
+    osg::Polytope GetPolytope();
+    void UpdateView();
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;

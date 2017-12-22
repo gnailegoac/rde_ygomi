@@ -13,6 +13,7 @@
 #pragma once
 
 #include "BasicCommand.h"
+#include "model/data_handler/IParser.h"
 
 namespace Controller
 {
@@ -22,6 +23,7 @@ public:
     void execute(PureMVC::Interfaces::INotification const& aNotification) override;
     static std::string GetCommandName();
 private:
+    void setMemoryModel(const Model::MemoryModelPtr& aMemoryModel);
     void ceateSceneModel();
 };
 }
