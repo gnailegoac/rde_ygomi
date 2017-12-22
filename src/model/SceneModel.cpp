@@ -76,7 +76,7 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
         Model::LinePtr leftLine = lane->GetLeftLine();
         osg::Group* laneNode = nullptr;
 
-        if(lineIdSet.find(leftLine->GetLineId()) != lineIdSet.end())
+        if(lineIdSet.find(leftLine->GetLineId()) == lineIdSet.end())
         {
             if(laneNode == nullptr)
             {
@@ -87,7 +87,7 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
             lineIdSet.insert(leftLine->GetLineId());
         }
 
-        if(lineIdSet.find(rightLine->GetLineId()) != lineIdSet.end())
+        if(lineIdSet.find(rightLine->GetLineId()) == lineIdSet.end())
         {
             if(laneNode == nullptr)
             {

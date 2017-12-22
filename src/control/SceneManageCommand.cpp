@@ -12,6 +12,8 @@
 
 #include <osg/Geometry>
 #include <osg/Geode>
+#include <osgDB/WriteFile>
+#include <QDebug>
 
 #include "SceneManageCommand.h"
 #include "facade/ApplicationFacade.h"
@@ -53,14 +55,19 @@ void Controller::SceneManageCommand::constructScene(osg::Polytope& aPolytope)
         for (const auto& road : *roadMap)
         {
             // Get bounding box's minimum and maximum x,y,z
-            osg::BoundingBox boundingBox;
-            convertBoundingbox(road.second->GetBox(), boundingBox);
-            if (aPolytope.contains(boundingBox))
+//            osg::BoundingBox boundingBox;
+//            convertBoundingbox(road.second->GetBox(), boundingBox);
+//            if (aPolytope.contains(boundingBox))
             {
                 sceneModel->AddRoadToScene(road.second);
             }
         }
     }
+//    bool wirteResult = osgDB::writeNodeFile(*(sceneModel->GetSceneModelRoot()), "/home/fei/osm-data/roads.osg");
+//    if (!wirteResult)
+//    {
+//        qDebug() << "Fail to save node.";
+//    }
 }
 
 void Controller::SceneManageCommand::convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox,
