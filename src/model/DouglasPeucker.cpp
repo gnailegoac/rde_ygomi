@@ -19,8 +19,7 @@ namespace
 const double ZERO = 1e-6;
 }
 
-Model::DouglasPeucker::DouglasPeucker(const Point3DListPtr& aPointList):
-    mPoints(aPointList)
+Model::DouglasPeucker::DouglasPeucker()
 {
 
 }
@@ -31,17 +30,19 @@ Model::DouglasPeucker::~DouglasPeucker()
 }
 
 Model::Point3DListPtr Model::DouglasPeucker::Simplify(
-                const double& aThreshold) const
+                const Point3DListPtr& aPoints,
+                const double& aThreshold)
 {
     std::vector<Point3DPtr> simplified;
     std::vector<std::uint32_t> resultIndex;
     std::vector<std::pair<std::uint32_t, std::uint32_t> > periods;
-    periods.push_back(std::make_pair(0, mPoints->size() - 1));
+    periods.push_back(std::make_pair(0, aPoints->size() - 1));
     while (!periods.empty())
     {
         auto line = periods.back();
         periods.pop_back();
-        std::pair<std::uint32_t, double> point = getFarthestPoint(line.first,
+        std::pair<std::uint32_t, double> point = getFarthestPoint(aPoints,
+                                                                  line.first,
                                                                   line.second);
         if (point.second >= aThreshold)
         {
@@ -53,7 +54,7 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
             resultIndex.push_back(line.first);
         }
     }
-    resultIndex.push_back(mPoints->size() - 1);
+    resultIndex.push_back(aPoints->size() - 1);
 
     // sort index and get points
     std::sort(resultIndex.begin(), resultIndex.end(),
@@ -63,24 +64,34 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
     });
     for (auto& idx : resultIndex)
     {
-        simplified.push_back(mPoints->at(idx));
+        simplified.push_back(aPoints->at(idx));
     }
     return std::make_shared<Point3DList>(simplified);
 }
 
 double Model::DouglasPeucker::pointToPointDistance(
                 const Model::Point3DPtr& aLhs,
-                const Model::Point3DPtr& aRhs) const
+                const Model::Point3DPtr& aRhs)
 {
     return mod(std::make_shared<Point3D>(aLhs->GetX() - aRhs->GetX(),
                                          aLhs->GetY() - aRhs->GetY(),
                                          aLhs->GetZ() - aRhs->GetZ()));
 }
 
+///----------------------------------------------------------------------------
+/// point to line distance is calculated based on triangle area calculation,
+/// where relevant parameters are listed in the following figure
+///                                    p
+///                                   @
+///                                  *   *
+///                                 *       *
+///                                *           *
+///                               *               *
+///                           L1 @*******************@ L2
 double Model::DouglasPeucker::pointToLineDistance(
                 const Model::Point3DPtr& aPoint,
                 const Model::Point3DPtr& aL1,
-                const Model::Point3DPtr& aL2) const
+                const Model::Point3DPtr& aL2)
 {
     Point3DPtr vecL1p = std::make_shared<Point3D>(aPoint->GetX() - aL1->GetX(),
                                                   aPoint->GetY() - aL1->GetY(),
@@ -105,27 +116,30 @@ double Model::DouglasPeucker::pointToLineDistance(
     else
     {
         // Heron's formula
-        double a = mod(vecL12);
-        if (a < ZERO)
+        double lengthL12 = mod(vecL12);
+        if (lengthL12 < ZERO)
         {
             return mod(vecL1p);
         }
-        double b = mod(vecL2p);
-        double c = mod(vecL1p);
-        double p = 0.5 * (a + b + c);
-        return 2 * std::sqrt((p) * (p - a) * (p - b) * (p - c)) / a;
+        double lengthL2p = mod(vecL2p);
+        double lengthL1p = mod(vecL1p);
+        double semiPerimeter = 0.5 * (lengthL12 + lengthL2p + lengthL1p);
+        return 2 * std::sqrt((semiPerimeter)
+                             * (semiPerimeter - lengthL12)
+                             * (semiPerimeter - lengthL2p)
+                             * (semiPerimeter - lengthL1p)) / lengthL12;
     }
 }
 
 double Model::DouglasPeucker::innerProduct(const Model::Point3DPtr& aLhs,
-                                           const Model::Point3DPtr& aRhs) const
+                                           const Model::Point3DPtr& aRhs)
 {
     return aLhs->GetX() * aRhs->GetX()
            + aLhs->GetY() * aRhs->GetY()
            + aLhs->GetZ() * aRhs->GetZ();
 }
 
-double Model::DouglasPeucker::mod(const Model::Point3DPtr& aVector) const
+double Model::DouglasPeucker::mod(const Model::Point3DPtr& aVector)
 {
     return std::sqrt(aVector->GetX() * aVector->GetX()
                      + aVector->GetY() * aVector->GetY()
@@ -133,16 +147,17 @@ double Model::DouglasPeucker::mod(const Model::Point3DPtr& aVector) const
 }
 
 std::pair<std::uint32_t, double> Model::DouglasPeucker::getFarthestPoint(
+                const Point3DListPtr& aPoints,
                 std::uint32_t aBegin,
-                std::uint32_t aEnd) const
+                std::uint32_t aEnd)
 {
     std::uint32_t idx = 0;
     double maxDistance = 0;
     for (std::uint32_t i = aBegin + 1; i < aEnd; ++i)
     {
-        double distance = pointToLineDistance(mPoints->at(i),
-                                              mPoints->at(aBegin),
-                                              mPoints->at(aEnd));
+        double distance = pointToLineDistance(aPoints->at(i),
+                                              aPoints->at(aBegin),
+                                              aPoints->at(aEnd));
         if (distance > maxDistance)
         {
             idx = i;

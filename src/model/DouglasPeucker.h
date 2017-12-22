@@ -20,26 +20,25 @@ namespace Model
 class DouglasPeucker
 {
 public:
-    DouglasPeucker(const Point3DListPtr& aPointList);
+    DouglasPeucker();
     ~DouglasPeucker();
 
-    Point3DListPtr Simplify(const double& aThreshold) const;
+    static Point3DListPtr Simplify(const Point3DListPtr& aPoints,
+                                   const double& aThreshold);
 
 private:
-    double pointToPointDistance(const Point3DPtr& aLhs,
-                                const Point3DPtr& aRhs) const;
-    double pointToLineDistance(const Point3DPtr& aPoint,
-                               const Point3DPtr& aL1,
-                               const Point3DPtr& aL2) const;
-    double innerProduct(const Point3DPtr& aLhs,
-                        const Point3DPtr& aRhs) const;
-    double mod(const Point3DPtr& aVector) const;
-    std::pair<std::uint32_t, double> getFarthestPoint(
+    static double pointToPointDistance(const Point3DPtr& aLhs,
+                                       const Point3DPtr& aRhs);
+    static double pointToLineDistance(const Point3DPtr& aPoint,
+                                      const Point3DPtr& aL1,
+                                      const Point3DPtr& aL2);
+    static double innerProduct(const Point3DPtr& aLhs,
+                               const Point3DPtr& aRhs);
+    static double mod(const Point3DPtr& aVector);
+    static std::pair<std::uint32_t, double> getFarthestPoint(
+                    const Point3DListPtr& aPoints,
                     std::uint32_t aBegin,
-                    std::uint32_t aEnd) const;
-
-private:
-    Point3DListPtr mPoints;
+                    std::uint32_t aEnd);
 };
 
 }
