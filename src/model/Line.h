@@ -58,6 +58,7 @@ public:
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
     Point3DListPtr GetMutablePointListByLevel(std::uint8_t aLevel);
+    void GenerateViewPointMap();
 
 private:
     std::uint64_t mLineId;

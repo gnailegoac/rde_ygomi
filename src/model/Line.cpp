@@ -14,7 +14,8 @@
 #include "Line.h"
 
 #include "CoordinateTransform/Factory.h"
-#include "CoordinateTransform/ICoordinateTransform.h"
+
+#include "DouglasPeucker.h"
 
 Model::Line::Line():
     Element(),
@@ -52,8 +53,8 @@ const Model::CurveListPtr& Model::Line::GetCurveList() const
 void Model::Line::SortCurve()
 {
     std::sort(mCurveList->begin(), mCurveList->end(),
-              [](const CurvePtr& aLhs,
-                 const CurvePtr& aRhs)
+              [](const CurvePtr & aLhs,
+                 const CurvePtr & aRhs)
     {
         return aLhs->GetIndexInLine() <= aRhs->GetIndexInLine();
     });
@@ -133,10 +134,6 @@ void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const 
                                                      aReferencePoint->GetX(),
                                                      aReferencePoint->GetY(),
                                                      aReferencePoint->GetZ());
-    std::unique_ptr<CRS::ICoordinateTransform> wgs84ToUtm =
-                    factory->CreateProjectionTransform(CRS::CoordinateType::Wgs84,
-                                                       CRS::CoordinateType::Utm,
-                                                       "+proj=utm +datum=WGS84 +unit=m +no_defs");
     mGeodeticPoints->clear();
 
     for (CurvePtr curve : *mCurveList)
@@ -150,7 +147,6 @@ void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const 
             double y = point->GetY();
             double z = point->GetZ();
             relativeToWgs84->Transform(x, y, z);
-            wgs84ToUtm->Transform(x, y, z);
             mGeodeticPoints->push_back(std::make_shared<Point3D>(x, y, z));
         }
     }
@@ -184,4 +180,31 @@ Model::Point3DListPtr Model::Line::GetMutablePointListByLevel(std::uint8_t aLeve
     }
 
     return mPointListMap->at(aLevel);
+}
+
+void Model::Line::GenerateViewPointMap()
+{
+    // Convert geodetic coordinates into UTM coordinates
+    auto utm = CRS::Factory().CreateProjectionTransform(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Utm,
+                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+    Point3DListPtr points = std::make_shared<Point3DList>();
+    points->reserve(mGeodeticPoints->size());
+    for (auto& p : *mGeodeticPoints)
+    {
+        double lon = p->GetX();
+        double lat = p->GetY();
+        double ele = p->GetZ();
+        utm->Transform(lon, lat, ele);
+        points->push_back(std::make_shared<Point3D>(lon, lat, ele));
+    }
+
+    // Down-sample points with Douglas-Peucker algorithm
+    mPointListMap->insert(std::make_pair(1, Model::DouglasPeucker
+                                         ::Simplify(points, 1)));
+    mPointListMap->insert(std::make_pair(2, Model::DouglasPeucker
+                                         ::Simplify(points, 0.5)));
+    mPointListMap->insert(std::make_pair(3, Model::DouglasPeucker
+                                         ::Simplify(points, 0.1)));
 }
