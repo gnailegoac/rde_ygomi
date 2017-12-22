@@ -14,7 +14,6 @@
 #include "Line.h"
 
 #include "CoordinateTransform/Factory.h"
-#include "CoordinateTransform/ICoordinateTransform.h"
 
 #include "DouglasPeucker.h"
 
@@ -54,8 +53,8 @@ const Model::CurveListPtr& Model::Line::GetCurveList() const
 void Model::Line::SortCurve()
 {
     std::sort(mCurveList->begin(), mCurveList->end(),
-              [](const CurvePtr& aLhs,
-                 const CurvePtr& aRhs)
+              [](const CurvePtr & aLhs,
+                 const CurvePtr & aRhs)
     {
         return aLhs->GetIndexInLine() <= aRhs->GetIndexInLine();
     });

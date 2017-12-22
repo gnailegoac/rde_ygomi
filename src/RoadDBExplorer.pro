@@ -64,7 +64,7 @@ SOURCES +=\
     model/external/geo_alg.cpp \
     model/Poly.cpp \
     model/SceneModel.cpp \
-    control/SceneManageCommand.cpp
+    control/SceneManageCommand.cpp \
     model/DouglasPeucker.cpp
 
 HEADERS  += view/MainWindow.h \
@@ -108,7 +108,7 @@ HEADERS  += view/MainWindow.h \
     model/external/geo_alg.h \
     model/Poly.h \
     model/SceneModel.h \
-    control/SceneManageCommand.h
+    control/SceneManageCommand.h \
     model/DouglasPeucker.h
 
 FORMS    += view/MainWindow.ui \
