@@ -97,9 +97,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[START_UP] = Controller::StartUpCommand::GetCommandName();
     mMessageList[FOLDER_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
-//    mMessageList[INIT_SCENE] = Controller::SceneManageCommand::GetCommandName();
     mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
-//    mMessageList[REFRESH_WINDOW] = Controller::SceneManageCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

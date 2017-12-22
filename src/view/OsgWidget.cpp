@@ -23,6 +23,7 @@
 #include <QPainter>
 #include <QWheelEvent>
 
+#include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
 #include <osg/Material>
@@ -115,19 +116,19 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
                                                           this->height())),
     mView(new osgViewer::View),
     mViewer(new View::Viewer),
-    mCamera(new osg::Camera),
     mSelectionActive(false),
     mSelectionFinished(true)
 {
     float aAspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
     auto aPixelRatio = this->devicePixelRatio();
 
-    mCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
-    mCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
-    mCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
-    mCamera->setGraphicsContext(mGraphicsWindow);
+    osg::Camera* aCamera = new osg::Camera;
+    aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
+    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
+    aCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
+    aCamera->setGraphicsContext(mGraphicsWindow);
 
-    mView->setCamera(mCamera);
+    mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
 
     osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
@@ -157,8 +158,8 @@ View::OsgWidget::~OsgWidget()
 
 osg::Polytope View::OsgWidget::GetPolytope()
 {
-    osg::Matrixd viewMatrix = mCamera->getViewMatrix();
-    osg::Matrixd projectionMatrix = mCamera->getProjectionMatrix();
+    osg::Matrixd viewMatrix = mView->getCamera()->getViewMatrix();
+    osg::Matrixd projectionMatrix = mView->getCamera()->getProjectionMatrix();
     osg::Matrixd viewProjectMatrix = viewMatrix * projectionMatrix;
     osg::Polytope frustum;
     frustum.setToUnitFrustum();
@@ -388,7 +389,7 @@ void View::OsgWidget::onHome()
 void View::OsgWidget::onResize(int aWidth, int aHeight)
 {
     auto aPixelRatio = this->devicePixelRatio();
-    mCamera->setViewport(0, 0, aWidth * aPixelRatio, aHeight * aPixelRatio);
+    mView->getCamera()->setViewport(0, 0, aWidth * aPixelRatio, aHeight * aPixelRatio);
 }
 
 osgGA::EventQueue* View::OsgWidget::getEventQueue() const

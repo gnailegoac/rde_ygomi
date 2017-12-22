@@ -16,9 +16,7 @@
 #include <QOpenGLWidget>
 #include <QPoint>
 
-#include <osg/Camera>
 #include <osg/ref_ptr>
-
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/GraphicsWindow>
 
@@ -74,7 +72,6 @@ private:
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
     osg::ref_ptr<osgViewer::View> mView;
     osg::ref_ptr<Viewer> mViewer;
-    osg::ref_ptr<osg::Camera> mCamera;
 
     QPoint mSelectionStart;
     QPoint mSelectionEnd;

@@ -89,6 +89,7 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPoints(referencePoint, samplingInterval);
+            line->GenerateViewPointMap();
         }
     }
 
