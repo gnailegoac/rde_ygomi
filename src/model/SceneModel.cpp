@@ -44,14 +44,14 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
 
 osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& aLine) const
 {
-    Model::ViewPointMapPtr viewPointMapPtr = aLine->GetPointListMap();
-    if(viewPointMapPtr->size() == 0)
+    Model::Point3DListPtr viewPointListPtr = aLine->GetPointListByLevel(2);
+    if(viewPointListPtr->size() == 0)
     {
         return nullptr;
     }
 
     osg::ref_ptr<osg::Vec3dArray> vertexArray = new osg::Vec3dArray;
-    for (auto point : *viewPointMapPtr->begin()->second)
+    for (auto point : *viewPointListPtr)
     {
         vertexArray->push_back(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
     }

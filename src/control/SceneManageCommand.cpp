@@ -63,11 +63,6 @@ void Controller::SceneManageCommand::constructScene(osg::Polytope& aPolytope)
             }
         }
     }
-//    bool wirteResult = osgDB::writeNodeFile(*(sceneModel->GetSceneModelRoot()), "/home/fei/osm-data/roads.osg");
-//    if (!wirteResult)
-//    {
-//        qDebug() << "Fail to save node.";
-//    }
 }
 
 void Controller::SceneManageCommand::convertBoundingbox(const Model::BoundingBoxPtr& aBoundingBox,
