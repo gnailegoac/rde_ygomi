@@ -123,10 +123,10 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
     auto aPixelRatio = this->devicePixelRatio();
 
     osg::Camera* aCamera = new osg::Camera;
-    aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
-    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
-    aCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
     aCamera->setGraphicsContext(mGraphicsWindow);
+    aCamera->setClearColor(osg::Vec4( 0.f, 0.f, 0.f, 1.f ));
+    aCamera->setViewport(0, 0, this->width() * aPixelRatio, this->height() * aPixelRatio);
+    aCamera->setProjectionMatrixAsPerspective(30.f, aAspectRatio, 1.f, 1000.f);
 
     mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
@@ -175,6 +175,12 @@ void View::OsgWidget::Refresh()
     {
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
+    osg::Vec3d eye, center, up;
+    mView->getCameraManipulator()->getHomePosition(eye, center, up);
+    eye = eye + up * 10000.0;
+    mView->getCameraManipulator()->setHomePosition(eye, center, up);
+    mView->home();
+
     paintGL();
 }
 
@@ -330,6 +336,7 @@ void View::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
         default:
             break;
         }
+
         auto aPixelRatio = this->devicePixelRatio();
         this->getEventQueue()->mouseButtonRelease(static_cast<float>(aPixelRatio * aEvent->x()),
                                                   static_cast<float>(aPixelRatio * aEvent->y()),
