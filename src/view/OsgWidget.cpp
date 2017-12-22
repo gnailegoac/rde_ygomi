@@ -33,7 +33,7 @@
 
 #include <osgGA/EventQueue>
 #include <osgDB/ReadFile>
-#include <osgGA/TrackballManipulator>
+#include <osgGA/TerrainManipulator>
 #include <osgDB/WriteFile>
 
 #include <osgUtil/IntersectionVisitor>
@@ -131,7 +131,7 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
     mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
 
-    osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
+    osgGA::TerrainManipulator* aManipulator = new osgGA::TerrainManipulator;
     aManipulator->setAllowThrow(false);
 
     mView->setCameraManipulator(aManipulator);
