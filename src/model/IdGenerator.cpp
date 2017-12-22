@@ -6,34 +6,30 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    IdGenerator.cpp
  * @brief
  *******************************************************************************
  */
 
-#pragma once
+#include "IdGenerator.h"
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
-
-namespace Model
+Model::IdGenerator::IdGenerator():
+    mId(1)
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+}
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
+Model::IdGenerator::~IdGenerator()
+{
 
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
+}
 
+std::uint64_t Model::IdGenerator::GetId() const
+{
+    return mId;
+}
 
+std::uint64_t Model::IdGenerator::GetNewId()
+{
+    return ++mId;
 }

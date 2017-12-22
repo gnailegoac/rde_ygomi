@@ -6,34 +6,43 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    DbParseException.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
+#include <exception>
+#include <string>
 
 namespace Model
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+class DbParseException : public std::exception
+{
+public:
+    enum class Type
+    {
+        DbParseError,
+        RoadPointillizeError,
+        TrafficSignPointillizeError,
+        LaneConnectionError,
+        CoordinateTransformError
+    };
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
+public:
+    DbParseException(Type aType, const std::string& aError);
+    ~DbParseException();
 
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
+    Type GetType() const;
+    void SetType(Type aType);
 
+    const char* what() const throw() override;
+
+private:
+    Type mType;
+    std::string mError;
+};
 
 }

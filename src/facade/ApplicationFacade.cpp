@@ -15,6 +15,7 @@
 #include "view/MainWindow.h"
 #include "control/StartUpCommand.h"
 #include "control/FileParseCommand.h"
+#include "control/SceneManageCommand.h"
 
 const std::string ApplicationFacade::NAME = "ApplicationFacade";
 std::map<std::string, PureMVC::Patterns::IProxy*> ApplicationFacade::mProxyList;
@@ -29,6 +30,7 @@ const std::string ApplicationFacade::FILE_OPEN = "FileOpen";
 const std::string ApplicationFacade::FOLDER_OPEN = "FolderOpen";
 const std::string ApplicationFacade::FILE_OPEN_SUCCESS = "FileOpenSuccess";
 const std::string ApplicationFacade::FOLDER_OPEN_SUCCESS = "FolderOpenSuccess";
+const std::string ApplicationFacade::INIT_SCENE = "InitScene";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -84,6 +86,8 @@ void ApplicationFacade::initializeCommands()
             std::shared_ptr<Controller::StartUpCommand>(new Controller::StartUpCommand);
     mCommandList[Controller::FileParseCommand::GetCommandName()] =
             std::shared_ptr<Controller::FileParseCommand>(new Controller::FileParseCommand);
+    mCommandList[Controller::SceneManageCommand::GetCommandName()] =
+            std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()
@@ -91,6 +95,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[START_UP] = Controller::StartUpCommand::GetCommandName();
     mMessageList[FOLDER_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
+    mMessageList[INIT_SCENE] = Controller::SceneManageCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

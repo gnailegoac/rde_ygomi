@@ -14,6 +14,8 @@
 #include "Line.h"
 
 #include "CoordinateTransform/Factory.h"
+#include "CoordinateTransform/ICoordinateTransform.h"
+
 #include "DouglasPeucker.h"
 
 Model::Line::Line():
@@ -47,6 +49,16 @@ void Model::Line::SetLineId(const uint64_t& aLineId)
 const Model::CurveListPtr& Model::Line::GetCurveList() const
 {
     return mCurveList;
+}
+
+void Model::Line::SortCurve()
+{
+    std::sort(mCurveList->begin(), mCurveList->end(),
+              [](const CurvePtr& aLhs,
+                 const CurvePtr& aRhs)
+    {
+        return aLhs->GetIndexInLine() <= aRhs->GetIndexInLine();
+    });
 }
 
 Model::CurveListPtr Model::Line::GetMutableCurveList()
@@ -114,6 +126,38 @@ void Model::Line::SetGeodeticPoints(const Model::Point3DListPtr& aGeodeticPoints
     mGeodeticPoints = aGeodeticPoints;
 }
 
+void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval)
+{
+    std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
+    std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
+                    factory->CreateRelativeTransform(CRS::CoordinateType::Relative,
+                                                     CRS::CoordinateType::Wgs84,
+                                                     aReferencePoint->GetX(),
+                                                     aReferencePoint->GetY(),
+                                                     aReferencePoint->GetZ());
+    std::unique_ptr<CRS::ICoordinateTransform> wgs84ToUtm =
+                    factory->CreateProjectionTransform(CRS::CoordinateType::Wgs84,
+                                                       CRS::CoordinateType::Utm,
+                                                       "+proj=utm +datum=WGS84 +unit=m +no_defs");
+    mGeodeticPoints->clear();
+
+    for (CurvePtr curve : *mCurveList)
+    {
+        Point3DListPtr point3DList = curve->CalculatePointCloud(aSamplingInterval);
+        mGeodeticPoints->reserve(mGeodeticPoints->size() + point3DList->size());
+
+        for (Point3DPtr point : *point3DList)
+        {
+            double x = point->GetX();
+            double y = point->GetY();
+            double z = point->GetZ();
+            relativeToWgs84->Transform(x, y, z);
+            wgs84ToUtm->Transform(x, y, z);
+            mGeodeticPoints->push_back(std::make_shared<Point3D>(x, y, z));
+        }
+    }
+}
+
 const Model::ViewPointMapPtr& Model::Line::GetPointListMap() const
 {
     return mPointListMap;
@@ -132,6 +176,16 @@ Model::Point3DListPtr Model::Line::GetPointListByLevel(std::uint8_t aLevel)
     }
 
     return nullptr;
+}
+
+Model::Point3DListPtr Model::Line::GetMutablePointListByLevel(std::uint8_t aLevel)
+{
+    if (0 == mPointListMap->count(aLevel))
+    {
+        (*mPointListMap)[aLevel] = std::make_shared<Point3DList>();
+    }
+
+    return mPointListMap->at(aLevel);
 }
 
 void Model::Line::GenerateViewPointMap()

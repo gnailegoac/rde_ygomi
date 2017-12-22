@@ -50,12 +50,12 @@ void Model::TrafficSign::SetTrafficSignType(const uint64_t& aTrafficSignType)
     mTrafficSignType = aTrafficSignType;
 }
 
-std::int32_t Model::TrafficSign::GetOrientation() const
+const double& Model::TrafficSign::GetOrientation() const
 {
     return mOrientation;
 }
 
-void Model::TrafficSign::SetOrientation(std::int32_t aOrientation)
+void Model::TrafficSign::SetOrientation(const double& aOrientation)
 {
     mOrientation = aOrientation;
 }

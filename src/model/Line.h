@@ -38,6 +38,7 @@ public:
     CurveListPtr GetMutableCurveList();
     size_t GetCurveListSize() const;
     CurvePtr GetCurve(const size_t& aIndex);
+    void SortCurve();
 
     float GetConfidence() const;
     void SetConfidence(float aConfidence);
@@ -51,10 +52,12 @@ public:
     const Point3DListPtr& GetGeodeticPoints() const;
     Point3DListPtr GetMutableGeodeticPoints();
     void SetGeodeticPoints(const Point3DListPtr& aGeodeticPoints);
+    void CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval);
 
     const ViewPointMapPtr& GetPointListMap() const;
     ViewPointMapPtr GetMutablePointListMap();
     Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
+    Point3DListPtr GetMutablePointListByLevel(std::uint8_t aLevel);
     void GenerateViewPointMap();
 
 private:

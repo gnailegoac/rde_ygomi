@@ -16,6 +16,7 @@
 Model::Junction::Junction():
     Element(),
     mJunctionId(0),
+    mGeodeticPoints(std::make_shared<Point3DList>()),
     mPointListMap(std::make_shared<ViewPointMap>()),
     mBorderLineList(std::make_shared<LineList>()),
     mConnectionRelationList(std::make_shared<ConnectionRelationList>())
@@ -26,6 +27,7 @@ Model::Junction::Junction():
 Model::Junction::Junction(const std::uint64_t& aJunctionId):
     Element(),
     mJunctionId(aJunctionId),
+    mGeodeticPoints(std::make_shared<Point3DList>()),
     mPointListMap(std::make_shared<ViewPointMap>()),
     mBorderLineList(std::make_shared<LineList>()),
     mConnectionRelationList(std::make_shared<ConnectionRelationList>())
@@ -48,6 +50,26 @@ void Model::Junction::SetJunctionId(const std::uint64_t& aJunctionId)
     mJunctionId = aJunctionId;
 }
 
+const Model::Point3DListPtr& Model::Junction::GetGeodeticPoints() const
+{
+    return mGeodeticPoints;
+}
+
+Model::Point3DListPtr Model::Junction::GetMutableGeodeticPoints()
+{
+    return mGeodeticPoints;
+}
+
+void Model::Junction::SetGeodeticPoints(const Model::Point3DListPtr& aGeodeticPoints)
+{
+    mGeodeticPoints = aGeodeticPoints;
+}
+
+void Model::Junction::CreateGeodeticPoints(const Point3DPtr&, const double&)
+{
+
+}
+
 const Model::ViewPointMapPtr& Model::Junction::GetPointListMap() const
 {
     return mPointListMap;
@@ -66,6 +88,16 @@ Model::Point3DListPtr Model::Junction::GetPointListByLevel(uint8_t aLevel)
     }
 
     return nullptr;
+}
+
+Model::Point3DListPtr Model::Junction::GetMutablePointListByLevel(uint8_t aLevel)
+{
+    if (0 == mPointListMap->count(aLevel))
+    {
+        (*mPointListMap)[aLevel] = std::make_shared<Point3DList>();
+    }
+
+    return mPointListMap->at(aLevel);
 }
 
 const Model::LineListPtr& Model::Junction::GetBorderLineList() const

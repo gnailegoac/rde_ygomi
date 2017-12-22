@@ -6,34 +6,38 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Common.h
+ * @file    DbConvertException.cpp
  * @brief
  *******************************************************************************
  */
 
-#pragma once
+#include "DbParseException.h"
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <limits>
-#include <cstring>
-#include <algorithm>
 
-namespace Model
+Model::DbParseException::DbParseException(Model::DbParseException::Type aType,
+                                                    const std::string& aError):
+    mType(aType),
+    mError(aError)
 {
 
-#ifndef DBL_NAN
-#define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
+}
 
-typedef std::vector<std::string> StringList;
-typedef std::shared_ptr<StringList> StringListPtr;
+Model::DbParseException::~DbParseException()
+{
 
-typedef StringList PathList;
-typedef StringListPtr PathListPtr;
+}
 
+Model::DbParseException::Type Model::DbParseException::GetType() const
+{
+    return mType;
+}
 
+void Model::DbParseException::SetType(Model::DbParseException::Type aType)
+{
+    mType = aType;
+}
+
+const char* Model::DbParseException::what() const throw()
+{
+    return mError.c_str();
 }

@@ -29,6 +29,11 @@ Model::Curve::~Curve()
 
 }
 
+Model::Point3DListPtr Model::Curve::CalculatePointCloud(const double&)
+{
+    return nullptr;
+}
+
 const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;
@@ -59,12 +64,12 @@ void Model::Curve::SetCurveType(CurveType aCurveType)
     mCurveType = aCurveType;
 }
 
-std::int8_t Model::Curve::GetIndexInLine() const
+std::uint32_t Model::Curve::GetIndexInLine() const
 {
     return mIndexInLine;
 }
 
-void Model::Curve::SetIndexInLine(std::int8_t aIndexInLine)
+void Model::Curve::SetIndexInLine(std::uint32_t aIndexInLine)
 {
     mIndexInLine = aIndexInLine;
 }
