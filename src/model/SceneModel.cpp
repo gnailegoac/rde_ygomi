@@ -15,6 +15,9 @@
 #include "model/Lane.h"
 #include "model/Line.h"
 
+#include <osg/Material>
+#include <osg/LineWidth>
+
 Model::SceneModel::SceneModel() :
     mSceneModelRoot(new osg::Group)
 {
@@ -57,11 +60,31 @@ osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& a
     }
 
     osg::Geometry* geometry = new osg::Geometry;
-    geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINE_STRIP, 0, vertexArray->size()));
+    if (aLine->GetCurve(0)->GetCurveType() == Model::CurveType::Solid)
+    {
+        geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINE_STRIP, 0, vertexArray->size()));
+    }
+    else
+    {
+        geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINES, 0, vertexArray->size()));
+    }
     geometry->setVertexArray(vertexArray);
+
 
     osg::Geode* geode = new osg::Geode;
     geode->addDrawable(geometry);
+
+    osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth;
+    width->setWidth(1.0f);
+    geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
+
+    osg::ref_ptr<osg::Material> material = new osg::Material;
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
+    geode->getOrCreateStateSet()->setAttributeAndModes(material,
+                                                       osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+
     return geode;
 }
 

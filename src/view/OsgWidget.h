@@ -46,8 +46,8 @@ public:
 
     osg::Polytope GetPolytope();
     void Refresh();
-protected:
 
+protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;
     void resizeGL(int aWidth, int aHeight) override;
@@ -63,7 +63,6 @@ protected:
     bool event(QEvent* aEvent) override;
 
 private:
-
     virtual void onHome();
     virtual void onResize(int aWidth, int aHeight);
 
