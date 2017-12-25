@@ -175,7 +175,9 @@ void View::OsgWidget::Refresh()
     {
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
-    osg::Vec3d eye, center, up;
+    osg::Vec3d eye;
+    osg::Vec3d center;
+    osg::Vec3d up;
     mView->getCameraManipulator()->getHomePosition(eye, center, up);
     eye = eye + up * 10000.0;
     mView->getCameraManipulator()->setHomePosition(eye, center, up);
