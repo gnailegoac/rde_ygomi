@@ -66,6 +66,48 @@ Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(const double& aSamp
     return result;
 }
 
+Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(const double& aSamplingInterval)
+{
+    PaintListPtr result = std::make_shared<PaintList>();
+    const size_t paintRangeSize = mPaintRange->size();
+
+    for (size_t i = 0; i < paintRangeSize; i++)
+    {
+        Model::Poly2XYZTListPtr polys = GetPaintEquationList(i);
+        Point3DListPtr paint = std::make_shared<Point3DList>();
+
+        for (const Poly2XYZTPtr& poly : *polys)
+        {
+            double startKnot = poly->GetStart();
+            double endKnot = poly->GetEnd();
+            double length = mNurbs->getLength(startKnot, endKnot);
+            size_t sampleNumber = length / aSamplingInterval;
+            sampleNumber = (sampleNumber < 2) ? 2 : sampleNumber;
+            double knotInterval = (endKnot - startKnot) / sampleNumber;
+
+            if (std::fabs(startKnot - endKnot) < 1e-10)
+            {
+                continue;
+            }
+
+            for (double t = startKnot; t <= endKnot + 1e-10; t+= knotInterval)
+            {
+                t = std::fabs(t - endKnot) < knotInterval / 2.0 ? endKnot : t;
+                Point3DPtr point = poly->GetPosition(t);
+                paint->push_back(point);
+            }
+
+        }
+
+        if (1 < paint->size())
+        {
+            result->push_back(paint);
+        }
+    }
+
+    return result;
+}
+
 bool Model::NurbsCurve::Convert(const std::string& aStrExpr)
 {
     QJsonParseError err;
@@ -247,6 +289,44 @@ void Model::NurbsCurve::SetPoly3T(const poly3_curve_t& aPoly3Curve, Poly2XYZTPtr
     SetPoly3(aPoly3Curve.fx, aPoly2->GetMutablePoly2X());
     SetPoly3(aPoly3Curve.fy, aPoly2->GetMutablePoly2Y());
     SetPoly3(aPoly3Curve.fz, aPoly2->GetMutablePoly2Z());
+}
+
+Model::Poly2XYZTListPtr Model::NurbsCurve::GetPaintEquationList(const size_t& index)
+{
+    if (index >= mPaintRange->size())
+    {
+        return nullptr;
+    }
+
+    Poly2XYZTListPtr equationParameters = std::make_shared<Poly2XYZTList>();
+    const std::vector<poly3_curve_t>& curves =  mNurbs->GetCurve();
+    const std::pair<double, double>& paintRange = mPaintRange->at(index);
+
+    const double& startKnot = paintRange.first;
+    const double& endKnot = paintRange.second;
+
+    for (size_t i = 0; i < curves.size(); i++)
+    {
+        const poly3_curve_t& curve = curves[i];
+        double knot1 = curve.t_min;
+        double knot2 = curve.t_max;
+
+        if (knot2 < startKnot || knot1 > endKnot)
+        {
+            continue;
+        }
+
+        knot1 = (knot1 < startKnot) ? startKnot : knot1;
+        knot2 = (knot2 > endKnot) ? endKnot : knot2;
+
+        Poly2XYZTPtr curve2 = std::make_shared<Poly2XYZT>();
+        SetPoly3T(curve, curve2);
+        curve2->SetStart(knot1);
+        curve2->SetEnd(knot2);
+        equationParameters->push_back(curve2);
+    }
+
+    return equationParameters;
 }
 
 Model::Poly2XYZTListPtr Model::NurbsCurve::GetEquationList()

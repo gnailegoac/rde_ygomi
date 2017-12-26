@@ -34,6 +34,11 @@ Model::Point3DListPtr Model::Curve::CalculatePointCloud(const double&)
     return nullptr;
 }
 
+Model::PaintListPtr Model::Curve::CalculatePaintPointCloud(const double&)
+{
+    return nullptr;
+}
+
 const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;

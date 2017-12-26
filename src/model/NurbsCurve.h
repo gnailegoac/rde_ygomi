@@ -40,6 +40,7 @@ public:
     ~NurbsCurve();
 
     Point3DListPtr CalculatePointCloud(const double& aSamplingInterval) override;
+    PaintListPtr CalculatePaintPointCloud(const double& aSamplingInterval) override;
 
     bool Convert(const std::string& aStrExpr);
 
@@ -65,6 +66,7 @@ private:
 
     void SetPoly3(const poly3_coef_t& aPol3Coef, Poly2Ptr aPoly2);
     void SetPoly3T(const poly3_curve_t& aPoly3Curve, Poly2XYZTPtr aPoly2);
+    Poly2XYZTListPtr GetPaintEquationList(const size_t& index);
     Poly2XYZTListPtr GetEquationList();
 
 private:

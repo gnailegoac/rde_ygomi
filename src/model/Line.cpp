@@ -24,8 +24,8 @@ Model::Line::Line():
     mConfidence(0.0),
     mLength(0.0),
     mLane(nullptr),
-    mGeodeticPoints(std::make_shared<Point3DList>()),
-    mPointListMap(std::make_shared<ViewPointMap>())
+    mGeodeticPointsList(std::make_shared<PaintList>()),
+    mPaintListMap(std::make_shared<ViewPaintMap>())
 {
 
 }
@@ -110,22 +110,22 @@ void Model::Line::SetLane(const Model::LanePtr& aLane)
     mLane = aLane;
 }
 
-const Model::Point3DListPtr& Model::Line::GetGeodeticPoints() const
+const Model::PaintListPtr& Model::Line::GetGeodeticPointsList() const
 {
-    return mGeodeticPoints;
+    return mGeodeticPointsList;
 }
 
-Model::Point3DListPtr Model::Line::GetMutableGeodeticPoints()
+Model::PaintListPtr Model::Line::GetMutableGeodeticPointsList()
 {
-    return mGeodeticPoints;
+    return mGeodeticPointsList;
 }
 
-void Model::Line::SetGeodeticPoints(const Model::Point3DListPtr& aGeodeticPoints)
+void Model::Line::SetGeodeticPointsList(const Model::PaintListPtr& aGeodeticPointsList)
 {
-    mGeodeticPoints = aGeodeticPoints;
+    mGeodeticPointsList = aGeodeticPointsList;
 }
 
-void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval)
+void Model::Line::CreateGeodeticPointsList(const Point3DPtr& aReferencePoint, const double& aSamplingInterval)
 {
     std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
     std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
@@ -134,77 +134,95 @@ void Model::Line::CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const 
                                                      aReferencePoint->GetX(),
                                                      aReferencePoint->GetY(),
                                                      aReferencePoint->GetZ());
-    mGeodeticPoints->clear();
+    mGeodeticPointsList->clear();
 
-    for (CurvePtr curve : *mCurveList)
+    for (CurvePtr& curve : *mCurveList)
     {
-        Point3DListPtr point3DList = curve->CalculatePointCloud(aSamplingInterval);
-        mGeodeticPoints->reserve(mGeodeticPoints->size() + point3DList->size());
+        PaintListPtr paintList = curve->CalculatePaintPointCloud(aSamplingInterval);
 
-        for (Point3DPtr point : *point3DList)
+        for (Point3DListPtr& point3DList : *paintList)
         {
-            double x = point->GetX();
-            double y = point->GetY();
-            double z = point->GetZ();
-            relativeToWgs84->Transform(x, y, z);
-            mGeodeticPoints->push_back(std::make_shared<Point3D>(x, y, z));
+            if (2 > point3DList->size())
+            {
+                continue;
+            }
+
+            Point3DListPtr geodeticPoints = std::make_shared<Point3DList>();
+            geodeticPoints->reserve(point3DList->size());
+
+            for (const Point3DPtr& point : *point3DList)
+            {
+                double x = point->GetX();
+                double y = point->GetY();
+                double z = point->GetZ();
+                relativeToWgs84->Transform(x, y, z);
+                geodeticPoints->push_back(std::make_shared<Point3D>(x, y, z));
+            }
+
+            mGeodeticPointsList->push_back(geodeticPoints);
         }
     }
 }
 
-const Model::ViewPointMapPtr& Model::Line::GetPointListMap() const
+const Model::ViewPaintMapPtr& Model::Line::GetPaintListMap() const
 {
-    return mPointListMap;
+    return mPaintListMap;
 }
 
-Model::ViewPointMapPtr Model::Line::GetMutablePointListMap()
+Model::ViewPaintMapPtr Model::Line::GetMutablePaintListMap()
 {
-    return mPointListMap;
+    return mPaintListMap;
 }
 
-Model::Point3DListPtr Model::Line::GetPointListByLevel(std::uint8_t aLevel)
+Model::PaintListPtr Model::Line::GetPaintListByLevel(std::uint8_t aLevel)
 {
-    if (0 != mPointListMap->count(aLevel))
+    if (0 != mPaintListMap->count(aLevel))
     {
-        return mPointListMap->at(aLevel);
+        return mPaintListMap->at(aLevel);
     }
 
     return nullptr;
 }
 
-Model::Point3DListPtr Model::Line::GetMutablePointListByLevel(std::uint8_t aLevel)
+Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
 {
-    if (0 == mPointListMap->count(aLevel))
+    if (0 == mPaintListMap->count(aLevel))
     {
-        (*mPointListMap)[aLevel] = std::make_shared<Point3DList>();
+        (*mPaintListMap)[aLevel] = std::make_shared<PaintList>();
     }
 
-    return mPointListMap->at(aLevel);
+    return mPaintListMap->at(aLevel);
 }
 
-void Model::Line::GenerateViewPointMap()
+void Model::Line::GenerateViewPaintMap()
 {
     // Convert geodetic coordinates into UTM coordinates
     auto utm = CRS::Factory().CreateProjectionTransform(
                                CRS::CoordinateType::Wgs84,
                                CRS::CoordinateType::Utm,
                                "+proj=utm +datum=WGS84 +unit=m +no_defs");
-    Point3DListPtr points = std::make_shared<Point3DList>();
-    points->reserve(mGeodeticPoints->size());
-    for (auto& p : *mGeodeticPoints)
-    {
-        double lon = p->GetX();
-        double lat = p->GetY();
-        double ele = p->GetZ();
-        utm->Transform(lon, lat, ele);
-        points->push_back(std::make_shared<Point3D>(lon, lat, ele));
-    }
 
-    // Down-sample points with Douglas-Peucker algorithm
-    mPointListMap->insert(std::make_pair(1, Model::DouglasPeucker
-                                         ::Simplify(points, 1)));
-    mPointListMap->insert(std::make_pair(2, Model::DouglasPeucker
-                                         ::Simplify(points, 0.5)));
-    mPointListMap->insert(std::make_pair(3, Model::DouglasPeucker
-                                         ::Simplify(points, 0.1)));
+    mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
+    mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
+    mPaintListMap->insert(std::make_pair(3, std::make_shared<PaintList>()));
+
+    for (Point3DListPtr& geodeticPoints : *mGeodeticPointsList)
+    {
+        Point3DListPtr points = std::make_shared<Point3DList>();
+        points->reserve(geodeticPoints->size());
+
+        for (auto& p : *geodeticPoints)
+        {
+            double lon = p->GetX();
+            double lat = p->GetY();
+            double ele = p->GetZ();
+            utm->Transform(lon, lat, ele);
+            points->push_back(std::make_shared<Point3D>(lon, lat, ele));
+        }
+
+        // Down-sample points with Douglas-Peucker algorithm
+        mPaintListMap->at(1)->push_back(Model::DouglasPeucker::Simplify(points, 1));
+        mPaintListMap->at(2)->push_back(Model::DouglasPeucker::Simplify(points, 0.5));
+        mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.1));
+    }
 }

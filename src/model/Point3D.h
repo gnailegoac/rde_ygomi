@@ -47,8 +47,15 @@ typedef std::vector<Point3DPtr> Point3DList;
 typedef std::shared_ptr<Point3DList> Point3DListPtr;
 typedef std::shared_ptr<const Point3DList> Point3DListConstPtr;
 
+typedef std::vector<Point3DListPtr> PaintList;
+typedef std::shared_ptr<PaintList> PaintListPtr;
+
 typedef std::unordered_map<uint8_t, Point3DListPtr> ViewPointMap;
 typedef std::shared_ptr<ViewPointMap> ViewPointMapPtr;
 typedef std::shared_ptr<const ViewPointMap> ViewPointMapConstPtr;
+
+typedef std::unordered_map<uint8_t, PaintListPtr> ViewPaintMap;
+typedef std::shared_ptr<ViewPaintMap> ViewPaintMapPtr;
+typedef std::shared_ptr<const ViewPaintMap> ViewPaintMapConstPtr;
 
 }

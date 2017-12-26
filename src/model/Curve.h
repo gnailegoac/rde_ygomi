@@ -40,6 +40,7 @@ public:
     ~Curve();
 
     virtual Point3DListPtr CalculatePointCloud(const double&);
+    virtual PaintListPtr CalculatePaintPointCloud(const double&);
 
     const std::uint64_t& GetCurveId() const;
     void SetCurveId(const std::uint64_t& aCurveId);

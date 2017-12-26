@@ -49,16 +49,17 @@ public:
     const LanePtr& GetLane() const;
     void SetLane(const LanePtr& aLane);
 
-    const Point3DListPtr& GetGeodeticPoints() const;
-    Point3DListPtr GetMutableGeodeticPoints();
-    void SetGeodeticPoints(const Point3DListPtr& aGeodeticPoints);
-    void CreateGeodeticPoints(const Point3DPtr& aReferencePoint, const double& aSamplingInterval);
+    const PaintListPtr& GetGeodeticPointsList() const;
+    PaintListPtr GetMutableGeodeticPointsList();
+    void SetGeodeticPointsList(const PaintListPtr& aGeodeticPointsList);
+    void CreateGeodeticPointsList(const Point3DPtr& aReferencePoint,
+                                  const double& aSamplingInterval);
 
-    const ViewPointMapPtr& GetPointListMap() const;
-    ViewPointMapPtr GetMutablePointListMap();
-    Point3DListPtr GetPointListByLevel(std::uint8_t aLevel);
-    Point3DListPtr GetMutablePointListByLevel(std::uint8_t aLevel);
-    void GenerateViewPointMap();
+    const ViewPaintMapPtr& GetPaintListMap() const;
+    ViewPaintMapPtr GetMutablePaintListMap();
+    PaintListPtr GetPaintListByLevel(std::uint8_t aLevel);
+    PaintListPtr GetMutablePaintListByLevel(std::uint8_t aLevel);
+    void GenerateViewPaintMap();
 
 private:
     std::uint64_t mLineId;
@@ -66,8 +67,8 @@ private:
     float mConfidence;
     float mLength;
     LanePtr mLane;
-    Point3DListPtr mGeodeticPoints;
-    ViewPointMapPtr mPointListMap;
+    PaintListPtr mGeodeticPointsList;
+    ViewPaintMapPtr mPaintListMap;
 };
 
 typedef std::shared_ptr<Line> LinePtr;

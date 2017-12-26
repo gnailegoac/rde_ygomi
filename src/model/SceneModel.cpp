@@ -47,33 +47,13 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
 
 osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& aLine) const
 {
-    Model::Point3DListPtr viewPointListPtr = aLine->GetPointListByLevel(2);
+    Model::PaintListPtr viewPointListPtr = aLine->GetPaintListByLevel(2);
     if(viewPointListPtr->size() == 0)
     {
         return nullptr;
     }
 
-    osg::ref_ptr<osg::Vec3dArray> vertexArray = new osg::Vec3dArray;
-    for (auto point : *viewPointListPtr)
-    {
-        vertexArray->push_back(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
-    }
-
-    osg::Geometry* geometry = new osg::Geometry;
-    if (aLine->GetCurve(0)->GetCurveType() == Model::CurveType::Solid)
-    {
-        geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINE_STRIP, 0, vertexArray->size()));
-    }
-    else
-    {
-        geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINES, 0, vertexArray->size()));
-    }
-    geometry->setVertexArray(vertexArray);
-
-
     osg::Geode* geode = new osg::Geode;
-    geode->addDrawable(geometry);
-
     osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth;
     width->setWidth(1.0f);
     geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
@@ -84,6 +64,25 @@ osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& a
     material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
     geode->getOrCreateStateSet()->setAttributeAndModes(material,
                                                        osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    for (Point3DListPtr& points : *viewPointListPtr)
+    {
+        if (0 == points->size())
+        {
+            continue;
+        }
+
+        osg::ref_ptr<osg::Vec3dArray> vertexArray = new osg::Vec3dArray;
+        for (auto& point : *points)
+        {
+            vertexArray->push_back(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+        }
+
+        osg::Geometry* geometry = new osg::Geometry;
+        geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINE_STRIP, 0, vertexArray->size()));
+        geometry->setVertexArray(vertexArray);
+
+        geode->addDrawable(geometry);
+    }
 
     return geode;
 }
