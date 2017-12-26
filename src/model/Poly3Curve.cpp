@@ -31,6 +31,11 @@ Model::Point3DListPtr Model::Poly3Curve::CalculatePointCloud(const double&)
     return nullptr;
 }
 
+Model::PaintListPtr Model::Poly3Curve::CalculatePaintPointCloud(const double&)
+{
+    return nullptr;
+}
+
 void Model::Poly3Curve::SetX(const double& aX, const size_t& aIndex)
 {
     if (aIndex < 4)

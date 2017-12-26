@@ -31,8 +31,13 @@ TEST(Line_Test, Generate_View_Points_Test)
         double ele = 0.1 * increment * i;
         points.push_back(std::make_shared<Model::Point3D>(lon, lat, ele));
     }
+
+    Model::PaintList paint;
+    paint.push_back(std::make_shared<Model::Point3DList>(points));
+
     Model::Line line;
-    line.SetGeodeticPoints(std::make_shared<Model::Point3DList>(points));
-    line.GenerateViewPointMap();
-    ASSERT_EQ(line.mPointListMap->size(), 3);
+    line.SetGeodeticPointsList(std::make_shared<Model::PaintList>(paint));
+    line.GenerateViewPaintMap();
+
+    ASSERT_EQ(line.mPaintListMap->size(), 3);
 }
