@@ -22,16 +22,24 @@ namespace Model
 class LogicDbFactory : public IFactory
 {
 public:
-    LogicDbFactory(const PathListPtr& aInputPathList);
-    LogicDbFactory(const PathList& aInputPathList);
-    LogicDbFactory(const std::string& aInputPath);
+    LogicDbFactory();
     ~LogicDbFactory();
+
+    void SetInputPathList(const PathListPtr& aInputPathList);
+    void SetInputPathList(const PathList& aInputPathList);
+    void SetInputPath(const std::string& aInputPath);
+    void SetOutputFolder(const std::string& aOutputFolder, std::string aVersion = "0");
 
     IParserPtr CreateParser() override;
     ISerializerPtr CreateSerializer() override;
 
 private:
+    std::string getCurrentTime() const;
+
+private:
     PathListPtr mInputPathList;
+    std::string mOutputFolder;
+    std::string mVersion;
 };
 
 }

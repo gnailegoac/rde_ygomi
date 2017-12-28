@@ -65,7 +65,8 @@ SOURCES +=\
     model/Poly.cpp \
     model/SceneModel.cpp \
     control/SceneManageCommand.cpp \
-    model/DouglasPeucker.cpp
+    model/DouglasPeucker.cpp \
+    model/data_handler/LogicDbSerializer.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -109,7 +110,8 @@ HEADERS  += view/MainWindow.h \
     model/Poly.h \
     model/SceneModel.h \
     control/SceneManageCommand.h \
-    model/DouglasPeucker.h
+    model/DouglasPeucker.h \
+    model/data_handler/LogicDbSerializer.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

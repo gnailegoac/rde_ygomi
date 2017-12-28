@@ -36,6 +36,16 @@ Model::PaintListPtr Model::Poly3Curve::CalculatePaintPointCloud(const double&)
     return nullptr;
 }
 
+bool Model::Poly3Curve::Convert(const std::string& aStrExpr)
+{
+    return false;
+}
+
+std::string Model::Poly3Curve::Parse() const
+{
+    return TEXT_NAN;
+}
+
 void Model::Poly3Curve::SetX(const double& aX, const size_t& aIndex)
 {
     if (aIndex < 4)

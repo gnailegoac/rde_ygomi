@@ -39,6 +39,16 @@ Model::PaintListPtr Model::Curve::CalculatePaintPointCloud(const double&)
     return nullptr;
 }
 
+bool Model::Curve::Convert(const std::string&)
+{
+    return false;
+}
+
+std::string Model::Curve::Parse() const
+{
+    return TEXT_NAN;
+}
+
 const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;
@@ -79,12 +89,12 @@ void Model::Curve::SetIndexInLine(std::uint32_t aIndexInLine)
     mIndexInLine = aIndexInLine;
 }
 
-float Model::Curve::GetWidth() const
+int Model::Curve::GetWidth() const
 {
     return mWidth;
 }
 
-void Model::Curve::SetWidth(float aWidth)
+void Model::Curve::SetWidth(int aWidth)
 {
     mWidth = aWidth;
 }

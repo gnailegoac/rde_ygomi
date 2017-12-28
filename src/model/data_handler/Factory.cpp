@@ -13,15 +13,34 @@
 
 #include "Factory.h"
 
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "../Common.h"
 #include "LogicDbFactory.h"
 
 Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::vector<std::string>& aDbPathList)
 {
-   return std::unique_ptr<LogicDbFactory>(new LogicDbFactory(aDbPathList));
+   std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
+   logicDbFactory->SetInputPathList(aDbPathList);
+   return std::move(logicDbFactory);
 }
 
 Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::string& aDbPath)
 {
-    return std::unique_ptr<LogicDbFactory>(new LogicDbFactory(aDbPath));
+    struct stat st;
+    stat(aDbPath.c_str(),&st);
+
+    if (S_ISDIR(st.st_mode))
+    {
+        std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
+        logicDbFactory->SetOutputFolder(aDbPath);
+        return std::move(logicDbFactory);
+    }
+    else
+    {
+        std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
+        logicDbFactory->SetInputPath(aDbPath);
+        return std::move(logicDbFactory);
+    }
 }

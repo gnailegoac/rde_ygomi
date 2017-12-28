@@ -25,6 +25,16 @@ class Line;
 typedef std::shared_ptr<Road> RoadPtr;
 typedef std::shared_ptr<Line> LinePtr;
 
+enum class LaneConnectionType : std::uint8_t
+{
+    LaneConnectionPredecessor= 0,
+    LaneConnectionSuccessor = 1,
+    LaneConnectionLeft = 2,
+    LaneConnectionRight = 3,
+    UnKnown = 200,
+    UnDefined = 201
+};
+
 typedef std::unordered_map<std::uint8_t, std::uint64_t> ConnectionMap;
 typedef std::shared_ptr<ConnectionMap> ConnectionMapPtr;
 typedef std::shared_ptr<const ConnectionMap> ConnectionMapConstPtr;
@@ -46,6 +56,9 @@ public:
 
     LinePtr GetCenterLine() const;
     void SetCenterLine(LinePtr aCenterLine);
+
+    LinePtr GetAvgSlamTrace() const;
+    void SetAvgSlamTrace(LinePtr aAvgSlamTrace);
 
     const RoadPtr& GetRoad() const;
     RoadPtr GetMutableRoad();
@@ -70,6 +83,7 @@ private:
     LinePtr mLeftLine;
     LinePtr mRightLine;
     LinePtr mCenterLine;
+    LinePtr mAvgSlamTrace;
     RoadPtr mRoad;
     ConnectionMapPtr mConnectionMap;
 };

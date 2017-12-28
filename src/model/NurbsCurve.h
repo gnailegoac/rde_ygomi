@@ -42,7 +42,8 @@ public:
     Point3DListPtr CalculatePointCloud(const double& aSamplingInterval) override;
     PaintListPtr CalculatePaintPointCloud(const double& aSamplingInterval) override;
 
-    bool Convert(const std::string& aStrExpr);
+    bool Convert(const std::string& aStrExpr) override;
+    std::string Parse() const override;
 
     const Point3DListPtr& GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();
@@ -61,8 +62,11 @@ public:
     void SetLineLength(const double& aLineLength);
 
 private:
-    void generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots);
-    void parsePaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints);
+    void readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots);
+    void readPaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints);
+
+    void writeNurbsToJSON(QJsonArray& aObjectCtrlPoints, QJsonArray& aObjectKnots) const;
+    void writePaintRangeToJSON(QJsonArray& aObjectPaintEndPoints) const;
 
     void SetPoly3(const poly3_coef_t& aPol3Coef, Poly2Ptr aPoly2);
     void SetPoly3T(const poly3_curve_t& aPoly3Curve, Poly2XYZTPtr aPoly2);

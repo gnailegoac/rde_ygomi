@@ -15,6 +15,11 @@
 
 #include "Common.h"
 
+#include <type_traits>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 namespace strings
 {
 
@@ -81,4 +86,16 @@ bool EndWith(const std::basic_string<T>& aString,
     return EndWith(aString, std::basic_string<T>(aEnding));
 }
 
+template<typename T,
+         typename std::enable_if<std::is_floating_point<T>::value, T>::type* = nullptr>
+std::string FormatFloat(const T& aValue, int aPrecision)
+{
+    std::stringstream ss;
+
+    ss << std::setprecision(aPrecision)
+       << std::setiosflags(std::ios_base::fixed)
+       << aValue;
+
+    return ss.str();
+}
 }
