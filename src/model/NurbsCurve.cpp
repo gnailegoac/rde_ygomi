@@ -310,12 +310,14 @@ void Model::NurbsCurve::writeNurbsToJSON(QJsonArray& aObjectCtrlPoints, QJsonArr
 {
     for (const Point3DPtr& point : *mControlPoints)
     {
-        aObjectCtrlPoints.append(QJsonValue(QString::fromStdString(point->FormatPoint(13, 13, 13))));
+        std::string pointStr = point->FormatPoint(13, 13, 13);
+        aObjectCtrlPoints.append(QJsonValue(QString::fromStdString(pointStr)));
     }
 
     for (const double& knot : *mKnots)
     {
-        aObjectKnots.append(QJsonValue(QString::fromStdString(strings::FormatFloat<double>(knot, 17))));
+        std::string knotStr = strings::FormatFloat<double>(knot, 17);
+        aObjectKnots.append(QJsonValue(QString::fromStdString(knotStr)));
     }
 }
 

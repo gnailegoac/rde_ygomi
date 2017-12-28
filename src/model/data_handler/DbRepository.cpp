@@ -503,7 +503,6 @@ void Model::DbRepository::setLaneConnection(const TilePtr& aSourceTile,
     }
 }
 
-
 void Model::DbRepository::storeSegments(const std::shared_ptr<MemoryModel>& aMemoryModel) const
 {
     try
