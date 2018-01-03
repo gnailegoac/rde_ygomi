@@ -19,6 +19,7 @@
 #include "model/data_handler/Factory.h"
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
+#include "model/TreeModel.h"
 
 void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
@@ -33,6 +34,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         //put the meomery model into MainProxy
         setMemoryModel(memoryModel);
         ceateSceneModel();
+        createTreeModel(memoryModel);
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
     else if(aNotification.getName() == ApplicationFacade::FOLDER_OPEN_SUCCESS)
@@ -47,6 +49,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         //put the meomery model into MainProxy
         setMemoryModel(memoryModel);
         ceateSceneModel();
+        createTreeModel(memoryModel);
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
 }
@@ -56,6 +59,13 @@ void Controller::FileParseCommand::ceateSceneModel()
     MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
     std::shared_ptr<Model::SceneModel> sceneModel(new Model::SceneModel);
     mainProxy.SetSceneModel(sceneModel);
+}
+
+void Controller::FileParseCommand::createTreeModel(const Model::MemoryModelPtr& aMemoryModel)
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    std::shared_ptr<Model::TreeModel> treeModel(new Model::TreeModel(aMemoryModel));
+    mainProxy.SetTreeModel(treeModel);
 }
 
 std::string Controller::FileParseCommand::GetCommandName()
