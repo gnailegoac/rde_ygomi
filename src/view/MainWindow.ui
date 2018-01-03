@@ -59,6 +59,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionPreference"/>
+    <addaction name="actionRoadInfo"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -114,6 +115,11 @@
   <action name="actionPreference">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionRoadInfo">
+   <property name="text">
+    <string>RoadInfo</string>
    </property>
   </action>
  </widget>

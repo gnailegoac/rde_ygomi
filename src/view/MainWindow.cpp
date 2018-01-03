@@ -38,7 +38,7 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
     mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
     mRoadInfoView->raise();
-    mRoadInfoView->setVisible(true);
+    mRoadInfoView->setVisible(false);
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -58,17 +58,15 @@ void View::MainWindow::UpdateView()
     viewer->Refresh();
 }
 
-void View::MainWindow::ShowRoadInfo(bool aVisible)
+void View::MainWindow::ShowRoadInfo()
 {
-    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
-    Model::TreeModel* treeModel = new Model::TreeModel(memoryModel);
-    mRoadInfoView->setModel(treeModel);
-    for (int column = 0; column < treeModel->columnCount(); ++column)
-    {
-        mRoadInfoView->resizeColumnToContents(column);
-    }
+    bool isVisible = mRoadInfoView->isVisible();
+    mRoadInfoView->setVisible(!isVisible);
+}
 
+void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel> &aTreeModel)
+{
+    mRoadInfoView->setModel(aTreeModel.get());
 }
 
 void View::MainWindow::setupConnections()
@@ -96,11 +94,17 @@ void View::MainWindow::setupConnections()
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
     });
+
+    connect(ui->actionRoadInfo, &QAction::triggered, [=]()
+    {
+        ShowRoadInfo();
+    });
 }
 
 View::MainWindow::~MainWindow()
 {
     delete ui;
+    delete mRoadInfoView;
 }
 
 void View::MainWindow::resizeEvent(QResizeEvent* aEvent)

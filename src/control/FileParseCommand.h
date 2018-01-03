@@ -25,6 +25,7 @@ public:
 private:
     void setMemoryModel(const Model::MemoryModelPtr& aMemoryModel);
     void ceateSceneModel();
+    void createTreeModel(const Model::MemoryModelPtr& aMemoryModel);
 };
 }
 
