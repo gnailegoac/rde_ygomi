@@ -888,69 +888,7 @@ void SurfacePointInv(int n, int p, double* U, int m, int q, double* V, const vec
     *u = u0;
     *v = v0;
 }
-/*void NurbsCurveFit(int n, int p, int k, double *U, double *u, cv::Point2f *Q, cv::Point2f *P)
-{
-    int m = n + p + 1;
-    cv::Mat A(k, n + 1, CV_64F);
-    int span;
-    double *N = new double [p + 1];
 
-    double d = (double)(m + 1) / (double)(n - p + 1);
-    for(int j = 1; j <= n - p; j++)
-    {
-        int i = d * 1.0 * j;
-        double alpha = 1.0 * j * d - 1.0 * i;
-        U[p + j] = (1-alpha) * u[i - 1] + alpha * u[i];
-        cout<<"U["<<p+j<<"]= "<<U[p+j]<<endl;
-    }
-    // for point Q[i] with param u[i]
-    for(int i = 0; i < k; i++)
-    {
-        span = FindSpan(n,p,u[i],U);
-        for(int i = 0; i < p + 1; i++) N[i] = 0;
-        BasisFuns(span, u[k], p, U, &N[span - p]);   //N_i,p(u[k])
-
-        double temp = 0.0;
-        for(int j = 0; j < n + 1; j++) temp += N[j];
-        for(int j = 0; j < n + 1; j++)
-        {
-            A.at<double>(i,j) = N[j] / temp;
-        }
-
-    }
-    cout<<A<<endl;
-    cv::Mat Qx(k, 1, CV_64F);
-    cv::Mat Qy(k, 1, CV_64F);
-    cv::Mat Px(n + 1 , 1, CV_64F);
-    cv::Mat Py(n + 1 , 1, CV_64F);
-    for(int i = 0; i < k; i++)
-    {
-        Qx.at<double>(i,0) = Q[i].x;
-        Qy.at<double>(i,0) = Q[i].y;
-    }
-
-    cv::Mat B = A.t() * A;
-    // solve the problem of sigular matrix A^TA
-    if(abs(cv::determinant(B)) < eps)
-    {
-        cv::Mat penalty = cv::Mat::eye(n + 1, n + 1, CV_64F);
-        B = B + 0.000001 * penalty;
-    }
-
-    B = B.inv();
-
-    B = B * A.t();
-
-    Px  = B * Qx;
-    Py  = B * Qy;
-
-    for(int i = 0; i < n + 1; i++)
-    {
-        P[i].x = Px.at<double>(i,0);
-        P[i].y = Py.at<double>(i,0);
-    }
-    delete []N;
-}*/
 void NurbsCurveFit(int n, int p, int m, double* U, double* u, cv::Point2f* Q, cv::Point2f* P)
 {
     cv::Mat A(m - 1, n - 1, CV_64F);
@@ -1024,23 +962,6 @@ void NurbsCurveFit(int n, int p, int m, double* U, double* u, cv::Point3d* Q, cv
 {
     cv::Mat A(m - 1, n - 1, CV_64F);
     cv::Mat R_mat = cv::Mat::zeros(n - 1, 3, CV_64F);
-
-    //    double d = (double)(m + 1) / (double)(n - p + 1);
-    //    for(int i = 0; i < p + 1; i++)
-    //    {
-    //        U[i] = 0;
-    //    }
-    //    for(int i = n + 1; i < n + p + 2; i++)
-    //    {
-    //        U[i] = 1;
-    //    }
-    //    for(int j = 1; j <= n - p; j++)
-    //    {
-    //        int i = d * 1.0 * j;
-    //        double alpha = 1.0 * j * d - 1.0 * i;
-    //        U[p + j] = (1 - alpha) * u[i - 1] + alpha * u[i];
-    //    }
-
     cv::Point3d* R = new cv::Point3d [m + 1];
     int span;
     double* N = new double [n + 1];
