@@ -54,7 +54,7 @@ int Model::TreeItem::ColumnCount() const
     return mData.count();
 }
 
-const QVariant& Model::TreeItem::Data(int aColumn) const
+QVariant Model::TreeItem::Data(int aColumn) const
 {
     return mData.value(aColumn);
 }

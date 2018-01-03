@@ -18,17 +18,23 @@
 #include <QModelIndex>
 #include <QVariant>
 
+#include "model/Curve.h"
 namespace Model {
 
 class MemoryModel;
 class TreeItem;
+class Tile;
+class Road;
+class Lane;
+class Line;
+//enum CurveType;
 
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    TreeModel(const std::shared_ptr<Model::MemoryModel>& aRoadModel,
+    TreeModel(const std::shared_ptr<MemoryModel>& aRoadModel,
               QObject* aParent = 0);
 
     ~TreeModel();
@@ -44,7 +50,19 @@ public:
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
 
 private:
-    void setupModelData(const std::shared_ptr<Model::MemoryModel>& aRoadModel, TreeItem* aParent);
+    void setupModelData(const std::shared_ptr<MemoryModel>& aRoadModel, TreeItem* aParent);
+
+    void createSegmentNode(const std::shared_ptr<Tile>& aTile, TreeItem* aParent);
+    void createRoadNode(const std::shared_ptr<Road>& aRoad, TreeItem* aParent);
+    void createLaneNode(const std::shared_ptr<Lane>& aLane, TreeItem* aParent);
+    void createPredecessorLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
+    void createSuccessorLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
+    void createLeftLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
+    void createRightLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
+    void createLeftLineNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
+    void createRightLineNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
+    void createLineIdNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
+    void createLineTypeNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
 
     TreeItem* mRoot;
 };
