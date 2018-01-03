@@ -14,6 +14,7 @@
 
 #include <QMainWindow>
 #include <QString>
+#include <QTreeView>
 
 #include <osg/Polytope>
 
@@ -33,6 +34,7 @@ public:
     void PopupWarningMessage(const QString& aWarning);
     osg::Polytope GetPolytope();
     void UpdateView();
+    void ShowRoadInfo(bool aVisible = true);
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
@@ -43,6 +45,7 @@ private:
     void writeSettings();
     void setupConnections();
     Ui::MainWindow *ui;
+    QTreeView* mRoadInfoView;
 };
 }
 

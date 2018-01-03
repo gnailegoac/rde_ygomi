@@ -21,10 +21,14 @@
 #include "OsgWidget.h"
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
+#include "model/TreeModel.h"
+
+#include "proxy/MainProxy.h"
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     QMainWindow(aParent, flags),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mRoadInfoView(new QTreeView(this))
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
@@ -32,6 +36,9 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     setupConnections();
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
+    mRoadInfoView->setStyleSheet("background-color:rgba(185,185,185,195);");
+    mRoadInfoView->raise();
+    mRoadInfoView->setVisible(true);
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -49,6 +56,14 @@ void View::MainWindow::UpdateView()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     viewer->Refresh();
+}
+
+void View::MainWindow::ShowRoadInfo(bool aVisible)
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
+    Model::TreeModel* treeModel = new Model::TreeModel(memoryModel);
+    mRoadInfoView->setModel(treeModel);
 }
 
 void View::MainWindow::setupConnections()
@@ -86,6 +101,8 @@ View::MainWindow::~MainWindow()
 void View::MainWindow::resizeEvent(QResizeEvent* aEvent)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
+    mRoadInfoView->resize(260, height());
+    mRoadInfoView->move(width() - 260, 0);
 }
 
 void View::MainWindow::closeEvent(QCloseEvent* aEvent)

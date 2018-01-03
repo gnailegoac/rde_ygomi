@@ -105,6 +105,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         View::MainWindow* mainWindow = getMainWindow();
         mainWindow->UpdateView();
+        mainWindow->ShowRoadInfo();
     }
 }
 
