@@ -34,7 +34,25 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
                 const double& aThreshold)
 {
     std::vector<Point3DPtr> simplified;
+    auto index = GetSimplifyIndex(aPoints, aThreshold, 0, aPoints->size() - 1);
+    for (auto& idx : *index)
+    {
+        simplified.push_back(aPoints->at(idx));
+    }
+    return std::make_shared<Point3DList>(simplified);
+}
+
+std::shared_ptr<std::vector<uint32_t> > Model::DouglasPeucker::GetSimplifyIndex(
+                const Model::Point3DListPtr& aPoints,
+                const double& aThreshold,
+                const uint32_t& aStartIndex,
+                const uint32_t& aEndIndex)
+{
     std::vector<std::uint32_t> resultIndex;
+    if (aStartIndex >= aEndIndex || aEndIndex >= aPoints->size())
+    {
+        return std::make_shared<std::vector<uint32_t>>(resultIndex);
+    }
     std::vector<std::pair<std::uint32_t, std::uint32_t> > periods;
     periods.push_back(std::make_pair(0, aPoints->size() - 1));
     while (!periods.empty())
@@ -62,11 +80,7 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
     {
         return a < b;
     });
-    for (auto& idx : resultIndex)
-    {
-        simplified.push_back(aPoints->at(idx));
-    }
-    return std::make_shared<Point3DList>(simplified);
+    return std::make_shared<std::vector<uint32_t>>(resultIndex);
 }
 
 double Model::DouglasPeucker::pointToPointDistance(

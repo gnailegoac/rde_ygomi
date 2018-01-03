@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(../external.pri)
 
 LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl
+LIBS += `pkg-config opencv --libs`
 
 SOURCES +=\
     RoadDBExplorer.cpp \
@@ -65,7 +66,9 @@ SOURCES +=\
     model/Poly.cpp \
     model/SceneModel.cpp \
     control/SceneManageCommand.cpp \
-    model/DouglasPeucker.cpp
+    model/DouglasPeucker.cpp \
+    model/FitNurbs.cpp \
+    model/external/nurbs.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -109,7 +112,10 @@ HEADERS  += view/MainWindow.h \
     model/Poly.h \
     model/SceneModel.h \
     control/SceneManageCommand.h \
-    model/DouglasPeucker.h
+    model/DouglasPeucker.h \
+    model/FitNurbs.h \
+    model/external/nurbs.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
+

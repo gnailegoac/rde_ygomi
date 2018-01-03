@@ -41,6 +41,20 @@ Model::Point3D::~Point3D()
 
 }
 
+double Model::Point3D::Distance(const std::shared_ptr<Point3D>& aLhs,
+                                const std::shared_ptr<Point3D>& aRhs)
+{
+    return Distance(*aLhs, *aRhs);
+}
+
+double Model::Point3D::Distance(const Model::Point3D& aLhs,
+                                const Model::Point3D& aRhs)
+{
+    return std::sqrt((aLhs.GetX() - aRhs.GetX()) * (aLhs.GetX() - aRhs.GetX()) +
+                     (aLhs.GetY() - aRhs.GetY()) * (aLhs.GetY() - aRhs.GetY()) +
+                     (aLhs.GetZ() - aRhs.GetZ()) * (aLhs.GetZ() - aRhs.GetZ()));
+}
+
 const double& Model::Point3D::GetX() const
 {
     return mX;

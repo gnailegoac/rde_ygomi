@@ -21,7 +21,8 @@
 #include "Poly.h"
 #include "external/geo_alg.h"
 
-namespace YGEO {
+namespace YGEO
+{
 
 class NURBS;
 
@@ -59,6 +60,11 @@ public:
 
     const double& GetLineLength() const;
     void SetLineLength(const double& aLineLength);
+
+    void SetNurbs(const Point3DListPtr& aControlPoints, const KnotListPtr& aKnots);
+    void CalculateLength(const double& aSamplingInterval,
+                         double& aTotalLength,
+                         double& aPaintLength);
 
 private:
     void generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots);

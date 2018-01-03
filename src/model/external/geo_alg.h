@@ -107,8 +107,8 @@ public:
     const std::vector<poly3_curve_t>& GetCurve() const;                               //get curve converted from nurbs
     const std::vector<vec3d_t>&       GetCtrlPoints() const;                          //get the control points
     const std::vector<double>&         GetKnots() const;                               //get the knots
-    const poly3_curve_t&              findCurve(double t) const;                      //find corresponding curve according to parameter
-    double  getLength(double aMin, double aMax) const;                                  //calc nurbs length from 'aMin' to 'aMax'
+    const poly3_curve_t&              FindCurve(double t) const;                      //find corresponding curve according to parameter
+    double  GetLength(double aMin, double aMax) const;                                  //calc nurbs length from 'aMin' to 'aMax'
 
 private:
     NURBS();                                                                          //default constructor
@@ -121,6 +121,7 @@ private:
     double  getNearestPointSubdivision(double begin, double end, int step,            //subdivide parameter from begin to end, with respect to point 'p'
         const vec3d_t p, vec3d_t &foot, double &t) const;                             //get the nearest point on the curve
 
+private:
     std::vector<poly3_curve_t> vecCurve;                                              //the poly2 curves converted from nurbs
     std::vector<vec3d_t>       vecCtrlPoints;                                         //the control points of a nurbs
     std::vector<double>         vecKnots;                                              //the knots vector of a nurbs
