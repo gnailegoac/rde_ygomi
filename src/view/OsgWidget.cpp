@@ -183,17 +183,6 @@ void View::OsgWidget::Refresh()
     mView->getCameraManipulator()->setHomePosition(eye, center, up);
     mView->home();
 
-    bool autoHome = mView->getCameraManipulator()->getAutoComputeHomePosition();
-    if (!autoHome)
-    {
-        qDebug() << "Not auto compute home";
-        mView->getCameraManipulator()->setAutoComputeHomePosition(true);
-    }
-    else
-    {
-        qDebug() << "Auto compute home";
-    }
-
     paintGL();
 }
 
@@ -311,7 +300,6 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
         default:
             break;
         }
-
         auto aPixelRatio = this->devicePixelRatio();
         this->getEventQueue()->mouseButtonPress(static_cast<float>(aEvent->x() * aPixelRatio),
                                                 static_cast<float>(aEvent->y() * aPixelRatio),
@@ -350,16 +338,6 @@ void View::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
         default:
             break;
         }
-
-        osg::Vec3d eye;
-        osg::Vec3d center;
-        osg::Vec3d up;
-        dynamic_cast<osgGA::TerrainManipulator*>(mView->getCameraManipulator())->getTransformation(eye, center, up);
-
-        qDebug("Eye[%f, %f, %f] Center[%f, %f, %f] Up[%f, %f, %f]",
-               eye.x(), eye.y(), eye.z(),
-               center.x(), center.y(), center.z(),
-               up.x(), up.y(), up.z());
 
         auto aPixelRatio = this->devicePixelRatio();
         this->getEventQueue()->mouseButtonRelease(static_cast<float>(aPixelRatio * aEvent->x()),
