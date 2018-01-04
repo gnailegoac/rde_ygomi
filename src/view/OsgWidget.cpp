@@ -141,17 +141,6 @@ void View::OsgWidget::Refresh()
     mView->getCameraManipulator()->setHomePosition(eye, center, up);
     mView->home();
 
-    bool autoHome = mView->getCameraManipulator()->getAutoComputeHomePosition();
-    if (!autoHome)
-    {
-        qDebug() << "Not auto compute home";
-        mView->getCameraManipulator()->setAutoComputeHomePosition(true);
-    }
-    else
-    {
-        qDebug() << "Auto compute home";
-    }
-
     paintGL();
 }
 
