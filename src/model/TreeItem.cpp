@@ -44,7 +44,9 @@ int Model::TreeItem::ChildCount() const
 int Model::TreeItem::ChildIndex() const
 {
     if (mParent)
+    {
         return mParent->mChildList.indexOf(const_cast<TreeItem*>(this));
+    }
 
     return 0;
 }
@@ -67,7 +69,9 @@ Model::TreeItem* Model::TreeItem::Parent()
 bool Model::TreeItem::SetData(int aColumn, const QVariant& aValue)
 {
     if (aColumn < 0 || aColumn >= mData.size())
+    {
         return false;
+    }
 
     mData[aColumn] = aValue;
     return true;
