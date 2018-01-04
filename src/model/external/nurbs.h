@@ -92,6 +92,7 @@ void NurbsSurfaceDerivs(int n, int p, double* U,
 
 // This function uses chord length to get parameterization of given data point set Q.
 void chord_length_param(int n, cv::Point2f* Q, double* u);
+void chord_length_param(int n, cv::Point3d* Q, double* u);
 
 // find parameters of a point on the curve
 void CurvePointInv(int n, int p, double* U, cv::Point3f* Pw, cv::Point2f* C, double* u);

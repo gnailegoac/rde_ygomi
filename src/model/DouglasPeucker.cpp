@@ -54,7 +54,7 @@ std::shared_ptr<std::vector<uint32_t> > Model::DouglasPeucker::GetSimplifyIndex(
         return std::make_shared<std::vector<uint32_t>>(resultIndex);
     }
     std::vector<std::pair<std::uint32_t, std::uint32_t> > periods;
-    periods.push_back(std::make_pair(0, aPoints->size() - 1));
+    periods.push_back(std::make_pair(aStartIndex, aEndIndex));
     while (!periods.empty())
     {
         auto line = periods.back();
@@ -72,7 +72,7 @@ std::shared_ptr<std::vector<uint32_t> > Model::DouglasPeucker::GetSimplifyIndex(
             resultIndex.push_back(line.first);
         }
     }
-    resultIndex.push_back(aPoints->size() - 1);
+    resultIndex.push_back(aEndIndex);
 
     // sort index and get points
     std::sort(resultIndex.begin(), resultIndex.end(),

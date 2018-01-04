@@ -166,6 +166,11 @@ Model::Point3DListPtr Model::NurbsCurve::GetMutableControlPoints()
     return mControlPoints;
 }
 
+void Model::NurbsCurve::SetControlPoints(const Model::Point3DListPtr& aControlPoints)
+{
+    mControlPoints = aControlPoints;
+}
+
 size_t Model::NurbsCurve::GetControlPointsSize() const
 {
     return mControlPoints->size();
@@ -189,6 +194,11 @@ const Model::KnotListPtr& Model::NurbsCurve::GetKnots() const
 Model::KnotListPtr Model::NurbsCurve::GetMutableKnots()
 {
     return mKnots;
+}
+
+void Model::NurbsCurve::SetKnots(const Model::KnotListPtr& aKnots)
+{
+    mKnots = aKnots;
 }
 
 size_t Model::NurbsCurve::GetKnotsSize() const

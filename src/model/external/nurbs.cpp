@@ -962,6 +962,23 @@ void NurbsCurveFit(int n, int p, int m, double* U, double* u, cv::Point3d* Q, cv
 {
     cv::Mat A(m - 1, n - 1, CV_64F);
     cv::Mat R_mat = cv::Mat::zeros(n - 1, 3, CV_64F);
+
+    double d = (double)(m + 1) / (double)(n - p + 1);
+    for(int i = 0; i < p + 1; i++)
+    {
+        U[i] = 0;
+    }
+    for(int i = n + 1; i < n + p + 2; i++)
+    {
+        U[i] = 1;
+    }
+    for(int j = 1; j <= n - p; j++)
+    {
+        int i = d * 1.0 * j;
+        double alpha = 1.0 * j * d - 1.0 * i;
+        U[p + j] = (1 - alpha) * u[i - 1] + alpha * u[i];
+    }
+
     cv::Point3d* R = new cv::Point3d [m + 1];
     int span;
     double* N = new double [n + 1];
@@ -1014,6 +1031,21 @@ void NurbsCurveFit(int n, int p, int m, double* U, double* u, cv::Point3d* Q, cv
     P[n] = Q[m];
     delete []N;
     delete []R;
+}
+
+void chord_length_param(int n, cv::Point3d* Q, double* u)
+{
+    double d = 0;
+    for(int i = 1; i < n; i++)
+    {
+        d += norm(Q[i] - Q[i - 1]);
+    }
+    u[0] = 0;
+    for(int i = 1; i < n - 1; i++)
+    {
+        u[i] = u[i - 1] + norm(Q[i] - Q[i - 1]) / d;
+    }
+    u[n - 1] = 1;
 }
 
 }

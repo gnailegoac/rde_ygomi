@@ -1,4 +1,4 @@
-QT -= gui core
+QT -= gui # core
 TARGET = unit_test
 CONFIG += console c++11
 TEMPLATE = app
@@ -14,7 +14,15 @@ SOURCES += \
     ../src/model/Line.cpp \
     ../src/model/Element.cpp \
     ../src/model/BoundingBox.cpp \
-    ../src/model/Curve.cpp
+    ../src/model/Curve.cpp \
+    UtFitNurbs.cpp \
+    ../src/model/FitNurbs.cpp \
+    ../src/model/NurbsCurve.cpp \
+    ../src/model/external/nurbs.cpp \
+    ../src/model/Poly.cpp \
+    ../src/model/external/geo_alg.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
+
+LIBS += `pkg-config opencv --libs`

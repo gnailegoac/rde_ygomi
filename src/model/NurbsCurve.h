@@ -47,11 +47,13 @@ public:
 
     const Point3DListPtr& GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();
+    void SetControlPoints(const Point3DListPtr& aControlPoints);
     size_t GetControlPointsSize() const;
     Point3DPtr GetControlPoint(const size_t& aIndex) const;
 
     const KnotListPtr& GetKnots() const;
     KnotListPtr GetMutableKnots();
+    void SetKnots(const KnotListPtr& aKnots);
     size_t GetKnotsSize() const;
     double GetKnot(const size_t& aIndex) const;
 
