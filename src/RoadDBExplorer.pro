@@ -68,7 +68,7 @@ SOURCES +=\
     model/DouglasPeucker.cpp \
     model/data_handler/LogicDbSerializer.cpp \
     view/StrokeIntersector.cpp \
-    control/NodeHighlightCommand.cpp
+    control/NodeHighlightCommand.cpp \
     model/TreeItem.cpp \
     model/TreeModel.cpp
 
@@ -117,7 +117,7 @@ HEADERS  += view/MainWindow.h \
     model/DouglasPeucker.h \
     model/data_handler/LogicDbSerializer.h \
     view/StrokeIntersector.h \
-    control/NodeHighlightCommand.h
+    control/NodeHighlightCommand.h \
     model/TreeItem.h \
     model/TreeModel.h
 
