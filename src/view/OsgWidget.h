@@ -15,10 +15,15 @@
 
 #include <QOpenGLWidget>
 #include <QPoint>
-
+#include <memory>
 #include <osg/ref_ptr>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/GraphicsWindow>
+
+namespace Controller
+{
+    class PickHandler;
+}
 
 namespace View
 {
@@ -71,13 +76,6 @@ private:
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
     osg::ref_ptr<osgViewer::View> mView;
     osg::ref_ptr<Viewer> mViewer;
-
-    QPoint mSelectionStart;
-    QPoint mSelectionEnd;
-
-    bool mSelectionActive;
-    bool mSelectionFinished;
-
-    void processSelection();
+    std::shared_ptr<Controller::PickHandler> mPickHandler;
 };
 }
