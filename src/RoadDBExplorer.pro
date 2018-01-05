@@ -25,7 +25,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(../external.pri)
 
 LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl
-LIBS += `pkg-config opencv --libs`
 
 SOURCES +=\
     RoadDBExplorer.cpp \

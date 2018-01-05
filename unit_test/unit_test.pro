@@ -25,4 +25,3 @@ SOURCES += \
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
 
-LIBS += `pkg-config opencv --libs`

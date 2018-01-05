@@ -12,11 +12,9 @@
  */
 #include "FitNurbs.h"
 
-#include "external/nurbs.h"
-
+#include "opencv2/opencv.hpp"
 #include "DouglasPeucker.h"
 #include "NurbsCurve.h"
-
 
 Model::ColOfMatrix::ColOfMatrix():
     mStart(-1),
@@ -142,6 +140,10 @@ bool Model::FitNurbs::checkFitData(const PaintListPtr& aInputPoints)
     std::int32_t pointCount = 0;
     for (auto& pointSet : *aInputPoints)
     {
+        if (pointSet->size() < 2)
+        {
+            return false;
+        }
         pointCount += pointSet->size();
     }
     if (pointCount < 2)
@@ -220,106 +222,6 @@ std::shared_ptr<std::vector<double> > Model::FitNurbs::generateU(
     }
     return u;
 }
-
-//std::shared_ptr<std::vector<Model::Point3DPtr> > Model::FitNurbs::getControlPoints(
-//                const std::shared_ptr<std::vector<double> >& aKnots,
-//                const std::shared_ptr<std::vector<double> >& aU,
-//                const std::shared_ptr<std::vector<Model::Point3DPtr> >& aInputPoints,
-//                const int32_t& aDegree)
-//{
-//    std::size_t numControlPoints = aKnots->size() - aDegree - 1;
-//    cv::Point2f cvControlPoints[numControlPoints];
-//    cv::Point2f cvInputPoints[aInputPoints->size()];
-//    double knots[aKnots->size()];
-//    double u[aU->size()];
-//    for (std::size_t i = 0; i < aInputPoints->size(); ++i)
-//    {
-//        cvInputPoints[i].x = aInputPoints->at(i)->GetX();
-//        cvInputPoints[i].y = aInputPoints->at(i)->GetY();
-//        //cvInputPoints[i].z = aInputPoints->at(i)->GetZ();
-//    }
-//    for (std::size_t i = 0; i < aKnots->size(); ++i)
-//    {
-//        knots[i] = aKnots->at(i);
-//    }
-//    for (std::size_t i = 0; i < aU->size(); ++i)
-//    {
-//        u[i] = aU->at(i);
-//    }
-//    nurbs::NurbsCurveFit(numControlPoints - 1, aDegree, aInputPoints->size() - 1,
-//                         knots, u, cvInputPoints, cvControlPoints);
-//    auto result = std::make_shared<std::vector<Point3DPtr>>();
-//    result->reserve(numControlPoints);
-//    for (std::size_t i = 0; i < numControlPoints; ++i)
-//    {
-//        result->push_back(std::make_shared<Point3D>(cvControlPoints[i].x,
-//                                                    cvControlPoints[i].y,
-//                                                    0)); //cvControlPoints[i].z));
-//    }
-//    return result;
-//}
-
-//std::shared_ptr<std::vector<Model::Point3DPtr> > Model::FitNurbs::getControlPoints2D(
-//                const std::shared_ptr<std::vector<double> >& aU,
-//                const std::shared_ptr<std::vector<Model::Point3DPtr> >& aInputPoints,
-//                const int32_t& aDegree)
-//{
-//    std::size_t numKnots = aU->size() + 2 * aDegree;
-//    double knots[numKnots];
-//    double u[aU->size()];
-//    for (std::size_t i = 0; i < aU->size(); ++i)
-//    {
-//        u[i] = aU->at(i);
-//    }
-//    std::size_t numControlPoints = numKnots - aDegree - 1;
-//    cv::Point2f cvControlPoints[numControlPoints];
-//    cv::Point2f cvInputPoints[aInputPoints->size()];
-//    for (std::size_t i = 0; i < aInputPoints->size(); ++i)
-//    {
-//        cvInputPoints[i].x = aInputPoints->at(i)->GetX();
-//        cvInputPoints[i].y = aInputPoints->at(i)->GetY();
-//    }
-//    nurbs::NurbsCurveFit(numControlPoints - 1, aDegree, aInputPoints->size() - 1,
-//                         knots, u, cvInputPoints, cvControlPoints);
-//    auto result = std::make_shared<std::vector<Point3DPtr>>();
-//    result->reserve(numControlPoints);
-//    for (std::size_t i = 0; i < numControlPoints; ++i)
-//    {
-//        result->push_back(std::make_shared<Point3D>(cvControlPoints[i].x,
-//                                                    cvControlPoints[i].y,
-//                                                    0));
-//    }
-//    return result;
-//}
-
-//std::shared_ptr<std::vector<Model::Point3DPtr> > Model::FitNurbs::controlPoints(
-//                const std::shared_ptr<std::vector<Model::Point3DPtr> >& aInputPoints,
-//                const int32_t& aDegree)
-//{
-//    cv::Point2f Q[aInputPoints->size()];
-//    for (std::size_t i = 0; i < aInputPoints->size(); ++i)
-//    {
-//        Q[i].x = aInputPoints->at(i)->GetX();
-//        Q[i].y = aInputPoints->at(i)->GetY();
-//    }
-//    std::size_t N = aInputPoints->size();
-//    double u[aInputPoints->size()];
-//    nurbs::chord_length_param(N, Q, u);
-//    std::size_t p = aDegree;
-//    double knots[N + 2 * p];
-//    std::size_t numControl = N + 2 * p - p - 1;
-//    cv::Point2f cvControlPoints[numControl];
-//    nurbs::NurbsCurveFit(numControl - 1, p, N - 1, knots, u, Q, cvControlPoints);
-//    auto result = std::make_shared<std::vector<Point3DPtr>>();
-//    result->reserve(numControl);
-//    for (std::size_t i = 0; i < numControl; ++i)
-//    {
-//        result->push_back(std::make_shared<Point3D>(cvControlPoints[i].x,
-//                                                    cvControlPoints[i].y,
-//                                                    0));
-//    }
-//    return result;
-//}
 
 int32_t Model::FitNurbs::findSpan(
                 const int32_t& aHigh,

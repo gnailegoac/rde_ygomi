@@ -48,7 +48,7 @@ protected:
                 points->push_back(std::make_shared<Model::Point3D>(
                                                   t,
                                                   200 * std::sin(0.01 * t),
-                                                  0)); // 0.02 * t
+                                                  0.02 * t));
                 if (t == 999)
                 {
                     Model::Point3DList tmp = *points;
@@ -76,52 +76,6 @@ TEST_F(NurbsFittingTest, U_Value_Generation_Test)
     }
 }
 
-void writeData(const std::string& aOutFile, const Model::Point3DListPtr& aData)
-{
-    std::stringstream ss;
-    for (const Model::Point3DPtr p : *aData)
-    {
-        ss << p->GetX() << "," << p->GetY() << "," << p->GetZ() << std::endl;
-    }
-    std::ofstream fout(aOutFile);
-    fout << ss.str();
-    fout.close();
-}
-
-Model::Point3DListPtr getKnotPoints(const Model::PaintListPtr& aInputPoints)
-{
-    std::size_t count = 0;
-    for (auto& pointSet : *aInputPoints)
-    {
-        count += pointSet->size();
-    }
-    Model::Point3DListPtr totalPoints = std::make_shared<Model::Point3DList>();
-    totalPoints->reserve(count);
-    std::vector<std::pair<uint32_t, uint32_t>> paintIndex;
-    paintIndex.reserve(aInputPoints->size());
-    for (const Model::Point3DListPtr& pointSet : *aInputPoints)
-    {
-        paintIndex.push_back(std::make_pair(totalPoints->size(),
-                                            totalPoints->size() + pointSet->size() - 1));
-        totalPoints->insert(totalPoints->end(), pointSet->begin(), pointSet->end());
-    }
-    std::shared_ptr<std::vector<uint32_t> > knotIndex = std::make_shared<std::vector<uint32_t>>();
-    for (auto& index : paintIndex)
-    {
-        auto tmpIndex = Model::DouglasPeucker::GetSimplifyIndex(totalPoints, 0.1,
-                                                                index.first, index.second);
-        knotIndex->insert(knotIndex->end(), tmpIndex->begin(), tmpIndex->end());
-    }
-    Model::Point3DListPtr knotPoints = std::make_shared<Model::Point3DList>();
-    knotPoints->reserve(knotIndex->size());
-    for (auto& i : *knotIndex)
-    {
-        knotPoints->push_back(totalPoints->at(i));
-    }
-    return knotPoints;
-}
-
-
 
 TEST_F(NurbsFittingTest, Fit_Points_Test)
 {
@@ -146,9 +100,12 @@ TEST_F(NurbsFittingTest, Fit_Points_Test)
     std::size_t sourceIndex1 = mPoints->size() - 1;
     std::size_t sourceIndex2 = mPoints->at(sourceIndex1)->size() - 1;
     std::size_t targetIndex = controlPoints->size() - 1;
-    EXPECT_NEAR(controlPoints->at(targetIndex)->GetX(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetX(), ZERO);
-    EXPECT_NEAR(controlPoints->at(targetIndex)->GetY(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetY(), ZERO);
-    EXPECT_NEAR(controlPoints->at(targetIndex)->GetZ(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetZ(), ZERO);
+    EXPECT_NEAR(controlPoints->at(targetIndex)->GetX(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetX(), ZERO);
+    EXPECT_NEAR(controlPoints->at(targetIndex)->GetY(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetY(), ZERO);
+    EXPECT_NEAR(controlPoints->at(targetIndex)->GetZ(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetZ(), ZERO);
 
     /// fitted points test
     auto fittedPoints = nc->CalculatePointCloud(2);
@@ -159,10 +116,10 @@ TEST_F(NurbsFittingTest, Fit_Points_Test)
     EXPECT_NEAR(fittedPoints->at(0)->GetZ(), mPoints->at(0)->at(0)->GetZ(), ZERO);
     // last point should be the same
     targetIndex = fittedPoints->size() - 1;
-    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetX(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetX(), ZERO);
-    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetY(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetY(), ZERO);
-    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetZ(), mPoints->at(sourceIndex1)->at(sourceIndex2)->GetZ(), ZERO);
-
-    writeData("/media/psf/Home/Mytest/FittedData.txt", fittedPoints);
-
+    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetX(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetX(), ZERO);
+    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetY(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetY(), ZERO);
+    EXPECT_NEAR(fittedPoints->at(targetIndex)->GetZ(),
+                mPoints->at(sourceIndex1)->at(sourceIndex2)->GetZ(), ZERO);
 }
