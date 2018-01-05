@@ -67,7 +67,9 @@ SOURCES +=\
     control/SceneManageCommand.cpp \
     model/DouglasPeucker.cpp \
     model/TreeItem.cpp \
-    model/TreeModel.cpp
+    model/TreeModel.cpp \
+    view/StrokeIntersector.cpp \
+    control/NodeHighlightCommand.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -113,7 +115,9 @@ HEADERS  += view/MainWindow.h \
     control/SceneManageCommand.h \
     model/DouglasPeucker.h \
     model/TreeItem.h \
-    model/TreeModel.h
+    model/TreeModel.h \
+    view/StrokeIntersector.h \
+    control/NodeHighlightCommand.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
