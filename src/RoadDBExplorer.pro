@@ -67,8 +67,7 @@ SOURCES +=\
     model/SceneModel.cpp \
     control/SceneManageCommand.cpp \
     model/DouglasPeucker.cpp \
-    model/FitNurbs.cpp \
-    model/external/nurbs.cpp
+    model/FitNurbs.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -113,8 +112,7 @@ HEADERS  += view/MainWindow.h \
     model/SceneModel.h \
     control/SceneManageCommand.h \
     model/DouglasPeucker.h \
-    model/FitNurbs.h \
-    model/external/nurbs.h
+    model/FitNurbs.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
