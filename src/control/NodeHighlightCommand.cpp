@@ -81,14 +81,17 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
         if(mSelectType == Controller::NodeHighlightCommand::SelectType::Road && nodeName.find("Road") != std::string::npos)
         {
             nodeList.push_back(node);
+            break;
         }
         else if(mSelectType == Controller::NodeHighlightCommand::SelectType::Lane && nodeName.find("Lane") != std::string::npos)
         {
             nodeList = getLaneNodesByName(nodeName);
+            break;
         }
         else if(mSelectType == Controller::NodeHighlightCommand::SelectType::Line && nodeName.find("Line") != std::string::npos)
         {
             nodeList.push_back(node);
+            break;
         }
     }
 
