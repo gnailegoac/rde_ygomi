@@ -35,6 +35,7 @@ public:
     static const std::string INIT_SCENE;
     static const std::string REFRESH_SCENE;
     static const std::string REFRESH_WINDOW;
+    static const std::string SELECT_NODE;
 
     static ApplicationFacade* GetInstance();
 

@@ -89,12 +89,12 @@ void Model::Curve::SetIndexInLine(std::uint32_t aIndexInLine)
     mIndexInLine = aIndexInLine;
 }
 
-int Model::Curve::GetWidth() const
+uint8_t Model::Curve::GetWidth() const
 {
     return mWidth;
 }
 
-void Model::Curve::SetWidth(int aWidth)
+void Model::Curve::SetWidth(uint8_t aWidth)
 {
     mWidth = aWidth;
 }

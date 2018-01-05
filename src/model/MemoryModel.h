@@ -51,7 +51,7 @@ public:
     const std::string& GetTrafficSignTextId(const std::uint64_t& aId) const;
 
     TilePtr GetTileByLaneId(const std::uint64_t& aLaneId);
-
+    std::shared_ptr<Model::Lane> GetLaneById(const std::uint64_t& aLaneId);
 private:
     TileMapPtr mTileMap;
     CurveIdMapPtr mCurveIdMap;

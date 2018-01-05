@@ -75,30 +75,3 @@ std::string Model::LogicDbSerializer::createDbPath(const TilePtr& aTile) const
 
     return path;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -13,6 +13,7 @@
 #include "MemoryModel.h"
 
 #include "Tile.h"
+#include "Lane.h"
 #include "IdGenerator.h"
 
 Model::MemoryModel::MemoryModel():
@@ -118,3 +119,18 @@ Model::TilePtr Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
     return nullptr;
 }
 
+std::shared_ptr<Model::Lane> Model::MemoryModel::GetLaneById(const std::uint64_t& aLaneId)
+{
+    for (auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const LaneMapPtr& laneMap = tile->GetLaneMap();
+
+        if (laneMap->end() != laneMap->find(aLaneId))
+        {
+            return laneMap->at(aLaneId);
+        }
+    }
+
+    return nullptr;
+}

@@ -210,7 +210,7 @@ void Model::DbRepository::queryCurves(std::shared_ptr<MemoryModel>& aMemoryModel
                     nurbsCurve->SetCurveId(curveId);
                     nurbsCurve->SetIndexInLine(query.getColumn(2).getUInt());
                     nurbsCurve->SetCurveType(CurveType(query.getColumn(3).getUInt()));
-                    nurbsCurve->SetWidth(query.getColumn(4).getInt());
+                    nurbsCurve->SetWidth(static_cast<std::uint8_t>(query.getColumn(4).getInt()));
 
                     std::uint64_t lineId = aMemoryModel->GetLineIntId(query.getColumn(1).getString());
                     LinePtr line = tile->GetMutableLine(lineId);
@@ -464,15 +464,15 @@ void Model::DbRepository::setLaneConnection(const TilePtr& aSourceTile,
     LanePtr sourceLane = nullptr;
     LanePtr destinationLane = nullptr;
 
-    if (nullptr == aSourceTile ||
-            nullptr == (sourceLane = aSourceTile->GetLane(aSourceId)))
+    if (nullptr == aSourceTile
+            || nullptr == (sourceLane = aSourceTile->GetLane(aSourceId)))
     {
         throw(DbParseException(DbParseException::Type::DbParseError,
                                "Cannot Find the Source Lane " + aSourceId));
     }
 
-    if (nullptr == aDestinationTile ||
-            nullptr == (destinationLane = aDestinationTile->GetLane(aDestinationId)))
+    if (nullptr == aDestinationTile
+            || nullptr == (destinationLane = aDestinationTile->GetLane(aDestinationId)))
     {
         throw(DbParseException(DbParseException::Type::DbParseError,
                                "Cannot Find the Destination Lane" + aDestinationId));
@@ -545,12 +545,9 @@ void Model::DbRepository::storeRoads(const std::shared_ptr<MemoryModel>& aMemory
             {
                 const RoadPtr& road = itorRoad.second;
 
-
-
                 mDatabase->exec("INSERT INTO " + roadTable + "(ID,SegID) VALUES ("
                                 + std::to_string(road->GetRoadId()) + ","
-                                + std::to_string(segmentId)
-                                + ")"
+                                + std::to_string(segmentId) + ")"
                                 );
             }
 
@@ -648,8 +645,7 @@ void Model::DbRepository::storeCurves(const std::shared_ptr<MemoryModel>& aMemor
                               + std::to_string((int)curve->GetCurveType()) + ","
                               + std::to_string(curve->GetWidth()) + ","
                               + "'" +  (curve->Parse()) + "',"
-                              + strings::FormatFloat<double>(curve->GetLength(), 8)
-                              + ")";
+                              + strings::FormatFloat<double>(curve->GetLength(), 8) + ")";
                     mDatabase->exec(sqlText);
 
                 }

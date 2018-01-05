@@ -12,15 +12,14 @@
  */
 
 #include "PickHandler.h"
-
 #include <iostream>
-
 #include <osg/io_utils>
-
 #include <osgUtil/IntersectionVisitor>
 #include <osgUtil/LineSegmentIntersector>
-
+#include "view/StrokeIntersector.h"
 #include <osgViewer/Viewer>
+#include <osg/Material>
+#include "facade/ApplicationFacade.h"
 
 Controller::PickHandler::PickHandler(double aDevicePixelRatio):
     mDevicePixelRatio(aDevicePixelRatio)
@@ -31,10 +30,22 @@ Controller::PickHandler::~PickHandler()
 {
 }
 
-bool Controller::PickHandler::Handle(const osgGA::GUIEventAdapter& aEventAdapter,
+osg::ref_ptr<StrokeIntersector> Controller::PickHandler::getStrokeIntersector(const osgGA::GUIEventAdapter& aEventAdapter)
+{
+    double centerX = aEventAdapter.getXnormalized();
+    double centerY = aEventAdapter.getYnormalized();
+    osg::ref_ptr<StrokeIntersector> picker(
+        new StrokeIntersector(
+                osgUtil::Intersector::PROJECTION,
+                centerX,
+                centerY));
+    return picker;
+}
+
+bool Controller::PickHandler::handle(const osgGA::GUIEventAdapter& aEventAdapter,
                                      osgGA::GUIActionAdapter& aActionAdapter)
 {
-    if(aEventAdapter.getEventType() != osgGA::GUIEventAdapter::RELEASE &&
+    if(aEventAdapter.getEventType() != osgGA::GUIEventAdapter::RELEASE ||
        aEventAdapter.getButton() != osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
     {
         return false;
@@ -42,32 +53,35 @@ bool Controller::PickHandler::Handle(const osgGA::GUIEventAdapter& aEventAdapter
 
     osgViewer::View* viewer = dynamic_cast<osgViewer::View*>(&aActionAdapter);
 
-    if(viewer)
+    if(viewer != nullptr)
     {
-        osgUtil::LineSegmentIntersector* aIntersector =
-                new osgUtil::LineSegmentIntersector(osgUtil::Intersector::WINDOW,
-                                                    aEventAdapter.getX() * mDevicePixelRatio,
-                                                    aEventAdapter.getY() * mDevicePixelRatio);
-        osgUtil::IntersectionVisitor aIntersectionVisitor(aIntersector);
+        osg::ref_ptr<StrokeIntersector> strokeIntersector = getStrokeIntersector(aEventAdapter);
+        osgUtil::IntersectionVisitor intersectionVisitor(strokeIntersector);
         osg::Camera* aCamera = viewer->getCamera();
-        if(!aCamera)
+        if(aCamera == nullptr)
         {
             return false;
         }
 
-        aCamera->accept(aIntersectionVisitor);
+        aCamera->accept(intersectionVisitor);
 
-        if(!aIntersector->containsIntersections())
+        std::vector<osg::Node*> nodeList;
+        if(!strokeIntersector->containsIntersections())
         {
+            ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE, &nodeList);
             return false;
         }
 
-        auto aIntersections = aIntersector->getIntersections();
-        std::cout << "Got " << aIntersections.size() << " intersections:\n";
-        for(auto&& intersection : aIntersections)
+        for(auto intersection : strokeIntersector->getIntersections())
         {
-            std::cout << "  - Local intersection point = " << intersection.localIntersectionPoint << "\n";
+           const osg::NodePath& intersectionNodes = intersection.nodePath;
+           for(osg::Node* node : intersectionNodes)
+           {
+               nodeList.push_back(node);
+           }
         }
+
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE, &nodeList);
     }
 
     return true;

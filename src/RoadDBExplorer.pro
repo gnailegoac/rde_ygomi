@@ -66,7 +66,9 @@ SOURCES +=\
     model/SceneModel.cpp \
     control/SceneManageCommand.cpp \
     model/DouglasPeucker.cpp \
-    model/data_handler/LogicDbSerializer.cpp
+    model/data_handler/LogicDbSerializer.cpp \
+    view/StrokeIntersector.cpp \
+    control/NodeHighlightCommand.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -111,7 +113,9 @@ HEADERS  += view/MainWindow.h \
     model/SceneModel.h \
     control/SceneManageCommand.h \
     model/DouglasPeucker.h \
-    model/data_handler/LogicDbSerializer.h
+    model/data_handler/LogicDbSerializer.h \
+    view/StrokeIntersector.h \
+    control/NodeHighlightCommand.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

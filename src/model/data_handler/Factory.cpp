@@ -28,19 +28,18 @@ Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::vector<std::s
 
 Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::string& aDbPath)
 {
+    std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
     struct stat st;
     stat(aDbPath.c_str(),&st);
 
     if (S_ISDIR(st.st_mode))
     {
-        std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
         logicDbFactory->SetOutputFolder(aDbPath);
-        return std::move(logicDbFactory);
     }
     else
     {
-        std::unique_ptr<LogicDbFactory> logicDbFactory(new LogicDbFactory);
         logicDbFactory->SetInputPath(aDbPath);
-        return std::move(logicDbFactory);
     }
+
+    return std::move(logicDbFactory);
 }

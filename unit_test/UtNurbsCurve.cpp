@@ -46,7 +46,6 @@ std::string gSplineJsonValue =  "{"
                                 "]"
                                 "}";
 
-
 TEST(NurbsCurve_Test, Serialize_Nurbs)
 {
     Model::NurbsCurve nurbs;

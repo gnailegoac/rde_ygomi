@@ -57,8 +57,8 @@ public:
     std::uint32_t GetIndexInLine() const;
     void SetIndexInLine(std::uint32_t aIndexInLine);
 
-    int GetWidth() const;
-    void SetWidth(int aWidth);
+    std::uint8_t GetWidth() const;
+    void SetWidth(std::uint8_t aWidth);
 
     const PaintRangePtr& GetPaintRange() const;
     PaintRangePtr GetMutablePaintRange();
@@ -70,7 +70,7 @@ protected:
     float mLength;
     CurveType mCurveType;
     std::uint32_t mIndexInLine;
-    int mWidth;
+    std::uint8_t mWidth;
     PaintRangePtr mPaintRange;
 };
 

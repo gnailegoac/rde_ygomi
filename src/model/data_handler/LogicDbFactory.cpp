@@ -51,7 +51,7 @@ void Model::LogicDbFactory::SetOutputFolder(const std::string& aOutputFolder, st
     mOutputFolder = aOutputFolder;
     mVersion = aVersion;
 
-    std::string folder = aOutputFolder + "/" +getCurrentTime();
+    std::string folder = aOutputFolder + "/" + getCurrentTime();
 
     if(0 == mkdir(folder.c_str(), 0755))
     {
@@ -68,7 +68,6 @@ Model::ISerializerPtr Model::LogicDbFactory::CreateSerializer()
 {
     return std::unique_ptr<ISerializer>(new LogicDbSerializer(mOutputFolder, mVersion));
 }
-
 
 std::string Model::LogicDbFactory::getCurrentTime() const
 {

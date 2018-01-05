@@ -98,4 +98,5 @@ std::string FormatFloat(const T& aValue, int aPrecision)
 
     return ss.str();
 }
+
 }
