@@ -20,6 +20,8 @@
 #include <string>
 #include <mutex>
 
+#include "Common.h"
+
 namespace Model
 {
 
@@ -43,16 +45,29 @@ public:
     IdGeneratorMap():mIdGenerator(std::make_shared<IdGenerator>()){}
     ~IdGeneratorMap(){}
 
-    std::uint64_t GetId(std::string aId)
+    const std::uint64_t& GetId(const std::string& aId)
     {
         std::lock_guard<std::mutex> mutexGuard(mMutex);
 
         if (0 == mIdMap.count(aId))
         {
             mIdMap[aId] = mIdGenerator->GetNewId();
+            mTextMap[mIdMap[aId]] = aId;
         }
 
         return mIdMap[aId];
+    }
+    const std::string& GetTextId(const std::uint64_t& aId)
+    {
+        const static std::string INVALID = TEXT_NAN;
+        std::lock_guard<std::mutex> mutexGuard(mMutex);
+
+        if (0 != mTextMap.count(aId))
+        {
+           return mTextMap[aId];
+        }
+
+        return INVALID;
     }
     void Reset()
     {
@@ -61,6 +76,7 @@ public:
         mIdGenerator.reset();
         mIdGenerator = std::make_shared<IdGenerator>();
         mIdMap.clear();
+        mTextMap.clear();
     }
 
 private:
@@ -68,6 +84,7 @@ private:
     std::mutex mMutex;
     std::shared_ptr<IdGenerator> mIdGenerator;
     std::unordered_map<std::string, uint64_t> mIdMap;
+    std::unordered_map<uint64_t, std::string> mTextMap;
 };
 
 }

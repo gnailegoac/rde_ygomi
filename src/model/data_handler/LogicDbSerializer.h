@@ -6,44 +6,38 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    DbParseException.h
+ * @file    LogicDbSerializer.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include <exception>
-#include <string>
+#include "../Common.h"
+#include "ISerializer.h"
 
 namespace Model
 {
 
-class DbParseException : public std::exception
+class Tile;
+typedef std::shared_ptr<Tile> TilePtr;
+
+
+class LogicDbSerializer : public ISerializer
 {
 public:
-    enum class Type
-    {
-        DbParseError,
-        RoadPointillizeError,
-        TrafficSignPointillizeError,
-        LaneConnectionError,
-        CoordinateTransformError,
-        DbStoreError
-    };
+    LogicDbSerializer(const std::string& aOuputFolder, const std::string aVersion = "0");
+    LogicDbSerializer();
+    ~LogicDbSerializer();
 
-public:
-    DbParseException(Type aType, const std::string& aError);
-    ~DbParseException();
-
-    Type GetType() const;
-    void SetType(Type aType);
-
-    const char* what() const throw() override;
+    bool Serialize(const MemoryModelPtr& aMemoryModel) override;
 
 private:
-    Type mType;
-    std::string mError;
+    std::string createDbPath(const TilePtr& aTile) const;
+
+private:
+    std::string mOuputFolder;
+    std::string mVersion;
 };
 
 }

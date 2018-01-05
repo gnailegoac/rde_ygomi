@@ -29,6 +29,10 @@ namespace Model
 #define DBL_NAN (std::numeric_limits<double>::quiet_NaN())
 #endif
 
+#ifndef TEXT_NAN
+#define TEXT_NAN ("NAN")
+#endif
+
 typedef std::vector<std::string> StringList;
 typedef std::shared_ptr<StringList> StringListPtr;
 

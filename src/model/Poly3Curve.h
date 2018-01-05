@@ -28,6 +28,9 @@ public:
     Point3DListPtr CalculatePointCloud(const double&) override;
     PaintListPtr CalculatePaintPointCloud(const double&) override;
 
+    bool Convert(const std::string& aStrExpr) override;
+    std::string Parse() const override;
+
     void SetX(const double& aX, const size_t& aIndex);
     double GetX(const size_t& aIndex) const;
 

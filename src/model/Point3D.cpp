@@ -13,6 +13,8 @@
 
 #include "Point3D.h"
 
+#include "Utilities.h"
+
 Model::Point3D::Point3D():
     mX(0.0),
     mY(0.0),
@@ -69,4 +71,15 @@ const double& Model::Point3D::GetZ() const
 void Model::Point3D::SetZ(const double& aZ)
 {
     mZ = aZ;
+}
+
+std::string Model::Point3D::FormatPoint(int aPrecisionX, int aPrecisionY, int aPrecisionZ) const
+{
+    std::string strPoint("");
+
+    strPoint += (strings::FormatFloat<double>(mX, aPrecisionX) + ",");
+    strPoint += (strings::FormatFloat<double>(mY, aPrecisionY) + ",");
+    strPoint += (strings::FormatFloat<double>(mZ, aPrecisionZ));
+
+    return strPoint;
 }
