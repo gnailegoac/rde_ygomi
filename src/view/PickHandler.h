@@ -15,6 +15,7 @@
 
 #include <osgGA/GUIEventHandler>
 
+class StrokeIntersector;
 namespace Controller
 {
 class PickHandler : public osgGA::GUIEventHandler
@@ -23,10 +24,11 @@ public:
     PickHandler(double aDevicePixelRatio = 1.0);
     virtual ~PickHandler();
 
-    virtual bool Handle(const osgGA::GUIEventAdapter& aEventAdapter,
-                        osgGA::GUIActionAdapter& aActionAdapter);
+    bool handle(const osgGA::GUIEventAdapter& aEventAdapter,
+                        osgGA::GUIActionAdapter& aActionAdapter) override;
 
 private:
+    osg::ref_ptr<StrokeIntersector> getStrokeIntersector(const osgGA::GUIEventAdapter& aEventAdapter);
     double mDevicePixelRatio;
 };
 }
