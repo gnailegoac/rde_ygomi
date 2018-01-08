@@ -30,6 +30,7 @@ public:
 
     bool Convert(const std::string& aStrExpr) override;
     std::string Parse() const override;
+    bool FitPointsToCurve(std::string& aErrorMessage) override;
 
     void SetX(const double& aX, const size_t& aIndex);
     double GetX(const size_t& aIndex) const;

@@ -45,6 +45,7 @@ public:
 
     bool Convert(const std::string& aStrExpr) override;
     std::string Parse() const override;
+    bool FitPointsToCurve(std::string& aErrorMessage) override;
 
     const Point3DListPtr& GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();

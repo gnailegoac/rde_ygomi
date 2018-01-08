@@ -19,6 +19,7 @@
 #include <QJsonObject>
 
 #include "Utilities.h"
+#include "FitNurbs.h"
 #include "external/geo_alg.h"
 
 Model::NurbsCurve::NurbsCurve():
@@ -185,6 +186,30 @@ std::string Model::NurbsCurve::Parse() const
     QString strJson(document.toJson(QJsonDocument::Indented));
 
     return strJson.toStdString();
+}
+
+bool Model::NurbsCurve::FitPointsToCurve(std::string& aErrorMessage)
+{
+    const static double FITINTERBAL = 0.1;
+    const static std::uint8_t FITORDER = 3;
+
+    PaintListPtr paintList = CalculatePaintPointCloud(FITINTERBAL);
+    NurbsCurvePtr fitNurbs = FitNurbs::FitPointsToCurve(paintList, FITORDER, aErrorMessage);
+
+    if (nullptr != fitNurbs)
+    {
+        SetControlPoints(fitNurbs->GetControlPoints());
+        SetKnots(fitNurbs->GetKnots());
+        SetPaintRange(fitNurbs->GetPaintRange());
+        SetLineLength(fitNurbs->GetLength());
+        SetPaintTotalLength(fitNurbs->GetPaintTotalLength());
+        SetNurbs(fitNurbs->GetControlPoints(), fitNurbs->GetKnots());
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 const Model::Point3DListPtr& Model::NurbsCurve::GetControlPoints() const

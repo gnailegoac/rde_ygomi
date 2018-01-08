@@ -44,6 +44,7 @@ public:
 
     virtual bool Convert(const std::string&);
     virtual std::string Parse() const;
+    virtual bool FitPointsToCurve(std::string&);
 
     const std::uint64_t& GetCurveId() const;
     void SetCurveId(const std::uint64_t& aCurveId);
