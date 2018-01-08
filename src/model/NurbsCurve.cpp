@@ -291,7 +291,7 @@ void Model::NurbsCurve::CalculateLength()
     {
         return;
     }
-    mLineLength = mNurbs->GetLength(0, 1);
+    mLineLength = mNurbs->GetLength(mKnots->front(), mKnots->back());
     mPaintTotalLength = 0;
     for (const auto& paint : *mPaintRange)
     {
