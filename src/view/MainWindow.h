@@ -12,14 +12,21 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QMainWindow>
 #include <QString>
+#include <QTreeView>
 
 #include <osg/Polytope>
 #include "model/Common.h"
 
 namespace Ui {
 class MainWindow;
+}
+
+namespace Model {
+class TreeModel;
 }
 
 namespace View
@@ -34,6 +41,8 @@ public:
     void PopupWarningMessage(const QString& aWarning);
     osg::Polytope GetPolytope();
     void UpdateView();
+    void ShowRoadInfo();
+    void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
@@ -45,6 +54,7 @@ private:
     void writeSettings();
     void setupConnections();
     Ui::MainWindow *ui;
+    QTreeView* mRoadInfoView;
 };
 }
 

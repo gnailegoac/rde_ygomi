@@ -44,6 +44,7 @@ public:
 
     virtual bool Convert(const std::string&);
     virtual std::string Parse() const;
+    virtual bool FitPointsToCurve(std::string&);
 
     const std::uint64_t& GetCurveId() const;
     void SetCurveId(const std::uint64_t& aCurveId);
@@ -62,6 +63,7 @@ public:
 
     const PaintRangePtr& GetPaintRange() const;
     PaintRangePtr GetMutablePaintRange();
+    void SetPaintRange(const PaintRangePtr& aPaintRange);
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(const size_t& aIndex) const;
 

@@ -46,6 +46,11 @@ std::string Model::Poly3Curve::Parse() const
     return TEXT_NAN;
 }
 
+ bool Model::Poly3Curve::FitPointsToCurve(std::string&)
+ {
+     return false;
+ }
+
 void Model::Poly3Curve::SetX(const double& aX, const size_t& aIndex)
 {
     if (aIndex < 4)

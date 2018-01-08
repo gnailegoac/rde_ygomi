@@ -21,10 +21,13 @@
 #include "OsgWidget.h"
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
+#include "model/TreeModel.h"
 
-View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
-    QMainWindow(aParent, flags),
-    ui(new Ui::MainWindow)
+#include "proxy/MainProxy.h"
+
+View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
+                                                                        ui(new Ui::MainWindow),
+                                                                        mRoadInfoView(new QTreeView(this))
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
@@ -32,74 +35,87 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     setupConnections();
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
+    mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
+    mRoadInfoView->raise();
+    mRoadInfoView->setVisible(false);
 }
 
-void View::MainWindow::PopupWarningMessage(const QString& aWarning)
+void View::MainWindow::PopupWarningMessage(const QString &aWarning)
 {
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
 }
 
 osg::Polytope View::MainWindow::GetPolytope()
 {
-    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
     return viewer->GetPolytope();
 }
 
 void View::MainWindow::UpdateView()
 {
-    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
     viewer->Refresh();
+}
+
+void View::MainWindow::ShowRoadInfo()
+{
+    bool isVisible = mRoadInfoView->isVisible();
+    mRoadInfoView->setVisible(!isVisible);
+}
+
+void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel> &aTreeModel)
+{
+    mRoadInfoView->setModel(aTreeModel.get());
+    mRoadInfoView->setColumnWidth(0, 171);
 }
 
 void View::MainWindow::setupConnections()
 {
-    connect(ui->actionOpen, &QAction::triggered, [=]()
-    {
+    connect(ui->actionOpen, &QAction::triggered, [=]() {
         QString path = QFileDialog::getOpenFileName(this, tr("Open File"), "/", tr("Files(*.db *.xodr *.kml *.xml *.pb)"));
-        if(path.length() > 0)
+        if (path.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN, &path);
         }
     });
 
-    connect(ui->actionOpenFolder, &QAction::triggered, [=]()
-    {
+    connect(ui->actionOpenFolder, &QAction::triggered, [=]() {
         QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
-        if(folderPath.length() > 0)
+        if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN, &folderPath);
         }
     });
 
-    connect(ui->actionPreference, &QAction::triggered, [=]()
-    {
+    connect(ui->actionPreference, &QAction::triggered, [=]() {
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
     });
 
-    connect(ui->actionSelectRoad, &QAction::triggered, [=]()
-    {
+    connect(ui->actionRoadInfo, &QAction::triggered, [=]() {
+        ShowRoadInfo();
+    });
+
+    connect(ui->actionSelectRoad, &QAction::triggered, [=]() {
         onSelectTypeChange(Model::SelectType::Road, ui->actionSelectRoad->isChecked());
     });
 
-    connect(ui->actionSelectLane, &QAction::triggered, [=]()
-    {
+    connect(ui->actionSelectLane, &QAction::triggered, [=]() {
         onSelectTypeChange(Model::SelectType::Lane, ui->actionSelectLane->isChecked());
     });
 
-    connect(ui->actionSelectLine, &QAction::triggered, [=]()
-    {
+    connect(ui->actionSelectLine, &QAction::triggered, [=]() {
         onSelectTypeChange(Model::SelectType::Line, ui->actionSelectLine->isChecked());
     });
 }
 
-void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)
+void View::MainWindow::onSelectTypeChange(const Model::SelectType &aSelectType, bool aIsChecked)
 {
     ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
     Model::SelectType selectType = aSelectType;
-    if(aSelectType == Model::SelectType::Road)
+    if (aSelectType == Model::SelectType::Road)
     {
-        if(!aIsChecked)
+        if (!aIsChecked)
         {
             ui->actionSelectLine->setChecked(true);
             selectType = Model::SelectType::Line;
@@ -110,9 +126,9 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
             ui->actionSelectLane->setChecked(false);
         }
     }
-    else if(aSelectType == Model::SelectType::Lane)
+    else if (aSelectType == Model::SelectType::Lane)
     {
-        if(!aIsChecked)
+        if (!aIsChecked)
         {
             ui->actionSelectLine->setChecked(true);
             selectType = Model::SelectType::Line;
@@ -123,9 +139,9 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
             ui->actionSelectRoad->setChecked(false);
         }
     }
-    else if(aSelectType == Model::SelectType::Line)
+    else if (aSelectType == Model::SelectType::Line)
     {
-        if(!aIsChecked)
+        if (!aIsChecked)
         {
             ui->actionSelectLine->setChecked(true);
             selectType = Model::SelectType::Line;
@@ -147,14 +163,17 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
 View::MainWindow::~MainWindow()
 {
     delete ui;
+    delete mRoadInfoView;
 }
 
-void View::MainWindow::resizeEvent(QResizeEvent* aEvent)
+void View::MainWindow::resizeEvent(QResizeEvent *aEvent)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
+    mRoadInfoView->resize(300, height());
+    mRoadInfoView->move(width() - 300, 0);
 }
 
-void View::MainWindow::closeEvent(QCloseEvent* aEvent)
+void View::MainWindow::closeEvent(QCloseEvent *aEvent)
 {
     writeSettings();
     QMainWindow::closeEvent(aEvent);
