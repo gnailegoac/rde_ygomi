@@ -310,7 +310,7 @@ void Model::NurbsCurve::CalculateLength(const double& aSamplingInterval,
     }
 }
 
-void Model::NurbsCurve::generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots)
+void Model::NurbsCurve::readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots)
 {
     std::vector<_vec3d> ctrls;
     size_t controlPointSize = static_cast<size_t>(aObjectCtrlPoints.size());

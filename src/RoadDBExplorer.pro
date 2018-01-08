@@ -114,7 +114,7 @@ HEADERS  += view/MainWindow.h \
     model/SceneModel.h \
     control/SceneManageCommand.h \
     model/DouglasPeucker.h \
-    model/FitNurbs.h
+    model/FitNurbs.h \
     model/data_handler/LogicDbSerializer.h \
     view/StrokeIntersector.h \
     control/NodeHighlightCommand.h
