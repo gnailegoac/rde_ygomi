@@ -36,6 +36,8 @@ public:
     static const std::string REFRESH_SCENE;
     static const std::string REFRESH_WINDOW;
     static const std::string SELECT_NODE;
+    static const std::string CHANGE_SELECT_TYPE;
+    static const std::string DEHIGHLIGHT_ALL_NODE;
 
     static ApplicationFacade* GetInstance();
 

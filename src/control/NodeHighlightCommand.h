@@ -13,6 +13,7 @@
 #pragma once
 
 #include "BasicCommand.h"
+#include "model/Common.h"
 
 namespace osg
 {
@@ -24,14 +25,6 @@ namespace Controller
 class NodeHighlightCommand : public BasicCommand
 {
 public:
-
-    enum class SelectType
-    {
-        Road,
-        Lane,
-        Line
-    };
-
     NodeHighlightCommand();
     void execute(PureMVC::Interfaces::INotification const& aNotification) override;
     static std::string GetCommandName();
@@ -39,9 +32,10 @@ private:
     void highlightNode();
     void dehighlightNode();
     std::vector<osg::Node*> findNode(const std::vector<osg::Node*>& aNodeList);
-    std::vector<osg::Node*> getLaneNodesByName(const std::string& aLaneNodeName);
+    std::vector<osg::Node*> getLineNodesByLaneName(const std::string& aLaneNodeName);
+    std::vector<osg::Node*> getLineNodesByRoadNode(osg::Node* aNode);
 
     std::vector<osg::Node*> mSelectNodes;
-    SelectType mSelectType;
+    Model::SelectType mSelectType;
 };
 }

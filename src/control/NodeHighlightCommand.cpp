@@ -22,12 +22,31 @@
 #include "proxy/MainProxy.h"
 
 Controller::NodeHighlightCommand::NodeHighlightCommand() :
-    mSelectType(Controller::NodeHighlightCommand::SelectType::Lane)
+    mSelectType(Model::SelectType::Line)
 {
 
 }
 
-std::vector<osg::Node*> Controller::NodeHighlightCommand::getLaneNodesByName(const std::string& aLaneNodeName)
+std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByRoadNode(osg::Node* aNode)
+{
+    std::vector<osg::Node*> lineNodeList;
+    osg::Group* roadNode = dynamic_cast<osg::Group*>(aNode);
+    int childrenNum = roadNode->getNumChildren();
+    for(int childIndex = 0; childIndex < childrenNum; ++childIndex)
+    {
+        osg::Node* laneNode = roadNode->getChild(childIndex);
+        std::string laneName = laneNode->getName();
+        if(laneName.find("Lane") != std::string::npos)
+        {
+            std::vector<osg::Node*> nodeList = getLineNodesByLaneName(laneName);
+            lineNodeList.insert(lineNodeList.end(), nodeList.begin(), nodeList.end());
+        }
+    }
+
+    return lineNodeList;
+}
+
+std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByLaneName(const std::string& aLaneNodeName)
 {
     std::vector<osg::Node*> nodeList;
     std::vector<std::string> results;
@@ -50,20 +69,20 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::getLaneNodesByName(con
             Model::LinePtr leftLine = lane->GetLeftLine();
             if(leftLine != nullptr)
             {
-                osg::ref_ptr<osg::Node> leftLineNode = sceneModel->GetLineNodeById(leftLine->GetLineId());
+                osg::Node* leftLineNode = sceneModel->GetLineNodeById(leftLine->GetLineId()).get();
                 if(leftLineNode != nullptr)
                 {
-                    nodeList.push_back(leftLineNode.get());
+                    nodeList.push_back(leftLineNode);
                 }
             }
 
             Model::LinePtr rightLine = lane->GetRightLine();
             if(rightLine != nullptr)
             {
-                osg::ref_ptr<osg::Node> rightLineNode = sceneModel->GetLineNodeById(rightLine->GetLineId());
+                osg::Node* rightLineNode = sceneModel->GetLineNodeById(rightLine->GetLineId()).get();
                 if(rightLineNode != nullptr)
                 {
-                    nodeList.push_back(rightLineNode.get());
+                    nodeList.push_back(rightLineNode);
                 }
             }
         }
@@ -78,17 +97,17 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
     for(const auto& node : aNodeList)
     {
         std::string nodeName = node->getName();
-        if(mSelectType == Controller::NodeHighlightCommand::SelectType::Road && nodeName.find("Road") != std::string::npos)
+        if(mSelectType == Model::SelectType::Road && nodeName.find("Road") != std::string::npos)
         {
-            nodeList.push_back(node);
+            nodeList = getLineNodesByRoadNode(node);
             break;
         }
-        else if(mSelectType == Controller::NodeHighlightCommand::SelectType::Lane && nodeName.find("Lane") != std::string::npos)
+        else if(mSelectType == Model::SelectType::Lane && nodeName.find("Lane") != std::string::npos)
         {
-            nodeList = getLaneNodesByName(nodeName);
+            nodeList = getLineNodesByLaneName(nodeName);
             break;
         }
-        else if(mSelectType == Controller::NodeHighlightCommand::SelectType::Line && nodeName.find("Line") != std::string::npos)
+        else if(mSelectType == Model::SelectType::Line && nodeName.find("Line") != std::string::npos)
         {
             nodeList.push_back(node);
             break;
@@ -111,6 +130,16 @@ void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotificatio
             highlightNode();
         }
     }
+    else if(aNotification.getName() == ApplicationFacade::CHANGE_SELECT_TYPE)
+    {
+        Model::SelectType selectType = *CommonFunction::ConvertToNonConstType<Model::SelectType>(aNotification.getBody());
+        mSelectType = selectType;
+    }
+    else if(aNotification.getName() == ApplicationFacade::DEHIGHLIGHT_ALL_NODE)
+    {
+        dehighlightNode();
+        mSelectNodes.clear();
+    }
 }
 
 std::string Controller::NodeHighlightCommand::GetCommandName()
@@ -120,26 +149,26 @@ std::string Controller::NodeHighlightCommand::GetCommandName()
 
 void Controller::NodeHighlightCommand::highlightNode()
 {
-    for(auto& node : mSelectNodes)
+    for(auto node : mSelectNodes)
     {
         osg::ref_ptr<osg::Material> material = new osg::Material;
         material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
         material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
         material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
         node->getOrCreateStateSet()->setAttributeAndModes(material,
-                                                           osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+                                                          osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     }
 }
 
 void Controller::NodeHighlightCommand::dehighlightNode()
 {
-    for(auto& node : mSelectNodes)
+    for(auto node : mSelectNodes)
     {
         osg::ref_ptr<osg::Material> material = new osg::Material;
         material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
         material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
         material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
         node->getOrCreateStateSet()->setAttributeAndModes(material,
-                                                           osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+                                                          osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     }
 }

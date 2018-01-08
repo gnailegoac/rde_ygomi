@@ -76,6 +76,72 @@ void View::MainWindow::setupConnections()
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
     });
+
+    connect(ui->actionSelectRoad, &QAction::triggered, [=]()
+    {
+        onSelectTypeChange(Model::SelectType::Road, ui->actionSelectRoad->isChecked());
+    });
+
+    connect(ui->actionSelectLane, &QAction::triggered, [=]()
+    {
+        onSelectTypeChange(Model::SelectType::Lane, ui->actionSelectLane->isChecked());
+    });
+
+    connect(ui->actionSelectLine, &QAction::triggered, [=]()
+    {
+        onSelectTypeChange(Model::SelectType::Line, ui->actionSelectLine->isChecked());
+    });
+}
+
+void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)
+{
+    ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
+    Model::SelectType selectType = aSelectType;
+    if(aSelectType == Model::SelectType::Road)
+    {
+        if(!aIsChecked)
+        {
+            ui->actionSelectLine->setChecked(true);
+            selectType = Model::SelectType::Line;
+        }
+        else
+        {
+            ui->actionSelectLine->setChecked(false);
+            ui->actionSelectLane->setChecked(false);
+        }
+    }
+    else if(aSelectType == Model::SelectType::Lane)
+    {
+        if(!aIsChecked)
+        {
+            ui->actionSelectLine->setChecked(true);
+            selectType = Model::SelectType::Line;
+        }
+        else
+        {
+            ui->actionSelectLine->setChecked(false);
+            ui->actionSelectRoad->setChecked(false);
+        }
+    }
+    else if(aSelectType == Model::SelectType::Line)
+    {
+        if(!aIsChecked)
+        {
+            ui->actionSelectLine->setChecked(true);
+            selectType = Model::SelectType::Line;
+        }
+        else
+        {
+            ui->actionSelectRoad->setChecked(false);
+            ui->actionSelectLane->setChecked(false);
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_SELECT_TYPE, &selectType);
 }
 
 View::MainWindow::~MainWindow()
@@ -104,6 +170,8 @@ void View::MainWindow::restoreSettings()
     {
         restoreGeometry(mainWindowGeometry);
     }
+
+    ui->actionSelectLine->setChecked(true);
 }
 
 void View::MainWindow::writeSettings()

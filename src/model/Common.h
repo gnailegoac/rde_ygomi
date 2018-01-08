@@ -39,5 +39,10 @@ typedef std::shared_ptr<StringList> StringListPtr;
 typedef StringList PathList;
 typedef StringListPtr PathListPtr;
 
-
+enum class SelectType
+{
+    Road,
+    Lane,
+    Line
+};
 }

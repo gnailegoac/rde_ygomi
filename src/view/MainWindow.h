@@ -16,6 +16,7 @@
 #include <QString>
 
 #include <osg/Polytope>
+#include "model/Common.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,7 @@ protected:
     void closeEvent(QCloseEvent* aEvent) override;
 
 private:
+    void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();
     void setupConnections();
