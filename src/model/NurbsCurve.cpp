@@ -201,6 +201,7 @@ bool Model::NurbsCurve::FitPointsToCurve(std::string& aErrorMessage)
         SetControlPoints(fitNurbs->GetControlPoints());
         SetKnots(fitNurbs->GetKnots());
         SetPaintRange(fitNurbs->GetPaintRange());
+        SetLength(fitNurbs->GetLength());
         SetLineLength(fitNurbs->GetLength());
         SetPaintTotalLength(fitNurbs->GetPaintTotalLength());
         SetNurbs(fitNurbs->GetControlPoints(), fitNurbs->GetKnots());
