@@ -120,6 +120,11 @@
     <string>Preferences</string>
    </property>
   </action>
+  <action name="actionRoadInfo">
+   <property name="text">
+    <string>RoadInfo</string>
+   </property>
+  </action>
   <action name="actionSelectRoad">
    <property name="checkable">
     <bool>true</bool>
@@ -142,11 +147,8 @@
    </property>
    <property name="text">
     <string>Select Line</string>
-  <action name="actionRoadInfo">
-   <property name="text">
-    <string>RoadInfo</string>
-   </property>
-  </action>
+    </property>
+   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
