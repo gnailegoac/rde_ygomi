@@ -67,6 +67,7 @@ void View::MainWindow::ShowRoadInfo()
 void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel> &aTreeModel)
 {
     mRoadInfoView->setModel(aTreeModel.get());
+    mRoadInfoView->setColumnWidth(0, 171);
 }
 
 void View::MainWindow::setupConnections()

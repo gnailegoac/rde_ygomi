@@ -64,6 +64,7 @@ private:
     void createLineIdNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
     void createLineTypeNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
 
+private:
     TreeItem* mRoot;
 };
 
