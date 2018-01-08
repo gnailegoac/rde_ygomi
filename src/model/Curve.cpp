@@ -49,6 +49,11 @@ std::string Model::Curve::Parse() const
     return TEXT_NAN;
 }
 
+bool Model::Curve::FitPointsToCurve(std::string &)
+{
+    return false;
+}
+
 const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;
@@ -107,6 +112,11 @@ const Model::PaintRangePtr& Model::Curve::GetPaintRange() const
 Model::PaintRangePtr Model::Curve::GetMutablePaintRange()
 {
     return mPaintRange;
+}
+
+void Model::Curve::SetPaintRange(const Model::PaintRangePtr& aPaintRange)
+{
+    mPaintRange = aPaintRange;
 }
 
 size_t Model::Curve::GetPaintRangeSize() const

@@ -21,7 +21,8 @@
 #include "Poly.h"
 #include "external/geo_alg.h"
 
-namespace YGEO {
+namespace YGEO
+{
 
 class NURBS;
 
@@ -44,14 +45,17 @@ public:
 
     bool Convert(const std::string& aStrExpr) override;
     std::string Parse() const override;
+    bool FitPointsToCurve(std::string& aErrorMessage) override;
 
     const Point3DListPtr& GetControlPoints() const;
     Point3DListPtr GetMutableControlPoints();
+    void SetControlPoints(const Point3DListPtr& aControlPoints);
     size_t GetControlPointsSize() const;
     Point3DPtr GetControlPoint(const size_t& aIndex) const;
 
     const KnotListPtr& GetKnots() const;
     KnotListPtr GetMutableKnots();
+    void SetKnots(const KnotListPtr& aKnots);
     size_t GetKnotsSize() const;
     double GetKnot(const size_t& aIndex) const;
 
@@ -60,6 +64,9 @@ public:
 
     const double& GetLineLength() const;
     void SetLineLength(const double& aLineLength);
+
+    void SetNurbs(const Point3DListPtr& aControlPoints, const KnotListPtr& aKnots);
+    void CalculateLength();
 
 private:
     void readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots);

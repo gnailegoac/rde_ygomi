@@ -10,6 +10,7 @@ SOURCES += \
     UtDouglasPeucker.cpp \
     UtLine.cpp \
     UtNurbsCurve.cpp \
+    UtFitNurbs.cpp \
     ../src/model/Point3D.cpp \
     ../src/model/DouglasPeucker.cpp \
     ../src/model/Line.cpp \
@@ -18,7 +19,9 @@ SOURCES += \
     ../src/model/Curve.cpp \
     ../src/model/NurbsCurve.cpp \
     ../src/model/Poly.cpp \
-    ../src/model/external/geo_alg.cpp
+    ../src/model/external/geo_alg.cpp \
+    ../src/model/FitNurbs.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
+

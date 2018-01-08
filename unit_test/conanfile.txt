@@ -2,6 +2,7 @@
 gtest/1.8@RDBDelivery/stable
 gmock_main/1.8@RDBDelivery/stable
 CoordinateTransform/0.2.0.20171221135807.c542c2f@rde/devel
+opencv/3.0.0@RDBDelivery/stable
 
 [generators]
 qmake
