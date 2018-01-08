@@ -65,9 +65,7 @@ public:
     void SetLineLength(const double& aLineLength);
 
     void SetNurbs(const Point3DListPtr& aControlPoints, const KnotListPtr& aKnots);
-    void CalculateLength(const double& aSamplingInterval,
-                         double& aTotalLength,
-                         double& aPaintLength);
+    void CalculateLength();
 
 private:
     void readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots);

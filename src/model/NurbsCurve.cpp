@@ -285,28 +285,17 @@ void Model::NurbsCurve::SetNurbs(const Model::Point3DListPtr& aControlPoints,
     mNurbs = std::make_shared<YGEO::NURBS>(ctrls, *aKnots, aKnots->front(), aKnots->back());
 }
 
-void Model::NurbsCurve::CalculateLength(const double& aSamplingInterval,
-                                        double& aTotalLength,
-                                        double& aPaintLength)
+void Model::NurbsCurve::CalculateLength()
 {
-    PaintListPtr paintPoints = CalculatePaintPointCloud(aSamplingInterval);
-    aTotalLength = 0;
-    aPaintLength = 0;
-    for (std::size_t i = 0; i < paintPoints->size(); ++i)
+    if (mNurbs == nullptr)
     {
-        std::size_t j;
-        for (j = 0; j < paintPoints->at(i)->size() - 1; ++j)
-        {
-            aPaintLength += Point3D::Distance(paintPoints->at(i)->at(j),
-                                              paintPoints->at(i)->at(j + 1));
-        }
-        double interval = 0;
-        if (i < paintPoints->size() - 1)
-        {
-            interval = Point3D::Distance(paintPoints->at(i)->at(j),
-                                         paintPoints->at(i + 1)->at(0));
-        }
-        aTotalLength = aTotalLength + aPaintLength + interval;
+        return;
+    }
+    mLineLength = mNurbs->GetLength(0, 1);
+    mPaintTotalLength = 0;
+    for (const auto& paint : *mPaintRange)
+    {
+        mPaintTotalLength += mNurbs->GetLength(paint.first, paint.second);
     }
 }
 

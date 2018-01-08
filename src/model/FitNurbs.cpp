@@ -117,11 +117,7 @@ std::shared_ptr<Model::NurbsCurve> Model::FitNurbs::FitPointsToCurve(
         result->SetKnots(knots);
         result->SetPaintRange(paintRange);
         result->SetNurbs(controlPoints, knots);
-        double paintLength;
-        double totalLength;
-        result->CalculateLength(0.1, totalLength, paintLength);
-        result->SetLineLength(totalLength);
-        result->SetPaintTotalLength(paintLength);
+        result->CalculateLength();
         return result;
     }
     else
