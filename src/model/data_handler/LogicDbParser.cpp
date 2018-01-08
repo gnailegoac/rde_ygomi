@@ -40,8 +40,12 @@ Model::MemoryModelPtr Model::LogicDbParser::Parse()
     {
         DbRepositoryPtr dbRepository = std::make_shared<DbRepository>(mLogicDbFileList->at(i));
 
-        if (!dbRepository->InitializeDataBase()
-                || !dbRepository->QueryRoadElement(memoryModel))
+        if (!dbRepository->InitializeDataBase())
+        {
+            return nullptr;
+        }
+
+        if (!dbRepository->QueryRoadElement(memoryModel))
         {
             return nullptr;
         }
@@ -61,10 +65,13 @@ bool Model::LogicDbParser::createTopology(MemoryModelPtr& aMemoryModel)
     for (size_t i = 0; i < mLogicDbFileList->size(); i++)
     {
          DbRepositoryPtr dbRepository = std::make_shared<DbRepository>(mLogicDbFileList->at(i));
-         dbRepository->InitializeDataBase();
 
-         if(!dbRepository->InitializeDataBase()
-                 || !dbRepository->QueryTopology(aMemoryModel))
+         if (!dbRepository->InitializeDataBase())
+         {
+             return false;
+         }
+
+         if(!dbRepository->QueryTopology(aMemoryModel))
          {
              return false;
          }

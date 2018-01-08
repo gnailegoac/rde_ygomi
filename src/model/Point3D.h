@@ -40,6 +40,10 @@ public:
     const double& GetZ() const;
     void SetZ(const double& aZ);
 
+    std::string FormatPoint(int aPrecisionX = 12,
+                            int aPrecisionY = 12,
+                            int aPrecisionZ = 12) const;
+
 private:
     double mX;
     double mY;

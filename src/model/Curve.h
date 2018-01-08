@@ -42,6 +42,9 @@ public:
     virtual Point3DListPtr CalculatePointCloud(const double&);
     virtual PaintListPtr CalculatePaintPointCloud(const double&);
 
+    virtual bool Convert(const std::string&);
+    virtual std::string Parse() const;
+
     const std::uint64_t& GetCurveId() const;
     void SetCurveId(const std::uint64_t& aCurveId);
 
@@ -54,8 +57,8 @@ public:
     std::uint32_t GetIndexInLine() const;
     void SetIndexInLine(std::uint32_t aIndexInLine);
 
-    float GetWidth() const;
-    void SetWidth(float aWidth);
+    std::uint8_t GetWidth() const;
+    void SetWidth(std::uint8_t aWidth);
 
     const PaintRangePtr& GetPaintRange() const;
     PaintRangePtr GetMutablePaintRange();
@@ -68,7 +71,7 @@ protected:
     float mLength;
     CurveType mCurveType;
     std::uint32_t mIndexInLine;
-    float mWidth;
+    std::uint8_t mWidth;
     PaintRangePtr mPaintRange;
 };
 

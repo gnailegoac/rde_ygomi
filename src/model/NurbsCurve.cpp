@@ -138,8 +138,8 @@ bool Model::NurbsCurve::Convert(const std::string& aStrExpr)
         return false;
     }
 
-    generateNurbsFromJSON(objectCtrlPoints, objectKnots);
-    parsePaintRangeFromJSON(objectPaintEndPoints);
+    readNurbsFromJSON(objectCtrlPoints, objectKnots);
+    readPaintRangeFromJSON(objectPaintEndPoints);
 
     QJsonArray objectPaintTotalLength = object.value(QString("PaintTotalLength")).toArray();
     QJsonArray objectLineLength = object.value(QString("LineLength")).toArray();
@@ -149,11 +149,42 @@ bool Model::NurbsCurve::Convert(const std::string& aStrExpr)
         return false;
     }
 
-
     mPaintTotalLength = objectPaintTotalLength.at(0).toString().toDouble();
     mLineLength = objectLineLength.at(0).toString().toDouble();
 
     return true;
+}
+
+std::string Model::NurbsCurve::Parse() const
+{
+    QJsonArray objectCtrlPoints;
+    QJsonArray objectPaintEndPoints;
+    QJsonArray objectKnots;
+
+    writeNurbsToJSON(objectCtrlPoints, objectKnots);
+    writePaintRangeToJSON(objectPaintEndPoints);
+
+    QJsonArray objectPaintTotalLength;
+    QJsonArray objectLineLength;
+
+    std::string paintTotalLength = strings::FormatFloat<double>(mPaintTotalLength, 10);
+    objectPaintTotalLength.append(QJsonValue(QString::fromStdString(paintTotalLength)));
+
+    std::string lineLength = strings::FormatFloat<double>(mLineLength, 10);
+    objectLineLength.append(QJsonValue(QString::fromStdString(lineLength)));
+
+    QJsonObject object;
+    object.insert("ControlPoints", objectCtrlPoints);
+    object.insert("PaintEndPoints", objectPaintEndPoints);
+    object.insert("Knots", objectKnots);
+    object.insert("PaintTotalLength", objectPaintTotalLength);
+    object.insert("LineLength", objectLineLength);
+
+    QJsonDocument document;
+    document.setObject(object);
+    QString strJson(document.toJson(QJsonDocument::Indented));
+
+    return strJson.toStdString();
 }
 
 const Model::Point3DListPtr& Model::NurbsCurve::GetControlPoints() const
@@ -314,7 +345,7 @@ void Model::NurbsCurve::generateNurbsFromJSON(const QJsonArray& aObjectCtrlPoint
     mNurbs = std::make_shared<YGEO::NURBS>(ctrls, *mKnots, mKnots->front(), mKnots->back());
 }
 
-void Model::NurbsCurve::parsePaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints)
+void Model::NurbsCurve::readPaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints)
 {
     size_t numPaint = static_cast<size_t>(aObjectPaintEndPoints.size());
     mPaintRange->clear();
@@ -328,6 +359,35 @@ void Model::NurbsCurve::parsePaintRangeFromJSON(const QJsonArray& aObjectPaintEn
         mPaintRange->push_back(
                         std::make_pair<double, double>(std::stod(results[0]), std::stod(results[1]))
         );
+    }
+}
+
+void Model::NurbsCurve::writeNurbsToJSON(QJsonArray& aObjectCtrlPoints, QJsonArray& aObjectKnots) const
+{
+    for (const Point3DPtr& point : *mControlPoints)
+    {
+        std::string pointStr = point->FormatPoint(13, 13, 13);
+        aObjectCtrlPoints.append(QJsonValue(QString::fromStdString(pointStr)));
+    }
+
+    for (const double& knot : *mKnots)
+    {
+        std::string knotStr = strings::FormatFloat<double>(knot, 17);
+        aObjectKnots.append(QJsonValue(QString::fromStdString(knotStr)));
+    }
+}
+
+void Model::NurbsCurve::writePaintRangeToJSON(QJsonArray& aObjectPaintEndPoints) const
+{
+    for (const auto& paint : *mPaintRange)
+    {
+        std::string paintStr;
+
+        paintStr += strings::FormatFloat<double>(paint.first, 17);
+        paintStr += ",";
+        paintStr += strings::FormatFloat<double>(paint.second, 17);
+
+        aObjectPaintEndPoints.append(QJsonValue(QString::fromStdString(paintStr)));
     }
 }
 

@@ -41,13 +41,17 @@ public:
     TileConstPtr GetTile(const std::int64_t& aId);
     TilePtr GetMutableTile(const std::int64_t& aId);
 
-    uint64_t GetCurveIntId(const std::string& aId);
-    uint64_t GetLineIntId(const std::string& aId);
-    uint64_t GetLaneIntId(const std::string& aId);
-    uint64_t GetTrafficSignIntId(const std::string& aId);
+    const uint64_t& GetCurveIntId(const std::string& aId);
+    const std::string& GetCurveTextId(const std::uint64_t& aId) const;
+    const uint64_t& GetLineIntId(const std::string& aId);
+    const std::string& GetLineTextId(const std::uint64_t& aId) const;
+    const uint64_t& GetLaneIntId(const std::string& aId);
+    const std::string& GetLaneTextId(const std::uint64_t& aId) const;
+    const uint64_t& GetTrafficSignIntId(const std::string& aId);
+    const std::string& GetTrafficSignTextId(const std::uint64_t& aId) const;
 
     TilePtr GetTileByLaneId(const std::uint64_t& aLaneId);
-
+    std::shared_ptr<Model::Lane> GetLaneById(const std::uint64_t& aLaneId);
 private:
     TileMapPtr mTileMap;
     CurveIdMapPtr mCurveIdMap;

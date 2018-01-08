@@ -13,6 +13,7 @@
 #include "MemoryModel.h"
 
 #include "Tile.h"
+#include "Lane.h"
 #include "IdGenerator.h"
 
 Model::MemoryModel::MemoryModel():
@@ -62,24 +63,44 @@ Model::TilePtr Model::MemoryModel::GetMutableTile(const std::int64_t& aId)
     return mTileMap->at(aId);
 }
 
-uint64_t Model::MemoryModel::GetCurveIntId(const std::string& aId)
+const uint64_t& Model::MemoryModel::GetCurveIntId(const std::string& aId)
 {
     return mCurveIdMap->GetId(aId);
 }
 
-uint64_t Model::MemoryModel::GetLineIntId(const std::string& aId)
+const std::string& Model::MemoryModel::GetCurveTextId(const std::uint64_t& aId) const
+{
+    return mCurveIdMap->GetTextId(aId);
+}
+
+const uint64_t& Model::MemoryModel::GetLineIntId(const std::string& aId)
 {
     return mLineIdMap->GetId(aId);
 }
 
-uint64_t Model::MemoryModel::GetLaneIntId(const std::string& aId)
+const std::string& Model::MemoryModel::GetLineTextId(const std::uint64_t& aId) const
+{
+    return mLineIdMap->GetTextId(aId);
+}
+
+const uint64_t& Model::MemoryModel::GetLaneIntId(const std::string& aId)
 {
     return mLaneIdMap->GetId(aId);
 }
 
-uint64_t Model::MemoryModel::GetTrafficSignIntId(const std::string& aId)
+const std::string& Model::MemoryModel::GetLaneTextId(const std::uint64_t& aId) const
+{
+    return mLaneIdMap->GetTextId(aId);
+}
+
+const uint64_t& Model::MemoryModel::GetTrafficSignIntId(const std::string& aId)
 {
     return mTrafficSignIdMap->GetId(aId);
+}
+
+const std::string& Model::MemoryModel::GetTrafficSignTextId(const std::uint64_t& aId) const
+{
+    return mTrafficSignIdMap->GetTextId(aId);
 }
 
 Model::TilePtr Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
@@ -98,3 +119,18 @@ Model::TilePtr Model::MemoryModel::GetTileByLaneId(const std::uint64_t& aLaneId)
     return nullptr;
 }
 
+std::shared_ptr<Model::Lane> Model::MemoryModel::GetLaneById(const std::uint64_t& aLaneId)
+{
+    for (auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const LaneMapPtr& laneMap = tile->GetLaneMap();
+
+        if (laneMap->end() != laneMap->find(aLaneId))
+        {
+            return laneMap->at(aLaneId);
+        }
+    }
+
+    return nullptr;
+}

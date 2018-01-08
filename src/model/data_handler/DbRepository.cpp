@@ -14,6 +14,7 @@
 #include "DbRepository.h"
 
 #include "SQLiteCpp/Database.h"
+#include "SQLiteCpp/Transaction.h"
 #include "SQLiteCpp/Statement.h"
 
 #include "DbParseException.h"
@@ -30,12 +31,14 @@ const std::string gcLaneConnection = "LaneConnection_";
 const std::string gcLine = "Line_";
 const std::string gcCurve = "Curve_";
 const std::string gcTrafficSign = "TrafficSign_";
+const std::string gcRoad = "Road_";
 
 }
 
 Model::DbRepository::DbRepository(const std::string& aDbFileName):
     mDbFileName(aDbFileName),
     mTables(std::make_shared<StringList>()),
+    mRoadTables(std::make_shared<StringList>()),
     mSegmentTables(std::make_shared<StringList>()),
     mLaneTables(std::make_shared<StringList>()),
     mLaneConnectionTables(std::make_shared<StringList>()),
@@ -74,6 +77,7 @@ bool Model::DbRepository::QueryRoadElement(std::shared_ptr<Model::MemoryModel>& 
         queryLanes(aMemoryModel);
         queryCurves(aMemoryModel);
         queryTrafficSigns(aMemoryModel);
+        queryLines(aMemoryModel);
     }
     catch(DbParseException)
     {
@@ -95,7 +99,55 @@ bool Model::DbRepository::QueryTopology(std::shared_ptr<Model::MemoryModel>& aMe
     }
 
     return true;
+}
 
+bool Model::DbRepository::GenerateDataBase(const std::shared_ptr<Tile>& aTile)
+{
+    try
+    {
+        mDatabase = std::make_shared<SQLite::Database>(mDbFileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    }
+    catch(...)
+    {
+        return false;
+    }
+
+    return createAllTables(aTile->GetTileId());
+}
+
+bool Model::DbRepository::StoreRoadElement(const std::shared_ptr<MemoryModel>& aMemoryModel)
+{
+    try
+    {
+        storeSegments(aMemoryModel);
+        storeRoads(aMemoryModel);
+        storeLines(aMemoryModel);
+        storeCurves(aMemoryModel);
+        storeLanes(aMemoryModel);
+        storeTrafficSigns(aMemoryModel);
+    }
+    catch(DbParseException& e)
+    {
+        qCritical(e.what());
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::DbRepository::StoreTopology(const std::shared_ptr<MemoryModel>& aMemoryModel)
+{
+    try
+    {
+        storeLaneConnections(aMemoryModel);
+    }
+    catch(DbParseException& e)
+    {
+        qCritical(e.what());
+        return false;
+    }
+
+    return true;
 }
 
 void Model::DbRepository::querySegments(std::shared_ptr<MemoryModel>& aMemoryModel) const
@@ -131,7 +183,7 @@ void Model::DbRepository::queryCurves(std::shared_ptr<MemoryModel>& aMemoryModel
         TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
         std::string QUERY_CURVE = "SELECT ID,LineID,IndexInLine,Type,Width,"
                                     "EquationDescription,Length,Color FROM " + curveTable
-                                    + " WHERE Type in ('0','1','2')";
+                                    + " WHERE Type in ('0','1','2','3')";
 
         try
         {
@@ -158,10 +210,16 @@ void Model::DbRepository::queryCurves(std::shared_ptr<MemoryModel>& aMemoryModel
                     nurbsCurve->SetCurveId(curveId);
                     nurbsCurve->SetIndexInLine(query.getColumn(2).getUInt());
                     nurbsCurve->SetCurveType(CurveType(query.getColumn(3).getUInt()));
+                    nurbsCurve->SetWidth(static_cast<std::uint8_t>(query.getColumn(4).getInt()));
 
                     std::uint64_t lineId = aMemoryModel->GetLineIntId(query.getColumn(1).getString());
                     LinePtr line = tile->GetMutableLine(lineId);
                     line->GetMutableCurveList()->push_back(nurbsCurve);
+
+                    if (CurveType::SlamTrace == nurbsCurve->GetCurveType())
+                    {
+                        line->SetEditable(false);
+                    }
                 }
             }
         }
@@ -191,20 +249,10 @@ void Model::DbRepository::queryLaneConnection(std::shared_ptr<MemoryModel>& aMem
             {
                 std::uint64_t sourceLaneId = aMemoryModel->GetLaneIntId(query.getColumn(0).getString());
                 std::uint64_t destinationLaneId = aMemoryModel->GetLaneIntId(query.getColumn(1).getString());
-
                 TilePtr sourceTile = aMemoryModel->GetTileByLaneId(sourceLaneId);
                 TilePtr destinationTile = aMemoryModel->GetTileByLaneId(destinationLaneId);
-                int type = std::stoi(query.getColumn(2).getString());
-
-                if (0 == type)
-                {
-                    setLaneConnection(destinationTile, destinationLaneId, sourceTile, sourceLaneId);
-                }
-
-                if (1 == type)
-                {
-                    setLaneConnection(sourceTile, sourceLaneId, destinationTile, destinationLaneId);
-                }
+                LaneConnectionType type = (LaneConnectionType)std::stoi(query.getColumn(2).getString());
+                setLaneConnection(sourceTile, sourceLaneId, destinationTile, destinationLaneId, type);
             }
         }
         catch (DbParseException e)
@@ -223,7 +271,7 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
 {
     for (const std::string& laneTable : *mLaneTables)
     {
-        const std::string QUERY_LANE = "SELECT ID,LLineID,RLineID FROM " + laneTable;
+        const std::string QUERY_LANE = "SELECT ID,LLineID,RLineID,AvgSlamTrace FROM " + laneTable;
         const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(laneTable, "_")[1]);
         TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
 
@@ -234,15 +282,19 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
             {
                 std::uint64_t leftLineId = aMemoryModel->GetLineIntId(query.getColumn(1).getString());
                 std::uint64_t rightLineId = aMemoryModel->GetLineIntId(query.getColumn(2).getString());
+                std::uint64_t avgSlamTraceId = aMemoryModel->GetLineIntId(query.getColumn(3).getString());
                 LinePtr leftLine = tile->GetMutableLine(leftLineId);
                 LinePtr rightLine = tile->GetMutableLine(rightLineId);
+                LinePtr avgSlamTrace = tile->GetMutableLine(avgSlamTraceId);
 
                 std::uint64_t laneId = aMemoryModel->GetLaneIntId(query.getColumn(0).getString());
                 LanePtr lane = tile->GetMutableLane(laneId);
                 lane->SetLeftLine(leftLine);
                 lane->SetRightLine(rightLine);
+                lane->SetAvgSlamTrace(avgSlamTrace);
                 leftLine->SetLane(lane);
                 rightLine->SetLane(lane);
+                avgSlamTrace->SetLane(lane);
 
                 std::uint64_t roadId = (std::uint64_t)query.getColumn(0).getInt64();
                 RoadPtr road = tile->GetMutableRoad(roadId);
@@ -254,6 +306,34 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
         {
             throw(DbParseException(DbParseException::Type::DbParseError,
                                      "Lane Table Query Error"));
+        }
+    }
+}
+
+void Model::DbRepository::queryLines(std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    for (const std::string& lineTable : *mLineTables)
+    {
+        const std::string QUERY_LINE = "SELECT * FROM " + lineTable;
+        const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(lineTable, "_")[1]);
+        TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+
+        try
+        {
+            SQLite::Statement query(*mDatabase, QUERY_LINE);
+            while (query.executeStep())
+            {
+                std::uint64_t lineId = aMemoryModel->GetLineIntId(query.getColumn(0).getString());
+                LinePtr line = tile->GetMutableLine(lineId);
+
+                line->SetConfidence(query.getColumn(2).getDouble());
+                line->SetLength(query.getColumn(3).getDouble());
+            }
+        }
+        catch(std::exception)
+        {
+            throw(DbParseException(DbParseException::Type::DbParseError,
+                                     "Line Table Query Error"));
         }
     }
 }
@@ -375,31 +455,534 @@ Model::Point3DPtr Model::DbRepository::parsePoint(const std::string& aPointStrin
     }
 }
 
-void Model::DbRepository::setLaneConnection(const TilePtr& aPredecessorTile,
-                                            const std::uint64_t& aPredecessorId,
-                                            const TilePtr& aSuccessorTile,
-                                            const std::uint64_t& aSuccessorId) const
+void Model::DbRepository::setLaneConnection(const TilePtr& aSourceTile,
+                                            const std::uint64_t& aSourceId,
+                                            const TilePtr& aDestinationTile,
+                                            const std::uint64_t& aDestinationId,
+                                            const LaneConnectionType aType) const
 {
-    LanePtr predecessorLane = nullptr;
-    LanePtr successorLane = nullptr;
+    LanePtr sourceLane = nullptr;
+    LanePtr destinationLane = nullptr;
 
-    if (nullptr == aPredecessorTile ||
-            nullptr == (predecessorLane = aPredecessorTile->GetLane(aPredecessorId)))
+    if (nullptr == aSourceTile
+            || nullptr == (sourceLane = aSourceTile->GetLane(aSourceId)))
     {
         throw(DbParseException(DbParseException::Type::DbParseError,
-                               "Cannot Find the Corresponding Segment with Lane " + aPredecessorId));
+                               "Cannot Find the Source Lane " + aSourceId));
     }
 
-    if (nullptr == aSuccessorTile ||
-            nullptr == (successorLane = aSuccessorTile->GetLane(aSuccessorId)))
+    if (nullptr == aDestinationTile
+            || nullptr == (destinationLane = aDestinationTile->GetLane(aDestinationId)))
     {
         throw(DbParseException(DbParseException::Type::DbParseError,
-                               "Cannot Find the Corresponding Segment with Lane " + aSuccessorId));
+                               "Cannot Find the Destination Lane" + aDestinationId));
     }
 
-    if (aPredecessorId != aSuccessorId)
+    if (aSourceId != aDestinationId)
     {
-        predecessorLane->SetSuccessorLaneId(aSuccessorId);
-        successorLane->SetPredecessorLaneId(aPredecessorId);
+        if (LaneConnectionType::LaneConnectionPredecessor == aType)
+        {
+            sourceLane->SetPredecessorLaneId(aDestinationId);
+            destinationLane->SetSuccessorLaneId(aSourceId);
+        }
+        else if (LaneConnectionType::LaneConnectionSuccessor == aType)
+        {
+            sourceLane->SetSuccessorLaneId(aDestinationId);
+            destinationLane->SetPredecessorLaneId(aSourceId);
+        }
+        else if (LaneConnectionType::LaneConnectionLeft == aType)
+        {
+            sourceLane->SetLeftLaneId(aDestinationId);
+            destinationLane->SetRightLaneId(aSourceId);
+        }
+        else if (LaneConnectionType::LaneConnectionRight == aType)
+        {
+            sourceLane->SetRightLaneId(aDestinationId);
+            destinationLane->SetLeftLaneId(aSourceId);
+        }
+    }
+}
+
+void Model::DbRepository::storeSegments(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    try
+    {
+        for (const std::string& segmentTale : *mSegmentTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(segmentTale, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+
+            mDatabase->exec("INSERT INTO " + segmentTale + " VALUES ("
+                             + std::to_string(tile->GetTileId()) + ","
+                             + wrapText(formatReferencePoint(tile->GetReferencePoint()), false) + ")"
+                            );
+        }
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Segment Table Store Error"));
+    }
+}
+
+void Model::DbRepository::storeRoads(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    try
+    {
+        for (const std::string& roadTable : *mRoadTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(roadTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const RoadMapPtr& roadMap = tile->GetRoadMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorRoad : *roadMap)
+            {
+                const RoadPtr& road = itorRoad.second;
+
+                mDatabase->exec("INSERT INTO " + roadTable + "(ID,SegID) VALUES ("
+                                + std::to_string(road->GetRoadId()) + ","
+                                + std::to_string(segmentId) + ")"
+                                );
+            }
+
+            transaction.commit();
+        }
+
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Road Table Store Error"));
+    }
+}
+
+void Model::DbRepository::storeLines(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    std::string sqlText("");
+
+    try
+    {
+        for (const std::string& lineTable : *mLineTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(lineTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const LineMapPtr& lineMap = tile->GetLineMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorLine : *lineMap)
+            {
+                const LinePtr& line = itorLine.second;
+                const uint64_t& lineId = line->GetLineId();
+                const uint64_t& laneId = line->GetLane()->GetLaneId();
+
+                sqlText = "INSERT INTO " + lineTable
+                          + "(ID, LaneID, Confidence, Length) VALUES ("
+                          + wrapText(aMemoryModel->GetLineTextId(lineId))
+                          + wrapText(aMemoryModel->GetLaneTextId(laneId))
+                          + strings::FormatFloat<double>(line->GetConfidence(), 8) + ","
+                          + strings::FormatFloat<double>(line->GetLength(), 8) + ")";
+                mDatabase->exec(sqlText);
+            }
+
+            transaction.commit();
+        }
+
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Line Table Store Error with sql:" + sqlText));
+    }
+}
+
+void Model::DbRepository::storeCurves(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    std::string sqlText("");
+
+    try
+    {
+        for (const std::string& curveTable : *mCurveTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(curveTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const LineMapPtr& lineMap = tile->GetLineMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorLine : *lineMap)
+            {
+                const LinePtr& line = itorLine.second;
+                const CurveListPtr& curveList = line->GetCurveList();
+                const uint64_t& lineId = line->GetLineId();
+                const std::string lineTextId = aMemoryModel->GetLineTextId(lineId);
+
+                for (size_t i = 0; i < curveList->size(); i++)
+                {
+                    const CurvePtr& curve = curveList->at(i);
+                    const uint64_t& curveId = curve->GetCurveId();
+                    const std::string curveTextId = aMemoryModel->GetCurveTextId(curveId);
+
+                    sqlText = "INSERT INTO " + curveTable
+                              + "(ID,LineID,IndexInLine,Type,Width,EquationDescription,Length) VALUES ("
+                              + wrapText(curveTextId)
+                              + wrapText(lineTextId)
+                              + std::to_string(i) + ","
+                              + std::to_string((int)curve->GetCurveType()) + ","
+                              + std::to_string(curve->GetWidth()) + ","
+                              + "'" +  (curve->Parse()) + "',"
+                              + strings::FormatFloat<double>(curve->GetLength(), 8) + ")";
+                    mDatabase->exec(sqlText);
+
+                }
+            }
+
+            transaction.commit();
+        }
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Curve Table Store Error with sql:" + sqlText));
+    }
+}
+
+void Model::DbRepository::storeLanes(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    std::string sqlText("");
+
+    try
+    {
+        for (const std::string& laneTable : *mLaneTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(laneTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const LaneMapPtr& laneMap = tile->GetLaneMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorLane : *laneMap)
+            {
+                const LanePtr& lane = itorLane.second;
+                const uint64_t& laneId = lane->GetLaneId();
+                const uint64_t& leftLineId = lane->GetLeftLine()->GetLineId();
+                const uint64_t& rightLineId = lane->GetRightLine()->GetLineId();
+                const uint64_t& avgSlamTrace = lane->GetAvgSlamTrace()->GetLineId();
+
+                sqlText = "INSERT INTO " + laneTable
+                          + "(ID,RoadID,LLineID,RLineID,AvgSlamTrace) VALUES ("
+                          + wrapText(aMemoryModel->GetLaneTextId(laneId))
+                          + std::to_string(lane->GetRoad()->GetRoadId()) + ","
+                          + wrapText(aMemoryModel->GetLineTextId(leftLineId))
+                          + wrapText(aMemoryModel->GetLineTextId(rightLineId))
+                          + wrapText(aMemoryModel->GetLineTextId(avgSlamTrace), false) + ")";
+                mDatabase->exec(sqlText);
+            }
+
+            transaction.commit();
+        }
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Lane Table Store Error with sql:" + sqlText));
+    }
+}
+
+void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    std::string sqlText("");
+
+    try
+    {
+        for (const std::string& trafficSignTable : *mTrafficSignTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(trafficSignTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const TrafficSignMapPtr& trafficSignMap = tile->GetTrafficSignMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorTrafficSign : *trafficSignMap)
+            {
+                const TrafficSignPtr& trafficSign = itorTrafficSign.second;
+
+                sqlText = "INSERT INTO " + trafficSignTable
+                          + "(ID,SegmentID,Type,Orientation,ShapeWidth,ShapeHeight,Confidence,GPS) VALUES ("
+                          + std::to_string(trafficSign->GetTrafficSignId()) + ","
+                          + std::to_string(segmentId) + ","
+                          + std::to_string(trafficSign->GetTrafficSignType()) + ","
+                          + strings::FormatFloat<double>(trafficSign->GetOrientation(), 8) + ","
+                          + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
+                          + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
+                          + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ","
+                          + formatReferencePoint(trafficSign->GetPosition()) + ")";
+                mDatabase->exec(sqlText);
+            }
+
+            transaction.commit();
+        }
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "Trafficsign Table Store Error with sql:" + sqlText));
+    }
+}
+
+void Model::DbRepository::storeLaneConnections(const std::shared_ptr<MemoryModel>& aMemoryModel) const
+{
+    try
+    {
+        for (const std::string& laneConnectionTable : *mLaneConnectionTables)
+        {
+            const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(laneConnectionTable, "_")[1]);
+            TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
+            const LaneMapPtr& laneMap = tile->GetLaneMap();
+
+            SQLite::Transaction transaction(*mDatabase);
+
+            for (auto& itorLane : *laneMap)
+            {
+                const LanePtr& lane = itorLane.second;
+
+                recordLaneConnection(laneConnectionTable,
+                                     LaneConnectionType::LaneConnectionPredecessor,
+                                     aMemoryModel->GetLaneTextId(lane->GetLaneId()),
+                                     aMemoryModel->GetLaneTextId(lane->GetPredecessorLaneId()));
+
+                recordLaneConnection(laneConnectionTable,
+                                     LaneConnectionType::LaneConnectionSuccessor,
+                                     aMemoryModel->GetLaneTextId(lane->GetLaneId()),
+                                     aMemoryModel->GetLaneTextId(lane->GetSuccessorLaneId()));
+
+                recordLaneConnection(laneConnectionTable,
+                                     LaneConnectionType::LaneConnectionLeft,
+                                     aMemoryModel->GetLaneTextId(lane->GetLaneId()),
+                                     aMemoryModel->GetLaneTextId(lane->GetLeftLaneId()));
+
+                recordLaneConnection(laneConnectionTable,
+                                     LaneConnectionType::LaneConnectionRight,
+                                     aMemoryModel->GetLaneTextId(lane->GetLaneId()),
+                                     aMemoryModel->GetLaneTextId(lane->GetRightLaneId()));
+            }
+
+            transaction.commit();
+        }
+    }
+    catch(DbParseException e)
+    {
+        throw(e);
+    }
+    catch(...)
+    {
+        throw(DbParseException(DbParseException::Type::DbStoreError,
+                                 "LaneConnection Table Store Error"));
+    }
+}
+
+bool Model::DbRepository::createAllTables(const std::int64_t& aTileId)
+{
+    std::string segmentTable = gcSegment + std::to_string(aTileId);
+    mSegmentTables->push_back(segmentTable);
+    mTables->push_back(segmentTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + segmentTable +" ("
+                        "ID INTEGER primary key,"
+                        "ReferencePoint Text)");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string curveTable = gcCurve + std::to_string(aTileId);
+    mCurveTables->push_back(curveTable);
+    mTables->push_back(curveTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + curveTable +" ("
+                        "ID TEXT primary key,"
+                        "LineID TEXT,"
+                        "IndexInLine BYTE,"
+                        "Type INT,"
+                        "Width INT,"
+                        "EquationDescription TEXT,"
+                        "Length FLOAT,"
+                        "Color BYTE)");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string trafficSignTable = gcTrafficSign + std::to_string(aTileId);
+    mTrafficSignTables->push_back(trafficSignTable);
+    mTables->push_back(trafficSignTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + trafficSignTable +" ("
+                        "ID UNSIGNED BIG INT primary key,"
+                        "SegmentID INTEGER,"
+                        "Type INTEGER,"
+                        "Orientation float,"
+                        "ShapeWidth float,"
+                        "ShapeHeight float,"
+                        "Confidence float,"
+                        "GPS TEXT)");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string lineTable = gcLine + std::to_string(aTileId);
+    mLineTables->push_back(lineTable);
+    mTables->push_back(lineTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + lineTable +" ("
+                        "ID TEXT,"
+                        "LaneID TEXT,"
+                        "Confidence float,"
+                        "Length float,"
+                        "primary key(ID,laneID))");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string laneTable = gcLane + std::to_string(aTileId);
+    mLaneTables->push_back(laneTable);
+    mTables->push_back(laneTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + laneTable +" ("
+                        "ID TEXT primary key,"
+                        "RoadID UNSIGEND BIG INT,"
+                        "LLineID TEXT,"
+                        "RLineID TEXT,"
+                        "AvgSlamTrace TEXT"
+                        "TrafficSignID TEXT"
+                        "Attribute TEXT)");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string laneConnectionTable = gcLaneConnection + std::to_string(aTileId);
+    mLaneConnectionTables->push_back(laneConnectionTable);
+    mTables->push_back(laneConnectionTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + laneConnectionTable +" ("
+                        "SrcID TEXT,"
+                        "DstID TEXT,"
+                        "Type TEXT,"
+                        "primary key(SrcID,DstID))");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    std::string roadTable = gcRoad + std::to_string(aTileId);
+    mRoadTables->push_back(roadTable);
+    mTables->push_back(roadTable);
+
+    try
+    {
+        mDatabase->exec("CREATE TABLE " + roadTable +" ("
+                        "ID UNSIGNED BIG INT primary key,"
+                        "SegID INTEGER,"
+                        "StartJunctionID BIG INT,"
+                        "EndJunction BIG INT)");
+    }
+    catch(std::exception)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+std::string Model::DbRepository::formatReferencePoint(const Point3DPtr& aReferencePoint) const
+{
+    std::string strPoint("");
+
+    strPoint += (strings::FormatFloat<double>(aReferencePoint->GetX(), 12) + ",");
+    strPoint += (strings::FormatFloat<double>(aReferencePoint->GetY(), 12) + ",");
+    strPoint += (strings::FormatFloat<double>(aReferencePoint->GetZ(), 4));
+
+    return strPoint;
+}
+
+std::string Model::DbRepository::wrapText(const std::string& aText, bool aAppendComma) const
+{
+    return "\"" + aText + ((aAppendComma) ? ("\",") : ("\""));
+}
+
+void Model::DbRepository::recordLaneConnection(const std::string& aTable,
+                                               const LaneConnectionType aType,
+                                               const std::string& srcId,
+                                               const std::string& dstId) const
+{
+    if (TEXT_NAN != srcId && TEXT_NAN != dstId)
+    {
+        std::string sqlText("");
+
+        try
+        {
+            sqlText = "INSERT INTO " + aTable
+                      + "(SrcID,DstID,Type) VALUES ("
+                      + wrapText(srcId)
+                      + wrapText(dstId)
+                      + wrapText(std::to_string((std::uint8_t)aType), false) + ")";
+            mDatabase->exec(sqlText);
+        }
+        catch(DbParseException e)
+        {
+            throw(e);
+        }
+        catch(...)
+        {
+            throw(DbParseException(DbParseException::Type::DbStoreError,
+                                     "LaneConnection Table Store Error with sql:" + sqlText));
+        }
     }
 }

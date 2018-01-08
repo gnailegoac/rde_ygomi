@@ -73,6 +73,16 @@ void Model::Lane::SetCenterLine(Model::LinePtr aCenterLine)
     mCenterLine = aCenterLine;
 }
 
+Model::LinePtr Model::Lane::GetAvgSlamTrace() const
+{
+    return mAvgSlamTrace;
+}
+
+void Model::Lane::SetAvgSlamTrace(Model::LinePtr aAvgSlamTrace)
+{
+    mAvgSlamTrace = aAvgSlamTrace;
+}
+
 Model::RoadPtr Model::Lane::GetMutableRoad()
 {
     return mRoad;
@@ -95,60 +105,72 @@ const Model::ConnectionMapPtr& Model::Lane::GetConnectionMap() const
 
 void Model::Lane::SetPredecessorLaneId(const uint64_t& aId)
 {
-    (*mConnectionMap)[0] = aId;
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionPredecessor;
+    (*mConnectionMap)[key] = aId;
 }
 
 const std::uint64_t& Model::Lane::GetPredecessorLaneId() const
 {
-    if (0 == mConnectionMap->count(0))
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionPredecessor;
+
+    if (0 == mConnectionMap->count(key))
     {
-        (*mConnectionMap)[0] = 0;
+        (*mConnectionMap)[key] = 0;
     }
 
-    return mConnectionMap->at(0);
+    return mConnectionMap->at(key);
 }
 
 void Model::Lane::SetSuccessorLaneId(const uint64_t& aId)
 {
-    (*mConnectionMap)[1] = aId;
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionSuccessor;
+    (*mConnectionMap)[key] = aId;
 }
 
 const std::uint64_t& Model::Lane::GetSuccessorLaneId() const
 {
-    if (0 == mConnectionMap->count(1))
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionSuccessor;
+
+    if (0 == mConnectionMap->count(key))
     {
-        (*mConnectionMap)[1] = 0;
+        (*mConnectionMap)[key] = 0;
     }
 
-    return mConnectionMap->at(1);
+    return mConnectionMap->at(key);
 }
 
 void Model::Lane::SetLeftLaneId(const uint64_t& aId)
 {
-    (*mConnectionMap)[2] = aId;
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionLeft;
+    (*mConnectionMap)[key] = aId;
 }
 
 const std::uint64_t& Model::Lane::GetLeftLaneId() const
 {
-    if (0 == mConnectionMap->count(2))
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionLeft;
+
+    if (0 == mConnectionMap->count(key))
     {
-        (*mConnectionMap)[2] = 0;
+        (*mConnectionMap)[key] = 0;
     }
 
-    return mConnectionMap->at(2);
+    return mConnectionMap->at(key);
 }
 
 void Model::Lane::SetRightLaneId(const uint64_t& aId)
 {
-    (*mConnectionMap)[3] = aId;
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionRight;
+    (*mConnectionMap)[key] = aId;
 }
 
 const std::uint64_t& Model::Lane::GetRightLaneId() const
 {
-    if (0 == mConnectionMap->count(3))
+    std::uint8_t key = (std::uint8_t)LaneConnectionType::LaneConnectionRight;
+
+    if (0 == mConnectionMap->count(key))
     {
-        (*mConnectionMap)[3] = 0;
+        (*mConnectionMap)[key] = 0;
     }
 
-    return mConnectionMap->at(3);
+    return mConnectionMap->at(key);
 }
