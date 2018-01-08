@@ -21,10 +21,14 @@
 #include "OsgWidget.h"
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
+#include "model/TreeModel.h"
+
+#include "proxy/MainProxy.h"
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     QMainWindow(aParent, flags),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mRoadInfoView(new QTreeView(this))
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
@@ -32,6 +36,9 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) :
     setupConnections();
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
+    mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
+    mRoadInfoView->raise();
+    mRoadInfoView->setVisible(false);
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -49,6 +56,18 @@ void View::MainWindow::UpdateView()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     viewer->Refresh();
+}
+
+void View::MainWindow::ShowRoadInfo()
+{
+    bool isVisible = mRoadInfoView->isVisible();
+    mRoadInfoView->setVisible(!isVisible);
+}
+
+void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel> &aTreeModel)
+{
+    mRoadInfoView->setModel(aTreeModel.get());
+    mRoadInfoView->setColumnWidth(0, 171);
 }
 
 void View::MainWindow::setupConnections()
@@ -76,16 +95,24 @@ void View::MainWindow::setupConnections()
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
     });
+
+    connect(ui->actionRoadInfo, &QAction::triggered, [=]()
+    {
+        ShowRoadInfo();
+    });
 }
 
 View::MainWindow::~MainWindow()
 {
     delete ui;
+    delete mRoadInfoView;
 }
 
 void View::MainWindow::resizeEvent(QResizeEvent* aEvent)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
+    mRoadInfoView->resize(300, height());
+    mRoadInfoView->move(width() - 300, 0);
 }
 
 void View::MainWindow::closeEvent(QCloseEvent* aEvent)

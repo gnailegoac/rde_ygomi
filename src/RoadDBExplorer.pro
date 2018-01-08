@@ -69,6 +69,8 @@ SOURCES +=\
     model/data_handler/LogicDbSerializer.cpp \
     view/StrokeIntersector.cpp \
     control/NodeHighlightCommand.cpp \
+    model/TreeItem.cpp \
+    model/TreeModel.cpp \
     model/FitNurbs.cpp
 
 HEADERS  += view/MainWindow.h \
@@ -117,7 +119,9 @@ HEADERS  += view/MainWindow.h \
     model/FitNurbs.h \
     model/data_handler/LogicDbSerializer.h \
     view/StrokeIntersector.h \
-    control/NodeHighlightCommand.h
+    control/NodeHighlightCommand.h \
+    model/TreeItem.h \
+    model/TreeModel.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

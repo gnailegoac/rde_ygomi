@@ -98,6 +98,8 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if(noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
+        MainProxy* mainProxy = getMainProxy();
+        mainWindow->SetTreeModel(mainProxy->GetTreeModel());
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
     }
