@@ -35,6 +35,8 @@ const std::string ApplicationFacade::INIT_SCENE = "InitScene";
 const std::string ApplicationFacade::REFRESH_SCENE = "RefreshScene";
 const std::string ApplicationFacade::REFRESH_WINDOW = "RefreshWindow";
 const std::string ApplicationFacade::SELECT_NODE = "SelectNode";
+const std::string ApplicationFacade::CHANGE_SELECT_TYPE = "ChangeSelectType";
+const std::string ApplicationFacade::DEHIGHLIGHT_ALL_NODE = "DehighlightAllNode";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -103,6 +105,8 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
     mMessageList[SELECT_NODE] = Controller::NodeHighlightCommand::GetCommandName();
+    mMessageList[CHANGE_SELECT_TYPE] = Controller::NodeHighlightCommand::GetCommandName();
+    mMessageList[DEHIGHLIGHT_ALL_NODE] = Controller::NodeHighlightCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

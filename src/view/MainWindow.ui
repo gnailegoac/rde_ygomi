@@ -60,6 +60,9 @@
     </property>
     <addaction name="actionPreference"/>
     <addaction name="actionRoadInfo"/>
+    <addaction name="actionSelectRoad"/>
+    <addaction name="actionSelectLane"/>
+    <addaction name="actionSelectLine"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -122,6 +125,30 @@
     <string>RoadInfo</string>
    </property>
   </action>
+  <action name="actionSelectRoad">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Road</string>
+   </property>
+  </action>
+  <action name="actionSelectLane">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Lane</string>
+   </property>
+  </action>
+  <action name="actionSelectLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Line</string>
+    </property>
+   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
