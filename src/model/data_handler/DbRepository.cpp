@@ -636,7 +636,7 @@ void Model::DbRepository::storeCurves(const std::shared_ptr<MemoryModel>& aMemor
                     CurvePtr& curve = curveList->at(i);
                     std::string errMsg("");
 
-                    if (line->IsEditable() && line->IsEdited())
+                    if (line->IsEdited())
                     {
                         if (!curve->FitPointsToCurve(errMsg))
                         {
