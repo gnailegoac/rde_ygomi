@@ -636,10 +636,13 @@ void Model::DbRepository::storeCurves(const std::shared_ptr<MemoryModel>& aMemor
                     CurvePtr& curve = curveList->at(i);
                     std::string errMsg("");
 
-                    if (!curve->FitPointsToCurve(errMsg))
+                    if (line->IsEditable() && line->IsEdited())
                     {
-                        throw(DbParseException(DbParseException::Type::DbStoreError,
-                                               "fit curve error:" + errMsg));
+                        if (!curve->FitPointsToCurve(errMsg))
+                        {
+                            throw(DbParseException(DbParseException::Type::DbStoreError,
+                                                   "fit curve error:" + errMsg));
+                        }
                     }
 
                     const uint64_t& curveId = curve->GetCurveId();
