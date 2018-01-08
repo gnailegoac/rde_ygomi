@@ -50,11 +50,11 @@ TEST(NurbsCurve_Test, Serialize_Nurbs)
 {
     Model::NurbsCurve nurbs;
     EXPECT_TRUE(nurbs.Convert(gSplineJsonValue));
-    double length = nurbs.mNurbs->getLength(0.4999412894248962,0.5045203566551208);
+    double length = nurbs.mNurbs->GetLength(0.4999412894248962, 0.5045203566551208);
 
     Model::NurbsCurve nurbsNew;
     EXPECT_TRUE(nurbsNew.Convert(nurbs.Parse()));
-    double lengthNew = nurbsNew.mNurbs->getLength(0.4999412894248962,0.5045203566551208);
+    double lengthNew = nurbsNew.mNurbs->GetLength(0.4999412894248962, 0.5045203566551208);
 
     EXPECT_NEAR(length, lengthNew, 1e-5);
 }

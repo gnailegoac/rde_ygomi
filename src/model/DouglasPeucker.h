@@ -26,6 +26,12 @@ public:
     static Point3DListPtr Simplify(const Point3DListPtr& aPoints,
                                    const double& aThreshold);
 
+    static std::shared_ptr<std::vector<uint32_t> > GetSimplifyIndex(
+                    const Point3DListPtr& aPoints,
+                    const double& aThreshold,
+                    const std::uint32_t& aStartIndex,
+                    const std::uint32_t& aEndIndex);
+
 private:
     static double pointToPointDistance(const Point3DPtr& aLhs,
                                        const Point3DPtr& aRhs);

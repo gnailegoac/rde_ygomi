@@ -26,6 +26,11 @@ public:
     Point3D(const Point3D& aPoint);
     ~Point3D();
 
+    static double Distance(const std::shared_ptr<Model::Point3D>& aLhs,
+                           const std::shared_ptr<Model::Point3D>& aRhs);
+    static double Distance(const Model::Point3D& aLhs,
+                           const Model::Point3D& aRhs);
+
     const double& GetX() const;
     void SetX(const double& aX);
 

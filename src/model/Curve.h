@@ -62,6 +62,7 @@ public:
 
     const PaintRangePtr& GetPaintRange() const;
     PaintRangePtr GetMutablePaintRange();
+    void SetPaintRange(const PaintRangePtr& aPaintRange);
     size_t GetPaintRangeSize() const;
     std::pair<double, double> GetPaintRange(const size_t& aIndex) const;
 

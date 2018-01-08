@@ -36,7 +36,8 @@ Model::NurbsCurve::~NurbsCurve()
 {
 
 }
-Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(const double& aSamplingInterval)
+Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(
+                const double& aSamplingInterval)
 {
     Point3DListPtr result = std::make_shared<Point3DList>();
     Model::Poly2XYZTListPtr polys = GetEquationList();
@@ -45,7 +46,7 @@ Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(const double& aSamp
     {
         double startKnot = poly->GetStart();
         double endKnot = poly->GetEnd();
-        double length = mNurbs->getLength(startKnot, endKnot);
+        double length = mNurbs->GetLength(startKnot, endKnot);
         size_t sampleNumber = length / aSamplingInterval;
         sampleNumber = (sampleNumber < 2) ? 2 : sampleNumber;
         double knotInterval = (endKnot - startKnot) / sampleNumber;
@@ -55,7 +56,7 @@ Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(const double& aSamp
             continue;
         }
 
-        for (double t = startKnot; t <= endKnot + 1e-10; t+= knotInterval)
+        for (double t = startKnot; t <= endKnot + 1e-10; t += knotInterval)
         {
             t = std::fabs(t - endKnot) < knotInterval / 2.0 ? endKnot : t;
             Point3DPtr point = poly->GetPosition(t);
@@ -66,7 +67,8 @@ Model::Point3DListPtr Model::NurbsCurve::CalculatePointCloud(const double& aSamp
     return result;
 }
 
-Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(const double& aSamplingInterval)
+Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(
+                const double& aSamplingInterval)
 {
     PaintListPtr result = std::make_shared<PaintList>();
     const size_t paintRangeSize = mPaintRange->size();
@@ -80,7 +82,7 @@ Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(const double& aS
         {
             double startKnot = poly->GetStart();
             double endKnot = poly->GetEnd();
-            double length = mNurbs->getLength(startKnot, endKnot);
+            double length = mNurbs->GetLength(startKnot, endKnot);
             size_t sampleNumber = length / aSamplingInterval;
             sampleNumber = (sampleNumber < 2) ? 2 : sampleNumber;
             double knotInterval = (endKnot - startKnot) / sampleNumber;
@@ -90,7 +92,7 @@ Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(const double& aS
                 continue;
             }
 
-            for (double t = startKnot; t <= endKnot + 1e-10; t+= knotInterval)
+            for (double t = startKnot; t <= endKnot + 1e-10; t += knotInterval)
             {
                 t = std::fabs(t - endKnot) < knotInterval / 2.0 ? endKnot : t;
                 Point3DPtr point = poly->GetPosition(t);
@@ -195,6 +197,11 @@ Model::Point3DListPtr Model::NurbsCurve::GetMutableControlPoints()
     return mControlPoints;
 }
 
+void Model::NurbsCurve::SetControlPoints(const Model::Point3DListPtr& aControlPoints)
+{
+    mControlPoints = aControlPoints;
+}
+
 size_t Model::NurbsCurve::GetControlPointsSize() const
 {
     return mControlPoints->size();
@@ -218,6 +225,11 @@ const Model::KnotListPtr& Model::NurbsCurve::GetKnots() const
 Model::KnotListPtr Model::NurbsCurve::GetMutableKnots()
 {
     return mKnots;
+}
+
+void Model::NurbsCurve::SetKnots(const Model::KnotListPtr& aKnots)
+{
+    mKnots = aKnots;
 }
 
 size_t Model::NurbsCurve::GetKnotsSize() const
@@ -255,6 +267,38 @@ void Model::NurbsCurve::SetLineLength(const double& aLineLength)
     mLineLength = aLineLength;
 }
 
+void Model::NurbsCurve::SetNurbs(const Model::Point3DListPtr& aControlPoints,
+                                 const Model::KnotListPtr& aKnots)
+{
+    std::vector<_vec3d> ctrls;
+    ctrls.reserve(aControlPoints->size());
+    for (std::size_t i = 0; i < aControlPoints->size(); ++i)
+    {
+        _vec3d p =
+        {
+            aControlPoints->at(i)->GetX(),
+            aControlPoints->at(i)->GetY(),
+            aControlPoints->at(i)->GetZ()
+        };
+        ctrls.push_back(p);
+    }
+    mNurbs = std::make_shared<YGEO::NURBS>(ctrls, *aKnots, aKnots->front(), aKnots->back());
+}
+
+void Model::NurbsCurve::CalculateLength()
+{
+    if (mNurbs == nullptr)
+    {
+        return;
+    }
+    mLineLength = mNurbs->GetLength(mKnots->front(), mKnots->back());
+    mPaintTotalLength = 0;
+    for (const auto& paint : *mPaintRange)
+    {
+        mPaintTotalLength += mNurbs->GetLength(paint.first, paint.second);
+    }
+}
+
 void Model::NurbsCurve::readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, const QJsonArray& aObjectKnots)
 {
     std::vector<_vec3d> ctrls;
@@ -268,11 +312,12 @@ void Model::NurbsCurve::readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, c
     {
         std::string ctrlPointStr = aObjectCtrlPoints.at(i).toString().toStdString();
         std::vector<std::string> coefficients = strings::Split(ctrlPointStr, ",");
-        _vec3d point = {
-                        std::stod(coefficients[0]),
-                        std::stod(coefficients[1]),
-                        std::stod(coefficients[2])
-                        };
+        _vec3d point =
+        {
+            std::stod(coefficients[0]),
+            std::stod(coefficients[1]),
+            std::stod(coefficients[2])
+        };
         ctrls.push_back(point);
         mControlPoints->push_back(std::make_shared<Point3D>(point.x, point.y, point.z));
     }
@@ -286,7 +331,7 @@ void Model::NurbsCurve::readNurbsFromJSON(const QJsonArray& aObjectCtrlPoints, c
         mKnots->push_back(std::stod(knotStr));
     }
 
-     mNurbs = std::make_shared<YGEO::NURBS>(ctrls, *mKnots, mKnots->front(), mKnots->back());
+    mNurbs = std::make_shared<YGEO::NURBS>(ctrls, *mKnots, mKnots->front(), mKnots->back());
 }
 
 void Model::NurbsCurve::readPaintRangeFromJSON(const QJsonArray& aObjectPaintEndPoints)
@@ -301,8 +346,8 @@ void Model::NurbsCurve::readPaintRangeFromJSON(const QJsonArray& aObjectPaintEnd
         results = strings::Split(aObjectPaintEndPoints.at(i).toString().toStdString(), ",");
 
         mPaintRange->push_back(
-                    std::make_pair<double, double>(std::stod(results[0]), std::stod(results[1]))
-                );
+                        std::make_pair<double, double>(std::stod(results[0]), std::stod(results[1]))
+        );
     }
 }
 
@@ -423,4 +468,3 @@ Model::Poly2XYZTListPtr Model::NurbsCurve::GetEquationList()
 
     return equationParameters;
 }
-

@@ -109,6 +109,11 @@ Model::PaintRangePtr Model::Curve::GetMutablePaintRange()
     return mPaintRange;
 }
 
+void Model::Curve::SetPaintRange(const Model::PaintRangePtr& aPaintRange)
+{
+    mPaintRange = aPaintRange;
+}
+
 size_t Model::Curve::GetPaintRangeSize() const
 {
     return mPaintRange->size();
