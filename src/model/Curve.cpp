@@ -49,6 +49,11 @@ std::string Model::Curve::Parse() const
     return TEXT_NAN;
 }
 
+bool Model::Curve::FitPointsToCurve(std::string &)
+{
+    return false;
+}
+
 const uint64_t& Model::Curve::GetCurveId() const
 {
     return mCurveId;
