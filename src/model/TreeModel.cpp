@@ -188,10 +188,54 @@ void Model::TreeModel::createSegmentNode(const std::shared_ptr<Model::Tile>& aTi
     Model::TreeItem* tileNode = new Model::TreeItem(columnData, aParent);
     aParent->AppendChild(tileNode);
     const Model::RoadMapPtr& roadMap = aTile->GetRoadMap();
-    for (const auto& road : *roadMap)
+    for(const auto& road : *roadMap)
     {
         createRoadNode(road.second, tileNode);
     }
+
+    const Model::TrafficSignMapPtr& trafficSignMap = aTile->GetTrafficSignMap();
+    for(const auto& trafficSign : *trafficSignMap)
+    {
+        createTrafficSignNode(trafficSign.second, tileNode);
+    }
+}
+
+void Model::TreeModel::createTrafficSignNode(const std::shared_ptr<Model::TrafficSign>& aTrafficSign,
+                                             Model::TreeItem* aParent)
+{
+    QVector<QVariant> columnData;
+    columnData << "TrafficSign" << qulonglong(aTrafficSign->GetTrafficSignId());
+    Model::TreeItem* trafficSignNode = new Model::TreeItem(columnData, aParent);
+    aParent->AppendChild(trafficSignNode);
+    createUint64Node("Type", aTrafficSign->GetTrafficSignType(), trafficSignNode);
+    createDoubleNode("Orientation", aTrafficSign->GetOrientation(), trafficSignNode);
+    createDoubleNode("ShapeWidth", aTrafficSign->GetShapeWidth(), trafficSignNode);
+    createDoubleNode("ShapeHeight", aTrafficSign->GetShapeHeight(), trafficSignNode);
+    createDoubleNode("Confidence", aTrafficSign->GetConfidence(), trafficSignNode);
+}
+
+void Model::TreeModel::createUint64Node(const QString& aName, const uint64_t& aValue, Model::TreeItem* aParent)
+{
+    QVector<QVariant> columnData;
+    columnData << aName;
+    if (aValue > 0)
+    {
+        columnData << qulonglong(aValue);
+    }
+    else
+    {
+        columnData << "";
+    }
+
+    aParent->AppendChild(new Model::TreeItem(columnData, aParent));
+}
+
+void Model::TreeModel::createDoubleNode(const QString& aName, const double& aValue, Model::TreeItem* aParent)
+{
+    QVector<QVariant> columnData;
+    columnData << aName;
+    columnData << aValue;
+    aParent->AppendChild(new Model::TreeItem(columnData, aParent));
 }
 
 void Model::TreeModel::createRoadNode(const std::shared_ptr<Model::Road>& aRoad, Model::TreeItem* aParent)
@@ -213,113 +257,27 @@ void Model::TreeModel::createLaneNode(const std::shared_ptr<Model::Lane>& aLane,
     columnData << "Lane" << qulonglong(aLane->GetLaneId());
     Model::TreeItem* laneNode = new Model::TreeItem(columnData, aParent);
     aParent->AppendChild(laneNode);
-    createPredecessorLaneNode(aLane->GetPredecessorLaneId(), laneNode);
-    createSuccessorLaneNode(aLane->GetSuccessorLaneId(), laneNode);
-    createLeftLaneNode(aLane->GetLeftLaneId(), laneNode);
-    createRightLaneNode(aLane->GetRightLaneId(), laneNode);
-
-    const std::shared_ptr<Line>& leftLinePtr = aLane->GetLeftLine();
-    const std::shared_ptr<Line>& rightLinePtr = aLane->GetRightLine();
-    createLeftLineNode(leftLinePtr, laneNode);
-    createRightLineNode(rightLinePtr, laneNode);
+    createUint64Node("PreLaneID", aLane->GetPredecessorLaneId(), laneNode);
+    createUint64Node("SuccLaneID", aLane->GetSuccessorLaneId(), laneNode);
+    createUint64Node("LeftLaneID", aLane->GetLeftLaneId(), laneNode);
+    createUint64Node("RightLaneID", aLane->GetRightLaneId(), laneNode);
+    createLineNode("LeftLine", aLane->GetLeftLine(), laneNode);
+    createLineNode("RightLine", aLane->GetRightLine(), laneNode);
 }
 
-void Model::TreeModel::createPredecessorLaneNode(const uint64_t& aLaneId, Model::TreeItem* aParent)
+void Model::TreeModel::createLineNode(const QString& aName, const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
 {
     QVector<QVariant> columnData;
-    columnData << "PreLaneID";
-    if (aLaneId > 0)
-    {
-        columnData << qulonglong(aLaneId);
-    }
-    else
-    {
-        columnData << "";
-    }
-    Model::TreeItem* preLaneNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(preLaneNode);
-}
-
-void Model::TreeModel::createSuccessorLaneNode(const uint64_t& aLaneId, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "SuccLaneID";
-    if (aLaneId > 0)
-    {
-        columnData << qulonglong(aLaneId);
-    }
-    else
-    {
-        columnData << "";
-    }
-    Model::TreeItem* succLaneNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(succLaneNode);
-}
-
-void Model::TreeModel::createLeftLaneNode(const uint64_t& aLaneId, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "LeftLaneID";
-    if (aLaneId > 0)
-    {
-        columnData << qulonglong(aLaneId);
-    }
-    else
-    {
-        columnData << "";
-    }
-    Model::TreeItem* leftLaneNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(leftLaneNode);
-}
-
-void Model::TreeModel::createRightLaneNode(const uint64_t& aLaneId, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "RightLaneID";
-    if (aLaneId > 0)
-    {
-        columnData << qulonglong(aLaneId);
-    }
-    else
-    {
-        columnData << "";
-    }
-    Model::TreeItem* rightLaneNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(rightLaneNode);
-}
-
-void Model::TreeModel::createLeftLineNode(const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "LeftLine" << "";
+    columnData << aName << "";
     Model::TreeItem* lineNode = new Model::TreeItem(columnData, aParent);
     aParent->AppendChild(lineNode);
-    createLineIdNode(aLine, lineNode);
+    createUint64Node("ID", aLine->GetLineId(), lineNode);
     createLineTypeNode(aLine, lineNode);
-}
-
-void Model::TreeModel::createRightLineNode(const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "RightLine" << "";
-    Model::TreeItem* lineNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(lineNode);
-    createLineIdNode(aLine, lineNode);
-    createLineTypeNode(aLine, lineNode);
-}
-
-void Model::TreeModel::createLineIdNode(const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
-{
-    QVector<QVariant> columnData;
-    columnData << "ID" << qulonglong(aLine->GetLineId());
-    Model::TreeItem* lineIdNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(lineIdNode);
 }
 
 void Model::TreeModel::createLineTypeNode(const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
 {
     QVector<QVariant> columnData;
     columnData << "Type" << scLineTypeMap.at(aLine->GetCurve(0)->GetCurveType());
-    Model::TreeItem* lineTypeNode = new Model::TreeItem(columnData, aParent);
-    aParent->AppendChild(lineTypeNode);
+    aParent->AppendChild(new Model::TreeItem(columnData, aParent));
 }

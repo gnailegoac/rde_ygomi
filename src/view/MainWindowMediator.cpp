@@ -64,6 +64,13 @@ std::vector<std::string> View::MainWindowMediator::searchDatabaseFileList(const 
         }
     }
 
+    QFileInfoList folderList = folder.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for(const auto& subFolder : folderList)
+    {
+        std::vector<std::string> childFileList = searchDatabaseFileList(subFolder.absoluteFilePath());
+        databaseFileList.insert(databaseFileList.end(), childFileList.begin(), childFileList.end());
+    }
+
     return databaseFileList;
 }
 
