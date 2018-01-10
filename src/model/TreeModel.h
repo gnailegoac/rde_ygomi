@@ -27,7 +27,7 @@ class Tile;
 class Road;
 class Lane;
 class Line;
-//enum CurveType;
+class TrafficSign;
 
 class TreeModel : public QAbstractItemModel
 {
@@ -55,15 +55,13 @@ private:
     void createSegmentNode(const std::shared_ptr<Tile>& aTile, TreeItem* aParent);
     void createRoadNode(const std::shared_ptr<Road>& aRoad, TreeItem* aParent);
     void createLaneNode(const std::shared_ptr<Lane>& aLane, TreeItem* aParent);
-    void createPredecessorLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
-    void createSuccessorLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
-    void createLeftLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
-    void createRightLaneNode(const std::uint64_t& aLaneId, TreeItem* aParent);
-    void createLeftLineNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
-    void createRightLineNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
-    void createLineIdNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
+    void createLineNode(const QString& aName, const std::shared_ptr<Model::Line>& aLine,
+                        Model::TreeItem* aParent);
     void createLineTypeNode(const std::shared_ptr<Line>& aLine, TreeItem* aParent);
-
+    void createTrafficSignNode(const std::shared_ptr<Model::TrafficSign>& aTrafficSign,
+                               Model::TreeItem* aParent);
+    void createUint64Node(const QString& aName, const uint64_t& aValue, Model::TreeItem* aParent);
+    void createDoubleNode(const QString& aName, const double& aValue, Model::TreeItem* aParent);
 private:
     TreeItem* mRoot;
 };
