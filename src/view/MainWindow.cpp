@@ -63,10 +63,15 @@ void View::MainWindow::ShowRoadInfo()
     mRoadInfoView->setVisible(!isVisible);
 }
 
-void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel> &aTreeModel)
+void View::MainWindow::SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel)
 {
     mRoadInfoView->setModel(aTreeModel.get());
     mRoadInfoView->setColumnWidth(0, 171);
+}
+
+void View::MainWindow::ChangeCameraMatrix(const QJsonArray& aMatrix)
+{
+    ui->webRoadEditor->ChangeCameraMatrix(aMatrix);
 }
 
 void View::MainWindow::setupConnections()
@@ -106,6 +111,13 @@ void View::MainWindow::setupConnections()
 
     connect(ui->actionSelectLine, &QAction::triggered, [=]() {
         onSelectTypeChange(Model::SelectType::Line, ui->actionSelectLine->isChecked());
+    });
+
+    connect(ui->webRoadEditor, &WebRoadEditor::cameraMatrixChanged,
+            [=](const osg::Matrixd& aMatrix)
+    {
+        View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+        viewer->CameraMatrixChanged(aMatrix);
     });
 }
 
@@ -166,14 +178,14 @@ View::MainWindow::~MainWindow()
     delete mRoadInfoView;
 }
 
-void View::MainWindow::resizeEvent(QResizeEvent *aEvent)
+void View::MainWindow::resizeEvent(QResizeEvent* aEvent)
 {
     resizeDocks({ui->dockWidget}, {width() / 2}, Qt::Horizontal);
     mRoadInfoView->resize(300, height());
     mRoadInfoView->move(width() - 300, 0);
 }
 
-void View::MainWindow::closeEvent(QCloseEvent *aEvent)
+void View::MainWindow::closeEvent(QCloseEvent* aEvent)
 {
     writeSettings();
     QMainWindow::closeEvent(aEvent);

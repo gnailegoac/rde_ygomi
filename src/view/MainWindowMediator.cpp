@@ -11,6 +11,7 @@
  */
 
 #include <QDir>
+#include <QJsonArray>
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
 #include "proxy/MainProxy.h"
@@ -33,6 +34,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::FOLDER_OPEN);
     result->get().push_back(ApplicationFacade::INIT_SCENE);
     result->get().push_back(ApplicationFacade::REFRESH_WINDOW);
+    result->get().push_back(ApplicationFacade::CHANGE_CAMERA);
     return NotificationNames(result);
 }
 
@@ -88,11 +90,11 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
         ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
     }
-    else if(noteName == ApplicationFacade::FOLDER_OPEN)
+    else if (noteName == ApplicationFacade::FOLDER_OPEN)
     {
         QString folderPath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
-        if(databaseFileList.size() > 0)
+        if (databaseFileList.size() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
         }
@@ -102,7 +104,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             mainWindow->PopupWarningMessage("No DB file found!");
         }
     }
-    else if(noteName == ApplicationFacade::INIT_SCENE)
+    else if (noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
         MainProxy* mainProxy = getMainProxy();
@@ -110,10 +112,16 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
     }
-    else if(noteName == ApplicationFacade::REFRESH_WINDOW)
+    else if (noteName == ApplicationFacade::REFRESH_WINDOW)
     {
         View::MainWindow* mainWindow = getMainWindow();
         mainWindow->UpdateView();
+    }
+    else if (noteName == ApplicationFacade::CHANGE_CAMERA)
+    {
+        View::MainWindow* mainWindow = getMainWindow();
+        QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
+        mainWindow->ChangeCameraMatrix(cameraMatrix);
     }
 }
 

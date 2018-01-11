@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
  *                       Continental Confidential
- *                  Copyright (c) Continental AG. %YEAR%
+ *                  Copyright (c) Continental AG. 2018
  *
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
@@ -14,6 +14,7 @@
 
 #include <memory>
 
+#include <QJsonArray>
 #include <QMainWindow>
 #include <QString>
 #include <QTreeView>
@@ -21,11 +22,13 @@
 #include <osg/Polytope>
 #include "model/Common.h"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
-namespace Model {
+namespace Model
+{
 class TreeModel;
 }
 
@@ -35,7 +38,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
+  public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
@@ -43,18 +46,18 @@ public:
     void UpdateView();
     void ShowRoadInfo();
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
+    void ChangeCameraMatrix(const QJsonArray& aMatrix);
 
-protected:
+  protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
 
-private:
+  private:
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();
     void setupConnections();
     Ui::MainWindow *ui;
-    QTreeView* mRoadInfoView;
+    QTreeView *mRoadInfoView;
 };
 }
-

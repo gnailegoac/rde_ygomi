@@ -17,6 +17,9 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+#ifdef QT_DEBUG
+    qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9000");
+#endif
     View::MainWindow mainWindow;
     ApplicationFacade::GetInstance()->StartUp(&mainWindow);
     return application.exec();

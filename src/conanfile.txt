@@ -2,7 +2,7 @@
 PureMVC/1.0@RDE/stable
 osg/3.4.1@RDE/stable
 sqlite/3.0@RDE/stable 
-CoordinateTransform/0.2.0.20171221135807.c542c2f@rde/devel
+CoordinateTransform/0.2.0.20180110124633.ce35a0d@rde/devel
 opencv/3.0.0@RDBDelivery/stable
 
 [generators]
