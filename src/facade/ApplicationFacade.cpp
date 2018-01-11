@@ -19,13 +19,13 @@
 #include "control/NodeHighlightCommand.h"
 
 const std::string ApplicationFacade::NAME = "ApplicationFacade";
-std::map<std::string, PureMVC::Patterns::IProxy *> ApplicationFacade::mProxyList;
-std::map<std::string, PureMVC::Patterns::IMediator *> ApplicationFacade::mMediatorList;
+std::map<std::string, PureMVC::Patterns::IProxy*> ApplicationFacade::mProxyList;
+std::map<std::string, PureMVC::Patterns::IMediator*> ApplicationFacade::mMediatorList;
 std::map<std::string, std::shared_ptr<PureMVC::Patterns::ICommand>> ApplicationFacade::mCommandList;
 std::map<std::string, std::string> ApplicationFacade::mMessageList;
 std::shared_ptr<PureMVC::Patterns::IFacade> ApplicationFacade::mFacade(&Facade::getInstance(NAME));
 
-ApplicationFacade *ApplicationFacade::mInstance = NULL;
+ApplicationFacade* ApplicationFacade::mInstance = NULL;
 const std::string ApplicationFacade::START_UP = "StartUp";
 const std::string ApplicationFacade::FILE_OPEN = "FileOpen";
 const std::string ApplicationFacade::FOLDER_OPEN = "FolderOpen";
@@ -39,7 +39,7 @@ const std::string ApplicationFacade::CHANGE_SELECT_TYPE = "ChangeSelectType";
 const std::string ApplicationFacade::DEHIGHLIGHT_ALL_NODE = "DehighlightAllNode";
 const std::string ApplicationFacade::CHANGE_CAMERA = "ChangeCamera";
 
-bool ApplicationFacade::StartUp(View::MainWindow *aWindow)
+bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
     mFacade->sendNotification(START_UP, aWindow);
     return true;
@@ -52,7 +52,7 @@ ApplicationFacade::ApplicationFacade()
     registerCommand();
 }
 
-ApplicationFacade *ApplicationFacade::GetInstance()
+ApplicationFacade* ApplicationFacade::GetInstance()
 {
     if (mInstance == NULL)
     {
@@ -110,43 +110,43 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[DEHIGHLIGHT_ALL_NODE] = Controller::NodeHighlightCommand::GetCommandName();
 }
 
-void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy *aProxy)
+void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)
 {
     mProxyList[aProxy->getProxyName()] = aProxy;
     mFacade->registerProxy(aProxy);
 }
 
-void ApplicationFacade::RegisterMediator(PureMVC::Patterns::IMediator *aMediator)
+void ApplicationFacade::RegisterMediator(PureMVC::Patterns::IMediator* aMediator)
 {
     std::string meditorName = aMediator->getMediatorName();
     mMediatorList[meditorName] = aMediator;
     mFacade->registerMediator(aMediator);
 }
 
-void ApplicationFacade::SendNotification(const std::string &aNoteName,
-                                         const void *aBody,
-                                         const std::string &aType)
+void ApplicationFacade::SendNotification(const std::string& aNoteName,
+                                         const void* aBody,
+                                         const std::string& aType)
 {
     mFacade->sendNotification(aNoteName, aBody, aType);
 }
 
-PureMVC::Patterns::IProxy &ApplicationFacade::RetriveProxy(const std::string &aProxyName)
+PureMVC::Patterns::IProxy& ApplicationFacade::RetriveProxy(const std::string& aProxyName)
 {
     return mFacade->retrieveProxy(aProxyName);
 }
 
-PureMVC::Patterns::IMediator &ApplicationFacade::RetriveMediator(const std::string &aMediatorName)
+PureMVC::Patterns::IMediator& ApplicationFacade::RetriveMediator(const std::string& aMediatorName)
 {
     return mFacade->retrieveMediator(aMediatorName);
 }
 
-bool ApplicationFacade::HasMediator(const std::string &aMediatorName)
+bool ApplicationFacade::HasMediator(const std::string& aMediatorName)
 {
     return mFacade->hasMediator(aMediatorName);
 }
 
-MainProxy *ApplicationFacade::GetMainProxy()
+MainProxy* ApplicationFacade::GetMainProxy()
 {
-    MainProxy &mainProxy = dynamic_cast<MainProxy &>(RetriveProxy(MainProxy::NAME));
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(RetriveProxy(MainProxy::NAME));
     return &mainProxy;
 }
