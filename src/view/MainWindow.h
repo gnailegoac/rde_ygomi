@@ -38,7 +38,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-  public:
+public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
@@ -48,16 +48,16 @@ class MainWindow : public QMainWindow
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
 
-  protected:
+protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
 
-  private:
+private:
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();
     void setupConnections();
-    Ui::MainWindow *ui;
-    QTreeView *mRoadInfoView;
+    Ui::MainWindow* ui;
+    QTreeView* mRoadInfoView;
 };
 }
