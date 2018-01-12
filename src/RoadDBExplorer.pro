@@ -71,7 +71,8 @@ SOURCES +=\
     control/NodeHighlightCommand.cpp \
     model/TreeItem.cpp \
     model/TreeModel.cpp \
-    model/FitNurbs.cpp
+    model/FitNurbs.cpp \
+    model/GeoJsonConverter.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -121,7 +122,8 @@ HEADERS  += view/MainWindow.h \
     view/StrokeIntersector.h \
     control/NodeHighlightCommand.h \
     model/TreeItem.h \
-    model/TreeModel.h
+    model/TreeModel.h \
+    model/GeoJsonConverter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

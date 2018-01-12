@@ -49,6 +49,7 @@ View::NetworkPreferenceDialog::NetworkPreferenceDialog(QWidget* aParent) :
         setPreferenceChanged();
     };
 
+    connect(mUi->webServer, &QLineEdit::textChanged, valueChanged);
     connect(mUi->proxyServer, &QLineEdit::textChanged, valueChanged);
     connect(mUi->proxyPort, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), valueChanged);
     connect(mUi->credential, &QCheckBox::stateChanged, [=]

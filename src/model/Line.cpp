@@ -196,11 +196,10 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
 
 void Model::Line::GenerateViewPaintMap()
 {
-    // Convert geodetic coordinates into UTM coordinates
-    auto utm = CRS::Factory().CreateProjectionTransform(
+    // Convert geodetic coordinates into ECEF coordinates
+    auto ecef = CRS::Factory().CreateEcefProjection(
                                CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Utm,
-                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+                               CRS::CoordinateType::Ecef);
 
     mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
@@ -216,7 +215,7 @@ void Model::Line::GenerateViewPaintMap()
             double lon = p->GetX();
             double lat = p->GetY();
             double ele = p->GetZ();
-            utm->Transform(lon, lat, ele);
+            ecef->Transform(lon, lat, ele);
             points->push_back(std::make_shared<Point3D>(lon, lat, ele));
         }
 
