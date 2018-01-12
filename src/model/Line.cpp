@@ -196,7 +196,7 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
 
 void Model::Line::GenerateViewPaintMap()
 {
-    // Convert geodetic coordinates into UTM coordinates
+    // Convert geodetic coordinates into ECEF coordinates
     auto ecef = CRS::Factory().CreateEcefProjection(
                                CRS::CoordinateType::Wgs84,
                                CRS::CoordinateType::Ecef);
