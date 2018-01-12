@@ -198,6 +198,13 @@ void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 
 void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 {
+    // refresh traffic sign view if the camera rotated
+    // tightly coupled implementation! maybe refactor this code next time
+    if (isMouseButtonPressed(aEvent))
+    {
+        updateTrafficSignView();
+    }
+
     // Note that we have to check the buttons mask in order to see whether the
     // left button has been pressed. A call to `button()` will only result in
     // `Qt::NoButton` for mouse move events.
@@ -290,6 +297,24 @@ bool View::OsgWidget::event(QEvent* aEvent)
         break;
     }
     return aHandled;
+}
+
+bool View::OsgWidget::isMouseButtonPressed(const QMouseEvent* aEvent, int aButtonMask)
+{
+    return aEvent->buttons() & aButtonMask ;
+}
+
+void View::OsgWidget::updateTrafficSignView()
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetMutableSceneModel();
+
+    if (sceneModel)
+    {
+        osg::Matrixd matrix =  mView->getCameraManipulator()->getMatrix();
+        sceneModel->RotateTrafficSign(matrix);
+        paintGL();
+    }
 }
 
 void View::OsgWidget::onHome()

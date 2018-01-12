@@ -36,6 +36,11 @@ const std::shared_ptr<Model::SceneModel>& MainProxy::GetSceneModel() const
     return mSceneModel;
 }
 
+std::shared_ptr<Model::SceneModel>& MainProxy::GetMutableSceneModel()
+{
+    return mSceneModel;
+}
+
 void MainProxy::SetSceneModel(const std::shared_ptr<Model::SceneModel>& aSceneModel)
 {
     mSceneModel = aSceneModel;

@@ -344,7 +344,7 @@ void Model::DbRepository::queryTrafficSigns(std::shared_ptr<MemoryModel>& aMemor
     {
         const std::int64_t segmentId = (std::int64_t)std::stoi(strings::Split(trafficSignTable, "_")[1]);
         TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
-        const std::string QUERY_TRAFFIC_SIGN = "SELECT ID,Type,Gps FROM "
+        const std::string QUERY_TRAFFIC_SIGN = "SELECT * FROM "
                                                + trafficSignTable;
 
         try
@@ -362,7 +362,7 @@ void Model::DbRepository::queryTrafficSigns(std::shared_ptr<MemoryModel>& aMemor
                 trafficSign->SetConfidence(query.getColumn(6).getDouble());
                 trafficSign->SetShapeHeight(query.getColumn(5).getDouble());
                 trafficSign->SetShapeWidth(query.getColumn(4).getDouble());
-                trafficSign->SetPosition(parsePoint(query.getColumn(7).getString()));
+                trafficSign->SetGeodeticPosition(parsePoint(query.getColumn(7).getString()));
             }
         }
         catch(std::exception)
@@ -749,7 +749,7 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                           + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ","
-                          + formatReferencePoint(trafficSign->GetPosition()) + ")";
+                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + ")";
                 mDatabase->exec(sqlText);
             }
 

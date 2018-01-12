@@ -62,6 +62,12 @@ void Controller::SceneManageCommand::constructScene(osg::Polytope& aPolytope)
                 sceneModel->AddRoadToScene(road.second);
             }
         }
+
+        const Model::TrafficSignMapPtr& trafficSignMap = tile.second->GetTrafficSignMap();
+        for (const auto& trafficSign : *trafficSignMap)
+        {
+            sceneModel->AddTrafficSignToScene(trafficSign.second);
+        }
     }
 }
 

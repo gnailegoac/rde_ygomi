@@ -14,7 +14,6 @@
 #include "Line.h"
 
 #include "CoordinateTransform/Factory.h"
-
 #include "DouglasPeucker.h"
 
 Model::Line::Line():
@@ -194,14 +193,8 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
     return mPaintListMap->at(aLevel);
 }
 
-void Model::Line::GenerateViewPaintMap()
+void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer)
 {
-    // Convert geodetic coordinates into UTM coordinates
-    auto utm = CRS::Factory().CreateProjectionTransform(
-                               CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Utm,
-                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
-
     mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(3, std::make_shared<PaintList>()));
@@ -216,7 +209,7 @@ void Model::Line::GenerateViewPaintMap()
             double lon = p->GetX();
             double lat = p->GetY();
             double ele = p->GetZ();
-            utm->Transform(lon, lat, ele);
+            aTransformer->Transform(lon, lat, ele);
             points->push_back(std::make_shared<Point3D>(lon, lat, ele));
         }
 

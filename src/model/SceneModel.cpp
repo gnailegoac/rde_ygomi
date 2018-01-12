@@ -17,6 +17,14 @@
 
 #include <osg/Material>
 #include <osg/LineWidth>
+#include <osg/Texture2D>
+#include <osgDB/ReadFile>
+
+namespace  Model
+{
+    const static float DRAW_TRAFFICSIGN_WIDTH = 10.0;
+    const static float DRAW_TRAFFICSIGN_LENGTH = 10.0;
+}
 
 Model::SceneModel::SceneModel() :
     mSceneModelRoot(new osg::Group)
@@ -42,6 +50,55 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
     {
         mSceneModelRoot->removeChild(mRoadNodeMap[aRoadId].release());
         mRoadNodeMap.erase(aRoadId);
+    }
+}
+
+void Model::SceneModel::AddTrafficSignToScene(const std::shared_ptr<Model::TrafficSign>& aTrafficSign)
+{
+    osg::ref_ptr<osg::Group> trafficSignGroup = buildTrafficSignNode(aTrafficSign);
+    mSceneModelRoot->addChild(trafficSignGroup);
+    mTrafficSignNodeMap[aTrafficSign->GetTrafficSignId()] = trafficSignGroup;
+}
+
+void Model::SceneModel::RemoveTrafficSignFromScene(const std::uint64_t& aTrafficSignId)
+{
+    if (mTrafficSignNodeMap.find(aTrafficSignId) != mTrafficSignNodeMap.end())
+    {
+        mSceneModelRoot->removeChild(mTrafficSignNodeMap[aTrafficSignId].release());
+        mTrafficSignNodeMap.erase(aTrafficSignId);
+    }
+}
+
+void Model::SceneModel::RotateTrafficSign(const osg::Matrixd& aMatrix)
+{
+    auto rotate = [](const osg::Matrixd& aPose, const osg::Vec3& point)->osg::Vec3{
+        osg::Vec3 newPoint;
+        newPoint[0] = point[0] * aPose(0, 0) + point[1] * aPose(1, 0) + point[2] * aPose(2, 0);
+        newPoint[1] = point[0] * aPose(0, 1) + point[1] * aPose(1, 1) + point[2] * aPose(2, 1);
+        newPoint[2] = point[0] * aPose(0, 2) + point[1] * aPose(1, 2) + point[2] * aPose(2, 2);
+        return newPoint;
+    };
+
+    for (const auto& iter : mTrafficSignNodeMap)
+    {
+        osg::ref_ptr<osg::Group> trafficSignGroup = iter.second->asGroup();
+        osg::Geode* geode = trafficSignGroup->getChild(0)->asGeode();
+        osg::ref_ptr<osg::Geometry> geometry = geode->getDrawable(0)->asGeometry();
+        osg::Vec3Array* v = static_cast<osg::Vec3Array*>(geometry->getVertexArray());
+        const osg::Vec3* array = static_cast<const osg::Vec3*>(v->getDataPointer());
+        float center_x = (array[0][0] + array[1][0] + array[2][0] + array[3][0]) / 4.;
+        float center_y = (array[0][1] + array[1][1] + array[2][1] + array[3][1]) / 4.;
+        float center_z = (array[0][2] + array[1][2] + array[2][2] + array[3][2]) / 4.;
+        osg::Vec3 vertex0 = rotate(aMatrix, osg::Vec3(DRAW_TRAFFICSIGN_WIDTH, -DRAW_TRAFFICSIGN_LENGTH, 0));
+        osg::Vec3 vertex1 = rotate(aMatrix, osg::Vec3(-DRAW_TRAFFICSIGN_WIDTH, -DRAW_TRAFFICSIGN_LENGTH, 0));
+        osg::Vec3 vertex2 = rotate(aMatrix, osg::Vec3(-DRAW_TRAFFICSIGN_WIDTH, DRAW_TRAFFICSIGN_LENGTH, 0));
+        osg::Vec3 vertex3 = rotate(aMatrix, osg::Vec3(DRAW_TRAFFICSIGN_WIDTH, DRAW_TRAFFICSIGN_LENGTH, 0));
+        osg::Vec3 center(center_x, center_y, center_z);
+        (*v)[0].set(center + vertex0);
+        (*v)[1].set(center + vertex1);
+        (*v)[2].set(center + vertex2);
+        (*v)[3].set(center + vertex3);
+        geometry->dirtyDisplayList();
     }
 }
 
@@ -131,6 +188,40 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
     }
 
     return roadNode;
+}
+
+osg::ref_ptr<osg::Group> Model::SceneModel::buildTrafficSignNode(const std::shared_ptr<Model::TrafficSign>& aTrafficSign)
+{
+    osg::ref_ptr<osg::Group> trafficSignNode(new osg::Group);
+    trafficSignNode->setName("TrafficSign:" + std::to_string(aTrafficSign->GetTrafficSignId()));
+    osg::Geode* geode = new osg::Geode();
+    geode->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+    osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array();
+    const Point3DPtr& position = aTrafficSign->GetViewPosition();
+
+    osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry();
+    v->push_back(osg::Vec3(position->GetX() + DRAW_TRAFFICSIGN_WIDTH, position->GetY() - DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() - DRAW_TRAFFICSIGN_WIDTH, position->GetY() - DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() - DRAW_TRAFFICSIGN_WIDTH, position->GetY() + DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() + DRAW_TRAFFICSIGN_WIDTH, position->GetY() + DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
+    geometry->setVertexArray(v.get());
+
+    osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
+    tcoords->push_back(osg::Vec2(0.0f,0.0f));
+    tcoords->push_back(osg::Vec2(1.0f,0.0f));
+    tcoords->push_back(osg::Vec2(1.0f,1.0f));
+    tcoords->push_back(osg::Vec2(0.0f,1.0f));
+    geometry->setTexCoordArray(0, tcoords.get());
+    geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+
+    osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
+    osg::ref_ptr<osg::Image> image = osgDB::readImageFile(aTrafficSign->GetImagePath());
+    texture->setImage(image);
+    geometry->getOrCreateStateSet()->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+    geode->addDrawable(geometry);
+    trafficSignNode->addChild(geode);
+
+    return trafficSignNode;
 }
 
 const osg::ref_ptr<osg::Node>& Model::SceneModel::GetLineNodeById(const std::uint64_t& aLineId) const

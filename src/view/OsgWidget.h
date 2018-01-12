@@ -23,6 +23,7 @@
 namespace Controller
 {
     class PickHandler;
+    class RotateHandler;
 }
 
 namespace View
@@ -68,6 +69,9 @@ protected:
     bool event(QEvent* aEvent) override;
 
 private:
+    bool isMouseButtonPressed(const QMouseEvent* aEvent, int aButtonMask = 3);
+    void updateTrafficSignView();
+
     virtual void onHome();
     virtual void onResize(int aWidth, int aHeight);
 

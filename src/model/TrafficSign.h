@@ -17,6 +17,13 @@
 #include "Element.h"
 #include "Point3D.h"
 
+namespace  CRS
+{
+
+class ICoordinateTransform;
+
+}
+
 namespace Model
 {
 
@@ -44,8 +51,14 @@ public:
     float GetConfidence() const;
     void SetConfidence(float aConfidence);
 
-    const Point3DPtr& GetPosition() const;
-    void SetPosition(const Point3DPtr& aPosition);
+    const Point3DPtr& GetGeodeticPosition() const;
+    void SetGeodeticPosition(const Point3DPtr& aGeodeticPosition);
+
+    const Point3DPtr& GetViewPosition() const;
+    void SetViewPosition(const Point3DPtr& aViewPosition);
+    void GenerateViewPosition(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer);
+
+    const std::string& GetImagePath() const;
 
 private:
     std::uint64_t mTrafficSignId;
@@ -54,7 +67,8 @@ private:
     double mShapeWidth;
     double mShapeHeight;
     float mConfidence;
-    Point3DPtr mPosition;
+    Point3DPtr mGeodeticPosition;
+    Point3DPtr mViewPosition;
 };
 
 typedef std::shared_ptr<TrafficSign> TrafficSignPtr;

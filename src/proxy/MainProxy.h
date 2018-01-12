@@ -29,6 +29,7 @@ public:
     MainProxy(const std::string& aName);
 
     const std::shared_ptr<Model::SceneModel>& GetSceneModel() const;
+    std::shared_ptr<Model::SceneModel>& GetMutableSceneModel();
     void SetSceneModel(const std::shared_ptr<Model::SceneModel>& aSceneModel);
 
     const std::shared_ptr<Model::MemoryModel>& GetMemoryModel() const;

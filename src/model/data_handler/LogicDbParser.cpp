@@ -15,6 +15,7 @@
 
 #include "../MemoryModel.h"
 #include "DbRepository.h"
+#include "CoordinateTransform/Factory.h"
 
 Model::LogicDbParser::LogicDbParser(const PathList& aLogicDbFileList)
 {
@@ -85,18 +86,32 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
     const double samplingInterval = 0.5;
     TileMapPtr tileMap = aMemoryModel->GetMutableTileMap();
 
+    // Convert geodetic coordinates into UTM coordinates
+    auto utm = CRS::Factory().CreateProjectionTransform(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Utm,
+                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+
     for (auto itorTile : *tileMap)
     {
         TilePtr tile = itorTile.second;
         const Point3DPtr& referencePoint = tile->GetReferencePoint();
         LineMapPtr lineMap = tile->GetMutableLineMap();
 
-        for (auto itorLine : *lineMap)
+        for (auto& itorLine : *lineMap)
         {
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPointsList(referencePoint, samplingInterval);
-            line->GenerateViewPaintMap();
+            line->GenerateViewPaintMap(utm);
+        }
+
+        TrafficSignMapPtr trafficSignMap = tile->GetMutableTrafficSignMap();
+
+        for (auto& itorTrafficSign : *trafficSignMap)
+        {
+            TrafficSignPtr trafficSign = itorTrafficSign.second;
+            trafficSign->GenerateViewPosition(utm);
         }
     }
 
