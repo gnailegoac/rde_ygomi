@@ -23,7 +23,6 @@
 namespace Controller
 {
     class PickHandler;
-    class RotateHandler;
 }
 
 namespace View

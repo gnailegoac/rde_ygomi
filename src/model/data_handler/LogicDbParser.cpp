@@ -92,7 +92,7 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
                                CRS::CoordinateType::Utm,
                                "+proj=utm +datum=WGS84 +unit=m +no_defs");
 
-    for (auto itorTile : *tileMap)
+    for (auto& itorTile : *tileMap)
     {
         TilePtr tile = itorTile.second;
         const Point3DPtr& referencePoint = tile->GetReferencePoint();

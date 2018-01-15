@@ -43,7 +43,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
                 *CommonFunction::ConvertToNonConstType<std::vector<std::string>>(aNotification.getBody());
         Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(databaseFilePathList);
         Model::IParserPtr parser = factory->CreateParser();
-        Model::MemoryModelPtr memoryModel  = parser->Parse();
+        Model::MemoryModelPtr memoryModel = parser->Parse();
 
         //parse file
         //put the meomery model into MainProxy
