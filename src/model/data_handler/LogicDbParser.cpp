@@ -96,6 +96,8 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
     {
         TilePtr tile = itorTile.second;
         const Point3DPtr& referencePoint = tile->GetReferencePoint();
+
+        // Generate line map view
         LineMapPtr lineMap = tile->GetMutableLineMap();
 
         for (auto& itorLine : *lineMap)
@@ -106,6 +108,7 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
             line->GenerateViewPaintMap(utm);
         }
 
+        // Generate traffic sign map view
         TrafficSignMapPtr trafficSignMap = tile->GetMutableTrafficSignMap();
 
         for (auto& itorTrafficSign : *trafficSignMap)

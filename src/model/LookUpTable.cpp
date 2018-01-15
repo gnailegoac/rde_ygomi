@@ -12,9 +12,9 @@
 
 #include "LookUpTable.h"
 
-std::string Model::LookUpTable::mDefaultTrafficSignImagePath("../src/resource/trafficsign/US_signs_pics_defines/default.jpg");
-std::unordered_map<std::uint64_t, std::string>
-Model::LookUpTable::mTrafficSignImageMap
+std::string Model::LookUpTable::mDefaultTrafficSignImagePath
+("../src/resource/trafficsign/US_signs_pics_defines/default.jpg");
+std::unordered_map<std::uint64_t, std::string> Model::LookUpTable::mTrafficSignImageMap
 (
 {
     {

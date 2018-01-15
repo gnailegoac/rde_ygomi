@@ -22,8 +22,8 @@
 
 namespace  Model
 {
-    const static float DRAW_TRAFFICSIGN_WIDTH = 10.0;
-    const static float DRAW_TRAFFICSIGN_LENGTH = 10.0;
+    const static float VIEW_SIGN_WIDTH = 10.0;
+    const static float VIEW_SIGN_LENGTH = 10.0;
 }
 
 Model::SceneModel::SceneModel() :
@@ -89,10 +89,10 @@ void Model::SceneModel::RotateTrafficSign(const osg::Matrixd& aMatrix)
         float center_x = (array[0][0] + array[1][0] + array[2][0] + array[3][0]) / 4.;
         float center_y = (array[0][1] + array[1][1] + array[2][1] + array[3][1]) / 4.;
         float center_z = (array[0][2] + array[1][2] + array[2][2] + array[3][2]) / 4.;
-        osg::Vec3 vertex0 = rotate(aMatrix, osg::Vec3(DRAW_TRAFFICSIGN_WIDTH, -DRAW_TRAFFICSIGN_LENGTH, 0));
-        osg::Vec3 vertex1 = rotate(aMatrix, osg::Vec3(-DRAW_TRAFFICSIGN_WIDTH, -DRAW_TRAFFICSIGN_LENGTH, 0));
-        osg::Vec3 vertex2 = rotate(aMatrix, osg::Vec3(-DRAW_TRAFFICSIGN_WIDTH, DRAW_TRAFFICSIGN_LENGTH, 0));
-        osg::Vec3 vertex3 = rotate(aMatrix, osg::Vec3(DRAW_TRAFFICSIGN_WIDTH, DRAW_TRAFFICSIGN_LENGTH, 0));
+        osg::Vec3 vertex0 = rotate(aMatrix, osg::Vec3(VIEW_SIGN_WIDTH, -VIEW_SIGN_LENGTH, 0));
+        osg::Vec3 vertex1 = rotate(aMatrix, osg::Vec3(-VIEW_SIGN_WIDTH, -VIEW_SIGN_LENGTH, 0));
+        osg::Vec3 vertex2 = rotate(aMatrix, osg::Vec3(-VIEW_SIGN_WIDTH, VIEW_SIGN_LENGTH, 0));
+        osg::Vec3 vertex3 = rotate(aMatrix, osg::Vec3(VIEW_SIGN_WIDTH, VIEW_SIGN_LENGTH, 0));
         osg::Vec3 center(center_x, center_y, center_z);
         (*v)[0].set(center + vertex0);
         (*v)[1].set(center + vertex1);
@@ -193,17 +193,17 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
 osg::ref_ptr<osg::Group> Model::SceneModel::buildTrafficSignNode(const std::shared_ptr<Model::TrafficSign>& aTrafficSign)
 {
     osg::ref_ptr<osg::Group> trafficSignNode(new osg::Group);
-    trafficSignNode->setName("TrafficSign:" + std::to_string(aTrafficSign->GetTrafficSignId()));
+    trafficSignNode->setName("Sign:" + std::to_string(aTrafficSign->GetTrafficSignId()));
     osg::Geode* geode = new osg::Geode();
     geode->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array();
     const Point3DPtr& position = aTrafficSign->GetViewPosition();
 
     osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry();
-    v->push_back(osg::Vec3(position->GetX() + DRAW_TRAFFICSIGN_WIDTH, position->GetY() - DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
-    v->push_back(osg::Vec3(position->GetX() - DRAW_TRAFFICSIGN_WIDTH, position->GetY() - DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
-    v->push_back(osg::Vec3(position->GetX() - DRAW_TRAFFICSIGN_WIDTH, position->GetY() + DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
-    v->push_back(osg::Vec3(position->GetX() + DRAW_TRAFFICSIGN_WIDTH, position->GetY() + DRAW_TRAFFICSIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() + VIEW_SIGN_WIDTH, position->GetY() - VIEW_SIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() - VIEW_SIGN_WIDTH, position->GetY() - VIEW_SIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() - VIEW_SIGN_WIDTH, position->GetY() + VIEW_SIGN_LENGTH, position->GetZ()));
+    v->push_back(osg::Vec3(position->GetX() + VIEW_SIGN_WIDTH, position->GetY() + VIEW_SIGN_LENGTH, position->GetZ()));
     geometry->setVertexArray(v.get());
 
     osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();

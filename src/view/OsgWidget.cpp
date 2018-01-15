@@ -198,9 +198,9 @@ void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 
 void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 {
-    // refresh traffic sign view if the camera rotated
+    // change traffic sign geometry if someone rotate or drag the camera
     // tightly coupled implementation! maybe refactor this code next time
-    if (isMouseButtonPressed(aEvent))
+    if (isMouseButtonPressed(aEvent, 3))
     {
         updateTrafficSignView();
     }
@@ -299,7 +299,7 @@ bool View::OsgWidget::event(QEvent* aEvent)
     return aHandled;
 }
 
-bool View::OsgWidget::isMouseButtonPressed(const QMouseEvent* aEvent, int aButtonMask)
+bool View::OsgWidget::isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const
 {
     return aEvent->buttons() & aButtonMask ;
 }
@@ -311,7 +311,8 @@ void View::OsgWidget::updateTrafficSignView()
 
     if (sceneModel)
     {
-        osg::Matrixd matrix =  mView->getCameraManipulator()->getMatrix();
+        auto manipulator = mView->getCameraManipulator();
+        osg::Matrixd matrix =  manipulator->getMatrix();
         sceneModel->RotateTrafficSign(matrix);
         paintGL();
     }
