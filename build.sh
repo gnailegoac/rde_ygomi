@@ -3,6 +3,7 @@
 set -e
 
 script_dir=$(dirname `readlink -f $0`)
+resource_dir=resource/trafficsign/US_signs_pics_defines
 
 proj_name=$(grep -Po '(?<="name": ")[^"]*' config.json)
 make_tool=$(grep -Po '(?<="make_tool": ")[^"]*' config.json)
@@ -15,7 +16,8 @@ make_tool=$(grep -Po '(?<="make_tool": ")[^"]*' config.json)
 #fi
 
 rm -rf $script_dir/build $script_dir/build_ut
-mkdir -p build
+mkdir -p build/$resource_dir
+cp src/$resource_dir/* build/$resource_dir
 cd build
 echo "===== start build ${proj_name} ====="
 conan install ../src --build --update

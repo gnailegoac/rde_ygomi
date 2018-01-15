@@ -13,6 +13,9 @@
 
 #include "TrafficSign.h"
 
+#include "CoordinateTransform/Factory.h"
+#include "LookUpTable.h"
+
 Model::TrafficSign::TrafficSign():
     Element(),
     mTrafficSignType(0),
@@ -20,7 +23,8 @@ Model::TrafficSign::TrafficSign():
     mShapeWidth(0.0),
     mShapeHeight(0.0),
     mConfidence(0.0),
-    mPosition(std::make_shared<Point3D>())
+    mGeodeticPosition(std::make_shared<Point3D>()),
+    mViewPosition(std::make_shared<Point3D>())
 {
 
 }
@@ -90,14 +94,47 @@ void Model::TrafficSign::SetConfidence(float aConfidence)
     mConfidence = aConfidence;
 }
 
-const Model::Point3DPtr& Model::TrafficSign::GetPosition() const
+const Model::Point3DPtr& Model::TrafficSign::GetGeodeticPosition() const
 {
-    return mPosition;
+    return mGeodeticPosition;
 }
 
-void Model::TrafficSign::SetPosition(const Point3DPtr& aPosition)
+void Model::TrafficSign::SetGeodeticPosition(const Point3DPtr& aGeodeticPosition)
 {
-    mPosition->SetX(aPosition->GetX());
-    mPosition->SetY(aPosition->GetY());
-    mPosition->SetZ(aPosition->GetZ());
+    mGeodeticPosition->SetX(aGeodeticPosition->GetX());
+    mGeodeticPosition->SetY(aGeodeticPosition->GetY());
+    mGeodeticPosition->SetZ(aGeodeticPosition->GetZ());
+}
+
+const Model::Point3DPtr& Model::TrafficSign::GetViewPosition() const
+{
+    return mViewPosition;
+}
+
+void Model::TrafficSign::SetViewPosition(const Point3DPtr& aViewPosition)
+{
+    mViewPosition->SetX(aViewPosition->GetX());
+    mViewPosition->SetY(aViewPosition->GetY());
+    mViewPosition->SetZ(aViewPosition->GetZ());
+}
+
+void Model::TrafficSign::GenerateViewPosition(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer)
+{
+    double lon = mGeodeticPosition->GetX();
+    double lat = mGeodeticPosition->GetY();
+    double ele = mGeodeticPosition->GetZ();
+    aTransformer->Transform(lon, lat, ele);
+    mViewPosition->SetX(lon);
+    mViewPosition->SetY(lat);
+    mViewPosition->SetZ(ele);
+}
+
+const std::string& Model::TrafficSign::GetImagePath() const
+{
+    if (0 != Model::LookUpTable::mTrafficSignImageMap.count(mTrafficSignType))
+    {
+        return Model::LookUpTable::mTrafficSignImageMap[mTrafficSignType];
+    }
+
+    return Model::LookUpTable::mDefaultTrafficSignImagePath;
 }

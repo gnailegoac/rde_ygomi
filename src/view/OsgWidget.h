@@ -70,6 +70,9 @@ protected:
     bool event(QEvent* aEvent) override;
 
 private:
+    bool isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const;
+    void updateTrafficSignView();
+
     virtual void onHome();
     virtual void onResize(int aWidth, int aHeight);
 

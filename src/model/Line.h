@@ -17,10 +17,18 @@
 #include "Point3D.h"
 #include "Curve.h"
 
+namespace  CRS
+{
+
+class ICoordinateTransform;
+
+}
+
 namespace Model
 {
 
 class Lane;
+
 
 typedef std::shared_ptr<Lane> LanePtr;
 typedef std::shared_ptr<const Lane> LaneConstPtr;
@@ -59,7 +67,7 @@ public:
     ViewPaintMapPtr GetMutablePaintListMap();
     PaintListPtr GetPaintListByLevel(std::uint8_t aLevel);
     PaintListPtr GetMutablePaintListByLevel(std::uint8_t aLevel);
-    void GenerateViewPaintMap();
+    void GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer);
 
 private:
     std::uint64_t mLineId;
