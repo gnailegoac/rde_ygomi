@@ -38,6 +38,12 @@ const std::string ApplicationFacade::SELECT_NODE = "SelectNode";
 const std::string ApplicationFacade::CHANGE_SELECT_TYPE = "ChangeSelectType";
 const std::string ApplicationFacade::DEHIGHLIGHT_ALL_NODE = "DehighlightAllNode";
 const std::string ApplicationFacade::CHANGE_CAMERA = "ChangeCamera";
+const std::string ApplicationFacade::SELECT_ROAD_ON_TREE = "SelectRoadOnTree";
+const std::string ApplicationFacade::SELECT_LANE_ON_TREE = "SelectLaneOnTree";
+const std::string ApplicationFacade::SELECT_LINE_ON_TREE = "SelectLineOnTree";
+const std::string ApplicationFacade::UNSELECT_NODE_ON_TREE = "UnselectNodeOnTree";
+const std::string ApplicationFacade::SELECT_NODE_IN_3DVIEW = "SelectNodeIn3DView";
+const std::string ApplicationFacade::JUMP_TO_NODE = "JumpToNode";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -108,6 +114,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[SELECT_NODE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[CHANGE_SELECT_TYPE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[DEHIGHLIGHT_ALL_NODE] = Controller::NodeHighlightCommand::GetCommandName();
+    mMessageList[SELECT_NODE_IN_3DVIEW] = Controller::NodeHighlightCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

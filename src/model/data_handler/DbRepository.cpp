@@ -298,6 +298,7 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
 
                 std::uint64_t roadId = (std::uint64_t)query.getColumn(0).getInt64();
                 RoadPtr road = tile->GetMutableRoad(roadId);
+                road->SetTile(tile);
                 lane->SetRoad(road);
                 road->GetMutableLaneList()->push_back(lane);
             }

@@ -57,6 +57,12 @@ void View::MainWindow::UpdateView()
     viewer->Refresh();
 }
 
+void View::MainWindow::JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp)
+{
+    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
+    viewer->JumpTo(aEye, aCenter, aUp);
+}
+
 void View::MainWindow::ShowRoadInfo()
 {
     bool isVisible = mRoadInfoView->isVisible();
@@ -74,10 +80,17 @@ void View::MainWindow::ChangeCameraMatrix(const QJsonArray& aMatrix)
     ui->webRoadEditor->ChangeCameraMatrix(aMatrix);
 }
 
+QTreeView* View::MainWindow::GetTreeView() const
+{
+    return mRoadInfoView;
+}
+
 void View::MainWindow::setupConnections()
 {
     connect(ui->actionOpen, &QAction::triggered, [=]() {
-        QString path = QFileDialog::getOpenFileName(this, tr("Open File"), "/", tr("Files(*.db *.xodr *.kml *.xml *.pb)"));
+        QString path = QFileDialog::getOpenFileName(this,
+                                                    tr("Open File"), "/",
+                                                    tr("Files(*.db *.xodr *.kml *.xml *.pb)"));
         if (path.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN, &path);
@@ -118,6 +131,16 @@ void View::MainWindow::setupConnections()
     {
         View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
         viewer->CameraMatrixChanged(aMatrix);
+    });
+
+    connect(mRoadInfoView, &QTreeView::pressed, [=](const QModelIndex& aModelIndex) {
+        std::pair<QString, QString> selectItemPair = std::make_pair(aModelIndex.data().toString(),
+                                aModelIndex.sibling(aModelIndex.row(), 1).data().toString());
+        if(selectItemPair.first == "LeftLine" || selectItemPair.first == "RightLine")
+        {
+            selectItemPair.second = aModelIndex.child(0, 1).data().toString();
+        }
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE_IN_3DVIEW, &selectItemPair);
     });
 }
 

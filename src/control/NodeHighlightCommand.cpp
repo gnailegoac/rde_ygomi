@@ -22,7 +22,8 @@
 #include "proxy/MainProxy.h"
 
 Controller::NodeHighlightCommand::NodeHighlightCommand() :
-    mSelectType(Model::SelectType::Line)
+    mSelectType(Model::SelectType::Line),
+    mSelectNodeName("")
 {
 
 }
@@ -46,18 +47,22 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByRoadNode
     return lineNodeList;
 }
 
+uint64_t Controller::NodeHighlightCommand::getIdByNodeName(const std::string& aNodeName)
+{
+    std::vector<std::string> results;
+    results = strings::Split(aNodeName, ":");
+    if(results.size() != 2)
+    {
+        return 0;
+    }
+
+    return QString::fromStdString(results[1]).toULong();
+}
+
 std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByLaneName(const std::string& aLaneNodeName)
 {
     std::vector<osg::Node*> nodeList;
-    std::vector<std::string> results;
-    results = strings::Split(aLaneNodeName, ":");
-    if(results.size() != 2)
-    {
-        return nodeList;
-    }
-
-    QString laneIdString = QString::fromStdString(results[1]);
-    uint64_t laneId = laneIdString.toULong();
+    uint64_t laneId = getIdByNodeName(aLaneNodeName);
     MainProxy* mainProxy = getMainProxy();
     std::shared_ptr<Model::MemoryModel> memoryModel = mainProxy->GetMemoryModel();
     std::shared_ptr<Model::SceneModel> sceneModel = mainProxy->GetSceneModel();
@@ -100,16 +105,19 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
         if(mSelectType == Model::SelectType::Road && nodeName.find("Road") != std::string::npos)
         {
             nodeList = getLineNodesByRoadNode(node);
+            mSelectNodeName = nodeName;
             break;
         }
         else if(mSelectType == Model::SelectType::Lane && nodeName.find("Lane") != std::string::npos)
         {
             nodeList = getLineNodesByLaneName(nodeName);
+            mSelectNodeName = nodeName;
             break;
         }
         else if(mSelectType == Model::SelectType::Line && nodeName.find("Line") != std::string::npos)
         {
             nodeList.push_back(node);
+            mSelectNodeName = nodeName;
             break;
         }
     }
@@ -117,17 +125,46 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
     return nodeList;
 }
 
+void Controller::NodeHighlightCommand::highlightNodeOnTreeView()
+{
+    uint64_t id = getIdByNodeName(mSelectNodeName);
+    if(mSelectType == Model::SelectType::Road)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ROAD_ON_TREE, &id);
+    }
+    else if(mSelectType == Model::SelectType::Lane)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_LANE_ON_TREE, &id);
+    }
+    else if(mSelectType == Model::SelectType::Line)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_LINE_ON_TREE, &id);
+    }
+}
+
+void Controller::NodeHighlightCommand::clearSelectNodes(bool aNeedClearNodeOnTree)
+{
+    dehighlightNode();
+    if(aNeedClearNodeOnTree)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::UNSELECT_NODE_ON_TREE);
+    }
+
+    mSelectNodes.clear();
+    mSelectNodeName = "";
+}
+
 void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
     if (aNotification.getName() == ApplicationFacade::SELECT_NODE)
     {
         std::vector<osg::Node*> nodeList = *CommonFunction::ConvertToNonConstType<std::vector<osg::Node*>>(aNotification.getBody());
-        dehighlightNode();
-        mSelectNodes.clear();
+        clearSelectNodes();
         mSelectNodes = findNode(nodeList);
         if(mSelectNodes.size() > 0)
         {
             highlightNode();
+            highlightNodeOnTreeView();
         }
     }
     else if(aNotification.getName() == ApplicationFacade::CHANGE_SELECT_TYPE)
@@ -137,9 +174,60 @@ void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotificatio
     }
     else if(aNotification.getName() == ApplicationFacade::DEHIGHLIGHT_ALL_NODE)
     {
-        dehighlightNode();
-        mSelectNodes.clear();
+        clearSelectNodes();
     }
+    else if(aNotification.getName() == ApplicationFacade::SELECT_NODE_IN_3DVIEW)
+    {
+        std::pair<QString, QString> selectPair =
+                *CommonFunction::ConvertToNonConstType<std::pair<QString, QString>>(aNotification.getBody());
+        selectNodeIn3DView(selectPair.first.toStdString(), selectPair.second.toStdString());
+    }
+}
+
+void Controller::NodeHighlightCommand::jumpToNode(const osg::Node* aNode)
+{
+    const osg::BoundingSphere& sphere = aNode->getBound();
+    osg::Vec3 sphereCenter = sphere.center();
+    double cameraHeight = sphere.radius() * 4;
+    osg::Vec3d eye(sphereCenter.x(), sphereCenter.y(), cameraHeight);
+    osg::Vec3d center(sphereCenter.x(), sphereCenter.y(), 0);
+    //default up     osg::Vec3d up(0, 1, 0);
+    std::pair<osg::Vec3d, osg::Vec3d> cameraPara = std::make_pair(eye, center);
+    ApplicationFacade::SendNotification(ApplicationFacade::JUMP_TO_NODE, &cameraPara);
+}
+
+void Controller::NodeHighlightCommand::selectNodeIn3DView(const std::string& aName, const std::string& aValue)
+{
+    clearSelectNodes(false);
+    if(aName == "Road")
+    {
+        std::shared_ptr<Model::MemoryModel> memoryModel = getMainProxy()->GetMemoryModel();
+        Model::RoadPtr road = memoryModel->GetRoadById(QString::fromStdString(aValue).toULongLong());
+        for(const auto& lane : *road->GetLaneList())
+        {
+            std::vector<osg::Node*> nodeList = getLineNodesByLaneName("Lane:" + std::to_string(lane->GetLaneId()));
+            mSelectNodes.insert(mSelectNodes.end(), nodeList.begin(), nodeList.end());
+        }
+    }
+    else if(aName == "Lane")
+    {
+        mSelectNodes = getLineNodesByLaneName("Lane:" + aValue);
+    }
+    else if(aName == "LeftLine" || aName == "RightLine")
+    {
+        std::shared_ptr<Model::SceneModel> sceneModel = getMainProxy()->GetSceneModel();
+        mSelectNodes.push_back(sceneModel->GetLineNodeById(QString::fromStdString(aValue).toULongLong()));
+    }
+    else
+    {
+        return;
+    }
+
+    highlightNode();
+    //    if(mSelectNodes.size() > 0)
+    //    {
+    //        jumpToNode(mSelectNodes[0]);
+    //    }
 }
 
 std::string Controller::NodeHighlightCommand::GetCommandName()

@@ -53,7 +53,7 @@ public:
     osg::Polytope GetPolytope();
     void Refresh();
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
-
+    void JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp);
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;

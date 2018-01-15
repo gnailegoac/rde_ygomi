@@ -281,3 +281,52 @@ void Model::TreeModel::createLineTypeNode(const std::shared_ptr<Model::Line>& aL
     columnData << "Type" << scLineTypeMap.at(aLine->GetCurve(0)->GetCurveType());
     aParent->AppendChild(new Model::TreeItem(columnData, aParent));
 }
+
+bool Model::TreeModel::isNodeNameMatch(const QString& aName, const QString& aNodeName) const
+{
+    if(aName == "Line")
+    {
+        if(aNodeName == "LeftLine" || aNodeName == "RightLine")
+        {
+            return true;
+        }
+    }
+    else if(aName == aNodeName)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+QModelIndex Model::TreeModel::GetItemIndex(
+        const QString& aName,
+        const uint64_t& aId,
+        const QModelIndex& aParentIndex) const
+{
+    QModelIndex searchedModelIndex;
+    for(int rowIndex = 0; rowIndex < rowCount(aParentIndex); ++rowIndex)
+    {
+        QModelIndex rowNameIndex = index(rowIndex, 0, aParentIndex);
+        QModelIndex rowValueIndex = index(rowIndex, 1, aParentIndex);
+        QString rowName = rowNameIndex.data().toString();
+        uint64_t id;
+        if(rowName == "LeftLine" || rowName == "RightLine")
+        {
+            id = rowNameIndex.child(0, 1).data().toULongLong();
+        }
+        else
+        {
+            id = rowValueIndex.data().toULongLong();
+        }
+
+        if(isNodeNameMatch(aName, rowName) && id == aId)
+        {
+            searchedModelIndex = rowNameIndex;
+            break;
+        }
+    }
+
+    return searchedModelIndex;
+}
+

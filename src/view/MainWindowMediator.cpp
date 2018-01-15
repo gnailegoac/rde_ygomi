@@ -17,6 +17,12 @@
 #include "proxy/MainProxy.h"
 #include "MainWindow.h"
 #include "CommonFunction.h"
+#include "model/Road.h"
+#include "model/TreeModel.h"
+#include "model/Tile.h"
+#include "model/Lane.h"
+#include "model/Line.h"
+#include "model/MemoryModel.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -35,6 +41,11 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::INIT_SCENE);
     result->get().push_back(ApplicationFacade::REFRESH_WINDOW);
     result->get().push_back(ApplicationFacade::CHANGE_CAMERA);
+    result->get().push_back(ApplicationFacade::SELECT_ROAD_ON_TREE);
+    result->get().push_back(ApplicationFacade::SELECT_LANE_ON_TREE);
+    result->get().push_back(ApplicationFacade::SELECT_LINE_ON_TREE);
+    result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
+    result->get().push_back(ApplicationFacade::JUMP_TO_NODE);
     return NotificationNames(result);
 }
 
@@ -61,7 +72,7 @@ std::vector<std::string> View::MainWindowMediator::searchDatabaseFileList(const 
         QString suffix = file.suffix();
         if(QString::compare(suffix, QString("db"),Qt::CaseInsensitive) == 0)
         {
-            QString absoluteFilePath= file.absoluteFilePath();
+            QString absoluteFilePath = file.absoluteFilePath();
             databaseFileList.push_back(absoluteFilePath.toStdString());
         }
     }
@@ -80,6 +91,53 @@ View::MainWindow* View::MainWindowMediator::getMainWindow()
 {
     View::MainWindow* mainWindow = CommonFunction::ConvertToNonConstType<View::MainWindow>(getViewComponent());
     return mainWindow;
+}
+
+void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::Tile>& aSegment,
+                                                const std::shared_ptr<Model::Road> aRoad,
+                                                const std::shared_ptr<Model::Lane>& aLane,
+                                                const std::shared_ptr<Model::Line>& aLine)
+{
+    if(aSegment == nullptr || aRoad == nullptr)
+    {
+        return;
+    }
+
+    QModelIndex currentIndex;
+    QTreeView* roadInfoView= getMainWindow()->GetTreeView();
+    QAbstractItemModel* model = roadInfoView->model();
+    Model::TreeModel* treeModel = dynamic_cast<Model::TreeModel*>(model);
+    QModelIndex segmentIndex = treeModel->GetItemIndex("Segment",
+                                                       aSegment->GetTileId(),
+                                                       roadInfoView->rootIndex());
+    roadInfoView->expand(segmentIndex);
+
+    QModelIndex roadModelIndex = treeModel->GetItemIndex("Road",
+                                                         aRoad->GetRoadId(),
+                                                         segmentIndex);
+    roadInfoView->expand(roadModelIndex);
+    currentIndex = roadModelIndex;
+
+    QModelIndex laneModelIndex;
+    if(aLane != nullptr)
+    {
+        laneModelIndex = treeModel->GetItemIndex("Lane",
+                                                 aLane->GetLaneId(),
+                                                 roadModelIndex);
+        roadInfoView->expand(laneModelIndex);
+        currentIndex = laneModelIndex;
+    }
+
+    if(aLine != nullptr)
+    {
+        QModelIndex lineModelIndex = treeModel->GetItemIndex("Line",
+                                                             aLine->GetLineId(),
+                                                             laneModelIndex);
+        roadInfoView->expand(lineModelIndex);
+        currentIndex = lineModelIndex;
+    }
+
+    roadInfoView->setCurrentIndex(currentIndex);
 }
 
 void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotification const& aNotification)
@@ -107,8 +165,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
-        MainProxy* mainProxy = getMainProxy();
-        mainWindow->SetTreeModel(mainProxy->GetTreeModel());
+        mainWindow->SetTreeModel(getMainProxy()->GetTreeModel());
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
     }
@@ -122,6 +179,45 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         View::MainWindow* mainWindow = getMainWindow();
         QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
         mainWindow->ChangeCameraMatrix(cameraMatrix);
+    }
+    else if(noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
+    {
+        uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        Model::RoadPtr road = getMainProxy()->GetMemoryModel()->GetRoadById(id);
+        if(road != nullptr)
+        {
+            selectNodeOnTree(road->GetTile(), road);
+        }
+    }
+    else if(noteName == ApplicationFacade::SELECT_LANE_ON_TREE)
+    {
+        uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        Model::LanePtr lane = getMainProxy()->GetMemoryModel()->GetLaneById(id);
+        if(lane != nullptr)
+        {
+            Model::RoadPtr road = lane->GetRoad();
+            selectNodeOnTree(road->GetTile(), road, lane);
+        }
+    }
+    else if(noteName == ApplicationFacade::SELECT_LINE_ON_TREE)
+    {
+        uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        Model::LinePtr line = getMainProxy()->GetMemoryModel()->GetLineById(id);
+        if(line != nullptr)
+        {
+            Model::LanePtr lane = line->GetLane();
+            Model::RoadPtr road = lane->GetRoad();
+            selectNodeOnTree(road->GetTile(), road, lane, line);
+        }
+    }
+    else if(noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
+    {
+        getMainWindow()->GetTreeView()->clearSelection();
+    }
+    else if(noteName == ApplicationFacade::JUMP_TO_NODE)
+    {
+        std::pair<osg::Vec3d, osg::Vec3d> cameraPair = *CommonFunction::ConvertToNonConstType<std::pair<osg::Vec3d, osg::Vec3d>>(aNotification.getBody());
+        getMainWindow()->JumpTo(cameraPair.first, cameraPair.second);
     }
 }
 
