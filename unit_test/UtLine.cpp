@@ -12,6 +12,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <CoordinateTransform/Factory.h>
 
 #define private public
 #define protected public
@@ -21,6 +22,12 @@
 
 TEST(Line_Test, Generate_View_Points_Test)
 {
+    // Convert geodetic coordinates into UTM coordinates
+    auto utm = CRS::Factory().CreateProjectionTransform(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Utm,
+                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+
     Model::Point3DList points;
     points.reserve(10000);
     double increment = 0.1 / 6378137 * 180 / 3.141592653;
@@ -37,7 +44,7 @@ TEST(Line_Test, Generate_View_Points_Test)
 
     Model::Line line;
     line.SetGeodeticPointsList(std::make_shared<Model::PaintList>(paint));
-    line.GenerateViewPaintMap();
+    line.GenerateViewPaintMap(utm);
 
     ASSERT_EQ(line.mPaintListMap->size(), 3);
 }
