@@ -136,7 +136,7 @@ void View::OsgWidget::Refresh()
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
     mView->getCameraManipulator()->getHomePosition(mEye, mCenter, mUp);
-    mEye = mCenter + mUp * 30000.0;
+    mEye = mEye + mUp * 30000.0;
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
     mView->home();
     repaint();
@@ -149,9 +149,14 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
     osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
     osg::Vec3d center = eye - direction * 30000.0;
     osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
-    mView->getCameraManipulator()->setHomePosition(eye, center, up);
-    mView->home();
+    JumpTo(eye, center, up);
     repaint();
+}
+
+void View::OsgWidget::JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp)
+{
+    mView->getCameraManipulator()->setHomePosition(aEye, aCenter, aUp);
+    mView->home();
 }
 
 void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)

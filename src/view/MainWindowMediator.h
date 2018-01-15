@@ -19,6 +19,14 @@ namespace View
 class MainWindow;
 }
 
+namespace Model
+{
+class Tile;
+class Road;
+class Lane;
+class Line;
+}
+
 class MainProxy;
 
 namespace View
@@ -34,7 +42,11 @@ public:
     void onRemove();
 private:
     std::vector<std::string> searchDatabaseFileList(const QString& aFolderpath);
-
+    void selectNodeOnTree(const std::shared_ptr<Model::Tile>& aSegment,
+                          const std::shared_ptr<Model::Road> aRoad,
+                          const std::shared_ptr<Model::Lane>& aLane = nullptr,
+                          const std::shared_ptr<Model::Line>& aLine = nullptr);
+private:
     View::MainWindow* getMainWindow();
     MainProxy* getMainProxy();
 };

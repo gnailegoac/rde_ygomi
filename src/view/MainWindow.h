@@ -48,6 +48,10 @@ public:
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
 
+    QTreeView* GetTreeView() const;
+    void JumpTo(const osg::Vec3d& aEye,
+                const osg::Vec3d& aCenter,
+                const osg::Vec3d& aUp = osg::Vec3d(0.0f, 1.0f, 0.0f));
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
