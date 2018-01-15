@@ -33,7 +33,7 @@
 
 #include <osgGA/EventQueue>
 #include <osgDB/ReadFile>
-#include <osgGA/TerrainManipulator>
+#include <osgGA/TrackballManipulator>
 #include <osgDB/WriteFile>
 
 #include <osgUtil/IntersectionVisitor>
@@ -91,7 +91,7 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
     mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
     mView->addEventHandler(mPickHandler.get());
-    osgGA::TerrainManipulator* aManipulator = new osgGA::TerrainManipulator;
+    osgGA::TrackballManipulator * aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
 
     mView->setCameraManipulator(aManipulator);
@@ -136,7 +136,7 @@ void View::OsgWidget::Refresh()
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
     mView->getCameraManipulator()->getHomePosition(mEye, mCenter, mUp);
-    mEye = mEye + mUp * 30000.0;
+    mEye = mCenter + osg::Vec3d(15000.0, 0.0, 0.0) + mUp * 15000.0;
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
     mView->home();
     repaint();
@@ -147,7 +147,7 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
 {
     osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
     osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
-    osg::Vec3d center = eye - direction * 30000.0;
+    osg::Vec3d center = eye - direction * 15000.0;
     osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
     JumpTo(eye, center, up);
     repaint();
@@ -368,7 +368,7 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 
 void View::OsgWidget::notifyCameraChange()
 {
-    osg::Matrixd mat = dynamic_cast<osgGA::TerrainManipulator*>(mView->getCameraManipulator())->getMatrix();
+    osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
 }
