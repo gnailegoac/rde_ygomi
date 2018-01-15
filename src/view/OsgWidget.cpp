@@ -318,18 +318,18 @@ bool View::OsgWidget::event(QEvent* aEvent)
 
 bool View::OsgWidget::isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const
 {
-    return aEvent->buttons() & aButtonMask ;
+    return aEvent->buttons() & aButtonMask;
 }
 
 void View::OsgWidget::updateTrafficSignView()
 {
     MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-    std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetMutableSceneModel();
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
 
     if (sceneModel)
     {
         auto manipulator = mView->getCameraManipulator();
-        osg::Matrixd matrix =  manipulator->getMatrix();
+        osg::Matrixd matrix = manipulator->getMatrix();
         sceneModel->RotateTrafficSign(matrix);
         paintGL();
     }

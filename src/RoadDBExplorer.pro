@@ -130,3 +130,11 @@ HEADERS  += view/MainWindow.h \
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
 
+IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
+               $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
+
+resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
+resource_files.files += $${IMAGE_FILES}
+
+INSTALLS += resource_files
+

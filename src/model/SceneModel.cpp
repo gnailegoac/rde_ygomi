@@ -22,8 +22,8 @@
 
 namespace  Model
 {
-    const static float VIEW_SIGN_WIDTH = 10.0;
-    const static float VIEW_SIGN_LENGTH = 10.0;
+    const static float VIEW_SIGN_WIDTH = 2.0;
+    const static float VIEW_SIGN_LENGTH = 2.0;
 }
 
 Model::SceneModel::SceneModel() :
@@ -207,10 +207,10 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildTrafficSignNode(const std::shar
     geometry->setVertexArray(v.get());
 
     osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array();
-    tcoords->push_back(osg::Vec2(0.0f,0.0f));
-    tcoords->push_back(osg::Vec2(1.0f,0.0f));
-    tcoords->push_back(osg::Vec2(1.0f,1.0f));
-    tcoords->push_back(osg::Vec2(0.0f,1.0f));
+    tcoords->push_back(osg::Vec2(1.0f, 0.0f));
+    tcoords->push_back(osg::Vec2(0.0f, 0.0f));
+    tcoords->push_back(osg::Vec2(0.0f, 1.0f));
+    tcoords->push_back(osg::Vec2(1.0f, 1.0f));
     geometry->setTexCoordArray(0, tcoords.get());
     geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 
