@@ -52,12 +52,30 @@ int Model::TreeModel::columnCount(const QModelIndex& aParent) const
 {
     if (aParent.isValid())
     {
-        return static_cast<TreeItem*>(aParent.internalPointer())->ColumnCount();
+        return getItem(aParent)->ColumnCount();
     }
     else
     {
         return mRoot->ColumnCount();
     }
+}
+
+bool Model::TreeModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
+{
+    if (aRole != Qt::EditRole)
+    {
+        return false;
+    }
+
+    TreeItem *item = getItem(aIndex);
+    bool result = item->SetData(aIndex.column(), aValue);
+
+    if (result)
+    {
+        emit dataChanged(aIndex, aIndex);
+    }
+
+    return result;
 }
 
 QVariant Model::TreeModel::data(const QModelIndex& aIndex, int aRole) const
@@ -72,7 +90,7 @@ QVariant Model::TreeModel::data(const QModelIndex& aIndex, int aRole) const
         return QVariant();
     }
 
-    TreeItem *item = static_cast<TreeItem*>(aIndex.internalPointer());
+    TreeItem *item = getItem(aIndex);
     return item->Data(aIndex.column());
 }
 
@@ -83,7 +101,14 @@ Qt::ItemFlags Model::TreeModel::flags(const QModelIndex& aIndex) const
         return 0;
     }
 
-    return QAbstractItemModel::flags(aIndex);
+    if (aIndex.column() == 1)
+    {
+        return Qt::ItemIsEditable | QAbstractItemModel::flags(aIndex);
+    }
+    else
+    {
+        return QAbstractItemModel::flags(aIndex);
+    }
 }
 
 QVariant Model::TreeModel::headerData(int aSection, Qt::Orientation aOrientation,
@@ -112,7 +137,7 @@ QModelIndex Model::TreeModel::index(int aRow, int aColumn, const QModelIndex& aP
     }
     else
     {
-        parentItem = static_cast<TreeItem*>(aParent.internalPointer());
+        parentItem = getItem(aParent);
     }
 
     TreeItem *childItem = parentItem->Child(aRow);
@@ -133,7 +158,7 @@ QModelIndex Model::TreeModel::parent(const QModelIndex &aIndex) const
         return QModelIndex();
     }
 
-    TreeItem *childItem = static_cast<TreeItem*>(aIndex.internalPointer());
+    TreeItem *childItem = getItem(aIndex);
     TreeItem *parentItem = childItem->Parent();
 
     if (parentItem == mRoot)
@@ -158,7 +183,7 @@ int Model::TreeModel::rowCount(const QModelIndex& aParent) const
     }
     else
     {
-        parentItem = static_cast<Model::TreeItem*>(aParent.internalPointer());
+        parentItem = getItem(aParent);
     }
 
     return parentItem->ChildCount();
@@ -236,6 +261,19 @@ void Model::TreeModel::createDoubleNode(const QString& aName, const double& aVal
     columnData << aName;
     columnData << aValue;
     aParent->AppendChild(new Model::TreeItem(columnData, aParent));
+}
+
+Model::TreeItem* Model::TreeModel::getItem(const QModelIndex& aIndex) const
+{
+    if (aIndex.isValid())
+    {
+        TreeItem *item = static_cast<TreeItem*>(aIndex.internalPointer());
+        if (item)
+        {
+            return item;
+        }
+    }
+    return mRoot;
 }
 
 void Model::TreeModel::createRoadNode(const std::shared_ptr<Model::Road>& aRoad, Model::TreeItem* aParent)
