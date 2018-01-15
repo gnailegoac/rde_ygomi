@@ -45,6 +45,7 @@
 #include "PickHandler.h"
 
 #include "facade/ApplicationFacade.h"
+#include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
 #include "proxy/MainProxy.h"
 #include "PickHandler.h"
@@ -75,7 +76,8 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
                                                           this->height())),
     mView(new osgViewer::View),
     mViewer(new View::Viewer),
-    mPickHandler(new Controller::PickHandler(this->devicePixelRatio()))
+    mPickHandler(new Controller::PickHandler(this->devicePixelRatio())),
+    mSyncMap(false)
 {
     float aAspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
     auto aPixelRatio = this->devicePixelRatio();
@@ -133,15 +135,23 @@ void View::OsgWidget::Refresh()
     {
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
-    osg::Vec3d eye;
-    osg::Vec3d center;
-    osg::Vec3d up;
-    mView->getCameraManipulator()->getHomePosition(eye, center, up);
-    eye = eye + up * 10000.0;
+    mView->getCameraManipulator()->getHomePosition(mEye, mCenter, mUp);
+    mEye = mCenter + mUp * 30000.0;
+    mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
+    mView->home();
+    repaint();
+    notifyCameraChange();
+}
+
+void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
+{
+    osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
+    osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
+    osg::Vec3d center = eye - direction * 30000.0;
+    osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
     mView->getCameraManipulator()->setHomePosition(eye, center, up);
     mView->home();
-
-    paintGL();
+    repaint();
 }
 
 void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
@@ -198,6 +208,11 @@ void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 
 void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 {
+    if (mSyncMap)
+    {
+        notifyCameraChange();
+    }
+
     // change traffic sign geometry if someone rotate or drag the camera
     // tightly coupled implementation! maybe refactor this code next time
     if (isMouseButtonPressed(aEvent, 3))
@@ -233,6 +248,7 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
     default:
         break;
     }
+    mSyncMap = true;
     auto aPixelRatio = this->devicePixelRatio();
     this->getEventQueue()->mouseButtonPress(static_cast<float>(aEvent->x() * aPixelRatio),
                                             static_cast<float>(aEvent->y() * aPixelRatio),
@@ -259,7 +275,7 @@ void View::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
     default:
         break;
     }
-
+    mSyncMap = false;
     auto aPixelRatio = this->devicePixelRatio();
     this->getEventQueue()->mouseButtonRelease(static_cast<float>(aPixelRatio * aEvent->x()),
                                               static_cast<float>(aPixelRatio * aEvent->y()),
@@ -274,6 +290,7 @@ void View::OsgWidget::wheelEvent(QWheelEvent* aEvent)
     osgGA::GUIEventAdapter::ScrollingMotion aMotion = aDelta > 0 ? osgGA::GUIEventAdapter::SCROLL_UP
                                                                  : osgGA::GUIEventAdapter::SCROLL_DOWN;
     this->getEventQueue()->mouseScroll(aMotion);
+    notifyCameraChange();
 }
 
 bool View::OsgWidget::event(QEvent* aEvent)
@@ -320,14 +337,9 @@ void View::OsgWidget::updateTrafficSignView()
 
 void View::OsgWidget::onHome()
 {
-    osgViewer::ViewerBase::Views aViews;
-    mViewer->getViews(aViews);
-
-    for(std::size_t i = 0; i < aViews.size(); ++i)
-    {
-        osgViewer::View* aView = aViews.at(i);
-        aView->home();
-    }
+    mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
+    mView->home();
+    notifyCameraChange();
 }
 
 void View::OsgWidget::onResize(int aWidth, int aHeight)
@@ -347,4 +359,11 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
     {
         throw std::runtime_error("Unable to obtain valid event queue");
     }
+}
+
+void View::OsgWidget::notifyCameraChange()
+{
+    osg::Matrixd mat = dynamic_cast<osgGA::TerrainManipulator*>(mView->getCameraManipulator())->getMatrix();
+    QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
+    ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
 }

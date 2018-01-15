@@ -37,6 +37,7 @@ const std::string ApplicationFacade::REFRESH_WINDOW = "RefreshWindow";
 const std::string ApplicationFacade::SELECT_NODE = "SelectNode";
 const std::string ApplicationFacade::CHANGE_SELECT_TYPE = "ChangeSelectType";
 const std::string ApplicationFacade::DEHIGHLIGHT_ALL_NODE = "DehighlightAllNode";
+const std::string ApplicationFacade::CHANGE_CAMERA = "ChangeCamera";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -67,7 +68,7 @@ ApplicationFacade* ApplicationFacade::GetInstance()
 
 void ApplicationFacade::registerCommand()
 {
-    foreach(auto message, mMessageList)
+    foreach (auto message, mMessageList)
     {
         mFacade->registerCommand(message.first, mCommandList[message.second].get());
     }
@@ -75,12 +76,12 @@ void ApplicationFacade::registerCommand()
 
 ApplicationFacade::~ApplicationFacade()
 {
-    for(auto meditor : mMediatorList)
+    for (auto meditor : mMediatorList)
     {
         delete meditor.second;
     }
 
-    for(auto proxy : mProxyList)
+    for (auto proxy : mProxyList)
     {
         delete proxy.second;
     }
@@ -89,13 +90,13 @@ ApplicationFacade::~ApplicationFacade()
 void ApplicationFacade::initializeCommands()
 {
     mCommandList[Controller::StartUpCommand::GetCommandName()] =
-            std::shared_ptr<Controller::StartUpCommand>(new Controller::StartUpCommand);
+        std::shared_ptr<Controller::StartUpCommand>(new Controller::StartUpCommand);
     mCommandList[Controller::FileParseCommand::GetCommandName()] =
-            std::shared_ptr<Controller::FileParseCommand>(new Controller::FileParseCommand);
+        std::shared_ptr<Controller::FileParseCommand>(new Controller::FileParseCommand);
     mCommandList[Controller::SceneManageCommand::GetCommandName()] =
-            std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
+        std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
     mCommandList[Controller::NodeHighlightCommand::GetCommandName()] =
-            std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
+        std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()

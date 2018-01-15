@@ -72,7 +72,8 @@ SOURCES +=\
     model/TreeItem.cpp \
     model/TreeModel.cpp \
     model/FitNurbs.cpp \
-    model/LookUpTable.cpp
+    model/LookUpTable.cpp \
+    model/GeoJsonConverter.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -123,7 +124,8 @@ HEADERS  += view/MainWindow.h \
     control/NodeHighlightCommand.h \
     model/TreeItem.h \
     model/TreeModel.h \
-    model/LookUpTable.h
+    model/LookUpTable.h \
+    model/GeoJsonConverter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

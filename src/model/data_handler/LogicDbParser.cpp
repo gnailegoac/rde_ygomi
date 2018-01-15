@@ -86,11 +86,10 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
     const double samplingInterval = 0.5;
     TileMapPtr tileMap = aMemoryModel->GetMutableTileMap();
 
-    // Convert geodetic coordinates into UTM coordinates
-    auto utm = CRS::Factory().CreateProjectionTransform(
+    // Convert geodetic coordinates into ECEF coordinates
+    auto ecef = CRS::Factory().CreateEcefProjection(
                                CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Utm,
-                               "+proj=utm +datum=WGS84 +unit=m +no_defs");
+                               CRS::CoordinateType::Ecef);
 
     for (auto& itorTile : *tileMap)
     {
@@ -105,7 +104,7 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPointsList(referencePoint, samplingInterval);
-            line->GenerateViewPaintMap(utm);
+            line->GenerateViewPaintMap(ecef);
         }
 
         // Generate traffic sign map view
@@ -114,7 +113,7 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
         for (auto& itorTrafficSign : *trafficSignMap)
         {
             TrafficSignPtr trafficSign = itorTrafficSign.second;
-            trafficSign->GenerateViewPosition(utm);
+            trafficSign->GenerateViewPosition(ecef);
         }
     }
 
