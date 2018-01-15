@@ -72,7 +72,9 @@ SOURCES +=\
     model/TreeItem.cpp \
     model/TreeModel.cpp \
     model/FitNurbs.cpp \
-    model/GeoJsonConverter.cpp
+    model/GeoJsonConverter.cpp \
+    model/data_handler/KMLFactory.cpp \
+    model/data_handler/KMLSerializer.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -123,7 +125,9 @@ HEADERS  += view/MainWindow.h \
     control/NodeHighlightCommand.h \
     model/TreeItem.h \
     model/TreeModel.h \
-    model/GeoJsonConverter.h
+    model/GeoJsonConverter.h \
+    model/data_handler/KMLFactory.h \
+    model/data_handler/KMLSerializer.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
