@@ -15,6 +15,7 @@
 
 #include "../MemoryModel.h"
 #include "DbRepository.h"
+#include "CoordinateTransform/Factory.h"
 
 Model::LogicDbParser::LogicDbParser(const PathList& aLogicDbFileList)
 {
@@ -85,18 +86,34 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
     const double samplingInterval = 0.5;
     TileMapPtr tileMap = aMemoryModel->GetMutableTileMap();
 
-    for (auto itorTile : *tileMap)
+    // Convert geodetic coordinates into ECEF coordinates
+    auto ecef = CRS::Factory().CreateEcefProjection(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Ecef);
+
+    for (auto& itorTile : *tileMap)
     {
         TilePtr tile = itorTile.second;
         const Point3DPtr& referencePoint = tile->GetReferencePoint();
+
+        // Generate line map view
         LineMapPtr lineMap = tile->GetMutableLineMap();
 
-        for (auto itorLine : *lineMap)
+        for (auto& itorLine : *lineMap)
         {
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPointsList(referencePoint, samplingInterval);
-            line->GenerateViewPaintMap();
+            line->GenerateViewPaintMap(ecef);
+        }
+
+        // Generate traffic sign map view
+        TrafficSignMapPtr trafficSignMap = tile->GetMutableTrafficSignMap();
+
+        for (auto& itorTrafficSign : *trafficSignMap)
+        {
+            TrafficSignPtr trafficSign = itorTrafficSign.second;
+            trafficSign->GenerateViewPosition(ecef);
         }
     }
 

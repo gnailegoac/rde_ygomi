@@ -49,6 +49,11 @@ public:
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
 
+    QModelIndex GetItemIndex(
+            const QString& aName,
+            const uint64_t& aId,
+            const QModelIndex& aParentIndex) const;
+
 private:
     void setupModelData(const std::shared_ptr<MemoryModel>& aRoadModel, TreeItem* aParent);
 
@@ -62,6 +67,7 @@ private:
                                Model::TreeItem* aParent);
     void createUint64Node(const QString& aName, const uint64_t& aValue, Model::TreeItem* aParent);
     void createDoubleNode(const QString& aName, const double& aValue, Model::TreeItem* aParent);
+    bool isNodeNameMatch(const QString& aName, const QString& aNodeName) const;
 private:
     TreeItem* mRoot;
 };

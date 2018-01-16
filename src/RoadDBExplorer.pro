@@ -75,7 +75,8 @@ SOURCES +=\
     model/GeoJsonConverter.cpp \
     model/data_handler/KMLFactory.cpp \
     model/data_handler/KMLSerializer.cpp \
-    model/data_handler/KMLInterpreter.cpp
+    model/data_handler/KMLInterpreter.cpp \
+    model/LookUpTable.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -129,8 +130,18 @@ HEADERS  += view/MainWindow.h \
     model/GeoJsonConverter.h \
     model/data_handler/KMLFactory.h \
     model/data_handler/KMLSerializer.h \
-    model/data_handler/KMLInterpreter.h
+    model/data_handler/KMLInterpreter.h \
+    model/LookUpTable.h \
+    model/GeoJsonConverter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
+
+IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
+               $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
+
+resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
+resource_files.files += $${IMAGE_FILES}
+
+INSTALLS += resource_files
 

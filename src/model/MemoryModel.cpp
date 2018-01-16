@@ -134,3 +134,35 @@ std::shared_ptr<Model::Lane> Model::MemoryModel::GetLaneById(const std::uint64_t
 
     return nullptr;
 }
+
+std::shared_ptr<Model::Road> Model::MemoryModel::GetRoadById(const std::uint64_t& aRoadId)
+{
+    for (auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const RoadMapPtr& roadMap = tile->GetRoadMap();
+
+        if (roadMap->end() != roadMap->find(aRoadId))
+        {
+            return roadMap->at(aRoadId);
+        }
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<Model::Line> Model::MemoryModel::GetLineById(const std::uint64_t& aLineId)
+{
+    for (auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const LineMapPtr& lineMap = tile->GetLineMap();
+
+        if (lineMap->end() != lineMap->find(aLineId))
+        {
+            return lineMap->at(aLineId);
+        }
+    }
+
+    return nullptr;
+}

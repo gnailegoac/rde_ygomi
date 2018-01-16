@@ -22,7 +22,6 @@ namespace Model
 class Tile;
 typedef std::shared_ptr<Tile> TilePtr;
 
-
 class KMLSerializer : public ISerializer
 {
 public:

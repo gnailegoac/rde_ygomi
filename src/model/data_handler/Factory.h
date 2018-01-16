@@ -24,6 +24,8 @@ public:
     static IFactoryPtr CreateLogicDbFactory(const std::vector<std::string>& aDbPathList);
 
     static IFactoryPtr CreateLogicDbFactory(const std::string& aDbPath);
+
+    static IFactoryPtr CreateKMLFactory(const std::string& aKMLFolder, const double& aInterval);
 };
 
 }

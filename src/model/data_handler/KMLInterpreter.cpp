@@ -31,13 +31,15 @@ const std::string gcKMLTrafficSign = "Traffic_Signs_";
 
 }
 
-Model::KMLInterpreter::KMLInterpreter(std::string aKMLFolder):
-    mKMLFolder(aKMLFolder),
+Model::KMLInterpreter::KMLInterpreter(std::string aKMLFolder, double aOutputInterval):
+    mOutputInterval(aOutputInterval),
+    mPaintFolder(aKMLFolder + "/" + gcKMLPaint),
+    mLaneBoundaryFolder(aKMLFolder + "/" + gcKMLLaneBoundary),
+    mTrafficSignFolder(aKMLFolder + "/" + gcKMLTrafficSign),
     mPaintFiles(std::make_shared<StringList>()),
     mLaneBoundaryFiles(std::make_shared<StringList>()),
     mTrafficSignFiles(std::make_shared<StringList>())
 {
-
 }
 
 Model::KMLInterpreter::~KMLInterpreter()
@@ -47,42 +49,78 @@ Model::KMLInterpreter::~KMLInterpreter()
 
 bool Model::KMLInterpreter::TouchKMLDirectories()
 {
-    if (!touchKMLDirectory(mKMLFolder + "/" + gcKMLPaint))
+    if (!touchKMLDirectory(mPaintFolder))
     {
+        qCritical(("create folder " + mPaintFolder + " failed").c_str());
         return false;
     }
 
-    if (!touchKMLDirectory(mKMLFolder + "/" + gcKMLLaneBoundary))
+    if (!touchKMLDirectory(mLaneBoundaryFolder))
     {
+        qCritical(("create folder " + mLaneBoundaryFolder + " failed").c_str());
         return false;
     }
 
-    if (!touchKMLDirectory(mKMLFolder + "/" + gcKMLTrafficSign))
+    if (!touchKMLDirectory(mTrafficSignFolder))
     {
+        qCritical(("create folder " + mTrafficSignFolder + " failed").c_str());
         return false;
     }
 
     return true;
 }
 
-bool Model::KMLInterpreter::StorePaint(const std::shared_ptr<Tile>& aTile)
+bool Model::KMLInterpreter::SaveKMLPaint(const std::shared_ptr<Tile>& aTile)
 {
-    const std::string& path = createKMLPath(mKMLFolder + "/" + gcKMLPaint, aTile->GetTileId(), mPaintFiles);
     QDomDocument domDocument;
+    writeInstructions(domDocument);
 
-    if (!createKMLFile(path, domDocument))
-    {
-        return false;
-    }
+    QDomElement kml = domDocument.createElement("kml");
+    writeGoogleEarth(kml);
 
-    QDomElement root = domDocument.documentElement();
-    writeGoogleEarth(root);
     QDomElement document = domDocument.createElement("Document");
     writeLaneBoundaryStyle(document, domDocument);
 
-    QDomElement folder = domDocument.createElement("Folder");
     QDomElement nameFolder = domDocument.createElement("name");
-    nameFolder.setNodeValue("Paint");
+    QDomText paint = domDocument.createTextNode("Paint");
+    nameFolder.appendChild(paint);
+
+    QDomElement folder = domDocument.createElement("Folder");
+    folder.appendChild(nameFolder);
+
+    const Model::LaneMapPtr& laneMap = aTile->GetLaneMap();
+
+    for (auto& iterLane : *laneMap)
+    {
+        LanePtr lane = iterLane.second;
+        writePaintLine(folder, domDocument, lane->GetLeftLine(), aTile);
+        writePaintLine(folder, domDocument, lane->GetRightLine(), aTile);
+    }
+
+    document.appendChild(folder);
+    kml.appendChild(document);
+    domDocument.appendChild(kml);
+
+    const std::string& path = createKMLPath(mPaintFolder, aTile->GetTileId(), mPaintFiles);
+    return saveKMLFile(path, domDocument);
+}
+
+bool Model::KMLInterpreter::SaveKMLLaneBoundary(const std::shared_ptr<Tile>& aTile)
+{
+    QDomDocument domDocument;
+    writeInstructions(domDocument);
+
+    QDomElement kml = domDocument.createElement("kml");
+    writeGoogleEarth(kml);
+
+    QDomElement document = domDocument.createElement("Document");
+    writeLaneBoundaryStyle(document, domDocument);
+
+    QDomElement nameFolder = domDocument.createElement("name");
+    QDomText paint = domDocument.createTextNode("Road Marks");
+    nameFolder.appendChild(paint);
+
+    QDomElement folder = domDocument.createElement("Folder");
     folder.appendChild(nameFolder);
 
     const Model::LaneMapPtr& laneMap = aTile->GetLaneMap();
@@ -95,59 +133,29 @@ bool Model::KMLInterpreter::StorePaint(const std::shared_ptr<Tile>& aTile)
     }
 
     document.appendChild(folder);
-    root.appendChild(document);
+    kml.appendChild(document);
+    domDocument.appendChild(kml);
+
+    const std::string& path = createKMLPath(mLaneBoundaryFolder, aTile->GetTileId(), mLaneBoundaryFiles);
+    return saveKMLFile(path, domDocument);
 }
 
-bool Model::KMLInterpreter::StoreLaneBoundary(const std::shared_ptr<Tile>& aTile)
+bool Model::KMLInterpreter::SaveKMLTrafficSign(const std::shared_ptr<Tile>& aTile)
 {
-    const std::string& path = createKMLPath(mKMLFolder + "/" + gcKMLLaneBoundary, aTile->GetTileId(), mLaneBoundaryFiles);
     QDomDocument domDocument;
+    writeInstructions(domDocument);
 
-    if (!createKMLFile(path, domDocument))
-    {
-        return false;
-    }
+    QDomElement kml = domDocument.createElement("kml");
+    writeGoogleEarth(kml);
 
-    QDomElement root = domDocument.documentElement();
-    writeGoogleEarth(root);
     QDomElement document = domDocument.createElement("Document");
-    writeLaneBoundaryStyle(document, domDocument);
+    writeTrafficSignStyle(document, domDocument);
+
+    QDomElement nameFolder = domDocument.createElement("name");
+    QDomText trafficSign = domDocument.createTextNode("Traffic Signs");
+    nameFolder.appendChild(trafficSign);
 
     QDomElement folder = domDocument.createElement("Folder");
-    QDomElement nameFolder = domDocument.createElement("name");
-    nameFolder.setNodeValue("Paint");
-    folder.appendChild(nameFolder);
-
-    const Model::LaneMapPtr& laneMap = aTile->GetLaneMap();
-
-    for (auto& iterLane : *laneMap)
-    {
-        LanePtr lane = iterLane.second;
-        writeLaneBoundaryLine(folder, domDocument, lane->GetLeftLine(), aTile);
-        writeLaneBoundaryLine(folder, domDocument, lane->GetRightLine(), aTile);
-    }
-
-    document.appendChild(folder);
-    root.appendChild(document);
-}
-
-bool Model::KMLInterpreter::StoreTrafficSign(const std::shared_ptr<Tile>& aTile)
-{
-    const std::string& path = createKMLPath(mKMLFolder + "/" + gcKMLTrafficSign, aTile->GetTileId(), mLaneBoundaryFiles);
-    QDomDocument domDocument;
-
-    if (!createKMLFile(path, domDocument))
-    {
-        return false;
-    }
-
-    QDomElement root = domDocument.documentElement();
-    writeGoogleEarth(root);
-    writeTrafficSignStyle(root, domDocument);
-
-    QDomElement folder = domDocument.createElement("Folder");
-    QDomElement nameFolder = domDocument.createElement("name");
-    nameFolder.setNodeValue("Traffic Signs");
     folder.appendChild(nameFolder);
 
     const TrafficSignMapPtr& trafficSignMap = aTile->GetTrafficSignMap();
@@ -157,26 +165,40 @@ bool Model::KMLInterpreter::StoreTrafficSign(const std::shared_ptr<Tile>& aTile)
         const TrafficSignPtr trafficSign = iterTrafficSign.second;
         writeTrafficSign(folder, domDocument, trafficSign, aTile);
     }
+
+    document.appendChild(folder);
+    kml.appendChild(document);
+    domDocument.appendChild(kml);
+
+    const std::string& path = createKMLPath(mTrafficSignFolder, aTile->GetTileId(), mTrafficSignFiles);
+    return saveKMLFile(path, domDocument);
 }
 
 const std::string& Model::KMLInterpreter::createKMLPath(const std::string& aPrefix,
                                                         const int64_t& aTileId,
                                                         StringListPtr& aFiles)
 {
-    aFiles->push_back(mKMLFolder + "/" + aPrefix + std::to_string(aTileId));
+    aFiles->push_back(aPrefix + "/" + std::to_string(aTileId) + ".kml");
     return aFiles->back();
 }
 
-bool Model::KMLInterpreter::createKMLFile(const std::string& aPath, QDomDocument& aDocument) const
+bool Model::KMLInterpreter::saveKMLFile(const std::string& aPath, QDomDocument& aDocument) const
 {
-    QFile file(aPath.c_str());
+    QFile file(QString::fromStdString(aPath));
 
-    if (!file.open(QFile::ReadWrite | QFile::Text))
+    try
     {
-        return false;
-    }
+        if(!file.open(QIODevice::ReadWrite))
+        {
+            return false;
+        }
 
-    if (!aDocument.setContent(&file, true)) {
+        QTextStream out(&file);
+        aDocument.save(out,4);
+        file.close();
+    }
+    catch(...)
+    {
         file.close();
         return false;
     }
@@ -188,17 +210,30 @@ bool Model::KMLInterpreter::touchKMLDirectory(const std::string& aPath) const
 {
     struct stat sb;
 
-    if (0 != stat(aPath.c_str(), &sb) || !S_ISDIR(sb.st_mode))
+    try
     {
-        return mkdir(aPath.c_str(), 0755);
+        if (0 != stat(aPath.c_str(), &sb) || !S_ISDIR(sb.st_mode))
+        {
+            return (0 == mkdir(aPath.c_str(), 0755));
+        }
+    }
+    catch(...)
+    {
+        return false;
     }
 
     return true;
 }
 
+void Model::KMLInterpreter::writeInstructions(QDomDocument& aDom)
+{
+    QDomProcessingInstruction instruction;
+    instruction = aDom.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\"");
+    aDom.appendChild(instruction);
+}
+
 void Model::KMLInterpreter::writeGoogleEarth(QDomElement& aElement)
 {
-    aElement.setTagName("kml");
     aElement.setAttribute("xmlns", "http://earth.google.com/kml/2.2");
 }
 
@@ -221,7 +256,8 @@ void Model::KMLInterpreter::writePaintStyle(QDomElement& aElement, QDomDocument&
     style.setAttribute("id", "RoadMark");
     QDomElement lineStyle = aDom.createElement("LineStyle");
     QDomElement color = aDom.createElement("color");
-    color.setNodeValue("#ffff00ff");
+    QDomText colorDescriptor = aDom.createTextNode("#ffff00ff");
+    color.appendChild(colorDescriptor);
     lineStyle.appendChild(color);
     style.appendChild(lineStyle);
     aElement.appendChild(style);
@@ -232,25 +268,26 @@ void Model::KMLInterpreter::writePaint(QDomElement& aElement,
                                        const std::shared_ptr<Curve>& aCurve,
                                        const std::shared_ptr<Tile>& aTile)
 {
-    const static double PAINT_INTERVAL = 0.1;
-    PaintListPtr paints = aCurve->CalculatePaintPointCloud(PAINT_INTERVAL);
+    PaintListPtr paints = aCurve->CalculatePaintPointCloud(mOutputInterval);
 
     for (auto& points : *paints)
     {
         QDomElement placemark = aDom.createElement("Placemark");
         QDomElement name = aDom.createElement("name");
-        name.setNodeValue(("Paint " + std::to_string(aCurve->GetCurveId())).c_str());
+        QDomText paintId = aDom.createTextNode(("Paint " + std::to_string(aCurve->GetCurveId())).c_str());
+        name.appendChild(paintId);
         QDomElement description = aDom.createElement("description");
-        description.setNodeValue(("type=\"" + aCurve->GetCurveTypeDescriptor() = "\"").c_str());
+        QDomText paintType = aDom.createTextNode(("type=\"" + aCurve->GetCurveTypeDescriptor() = "\"").c_str());
+        description.appendChild(paintType);
         QDomElement styleUrl = aDom.createElement("styleUrl");
-        styleUrl.setNodeValue("Paint");
+        QDomText styleUrlValue = aDom.createTextNode("Paint");
+        styleUrl.appendChild(styleUrlValue);
         QDomElement altitudeMode = aDom.createElement("altitudeMode");
-        altitudeMode.setNodeValue("absolute");
+        QDomText altitudeModeValue = aDom.createTextNode("absolute");
+        altitudeMode.appendChild(altitudeModeValue);
         QDomElement lineString = aDom.createElement("LineString");
         QDomElement coordinates = aDom.createElement("coordinates");
-
-        writePaintCoordinates(coordinates, points, aTile);
-
+        writePaintCoordinates(coordinates, aDom, points, aTile);
         lineString.appendChild(coordinates);
         placemark.appendChild(name);
         placemark.appendChild(description);
@@ -262,11 +299,13 @@ void Model::KMLInterpreter::writePaint(QDomElement& aElement,
 }
 
 void Model::KMLInterpreter::writePaintCoordinates(QDomElement& aElement,
+                                                  QDomDocument& aDom,
                                                   const Point3DListPtr& aPoints,
                                                   const std::shared_ptr<Tile>& aTile)
 {
     const Point3DPtr& referencePoint = aTile->GetReferencePoint();
     std::stringstream ss;
+    size_t pointSize = aPoints->size();
 
     std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
     std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
@@ -276,7 +315,7 @@ void Model::KMLInterpreter::writePaintCoordinates(QDomElement& aElement,
                                                      referencePoint->GetY(),
                                                      referencePoint->GetZ());
 
-    for (size_t i = 0; i < aPoints->size(); i++)
+    for (size_t i = 0; i < pointSize; i++)
     {
         const auto& point = aPoints->at(i);
         double x = point->GetX();
@@ -287,13 +326,14 @@ void Model::KMLInterpreter::writePaintCoordinates(QDomElement& aElement,
         ss << strings::FormatFloat<double>(y, 10) << ",";
         ss << strings::FormatFloat<double>(z, 10);
 
-        if (aPoints->size() - 1 != i)
+        if (i != pointSize - 1 )
         {
             ss << "\n";
         }
     }
 
-    aElement.setNodeValue(ss.str().c_str());
+    QDomText coordinates = aDom.createTextNode(ss.str().c_str());
+    aElement.appendChild(coordinates);
 }
 
 void Model::KMLInterpreter::writeLaneBoundaryLine(QDomElement& aElement,
@@ -305,7 +345,7 @@ void Model::KMLInterpreter::writeLaneBoundaryLine(QDomElement& aElement,
 
     for (const auto& curve : *curves)
     {
-        writeLaneBoundary(aElement, aDom, aLine, curve, aTile);
+        writeLaneBoundary(aElement, aDom, curve, aTile);
     }
 }
 
@@ -315,7 +355,8 @@ void Model::KMLInterpreter::writeLaneBoundaryStyle(QDomElement& aElement, QDomDo
     style.setAttribute("id", "RoadMark");
     QDomElement lineStyle = aDom.createElement("LineStyle");
     QDomElement color = aDom.createElement("color");
-    color.setNodeValue("#ffff00ff");
+    QDomText text = aDom.createTextNode("#ffff00ff");
+    color.appendChild(text);
     lineStyle.appendChild(color);
     style.appendChild(lineStyle);
     aElement.appendChild(style);
@@ -323,25 +364,26 @@ void Model::KMLInterpreter::writeLaneBoundaryStyle(QDomElement& aElement, QDomDo
 
 void Model::KMLInterpreter::writeLaneBoundary(QDomElement& aElement,
                                               QDomDocument& aDom,
-                                              const std::shared_ptr<Line>& aLine,
                                               const std::shared_ptr<Curve>& aCurve,
                                               const std::shared_ptr<Tile>& aTile)
 {
     QDomElement placemark = aDom.createElement("Placemark");
     QDomElement name = aDom.createElement("name");
-    name.setNodeValue(("Road Mark " + std::to_string(aCurve->GetCurveId())).c_str());
+    QDomText nameValue = aDom.createTextNode(("Road Mark " + std::to_string(aCurve->GetCurveId())).c_str());
+    name.appendChild(nameValue);
     QDomElement description = aDom.createElement("description");
-    description.setNodeValue(("type=\"" + aCurve->GetCurveTypeDescriptor() + "\"," +
-                              " confidence=\"" +
-                              strings::FormatFloat<double>(aLine->GetConfidence(), 8) + "\"").c_str());
+    QDomText descriptionValue = aDom.createTextNode(("type=\"" + aCurve->GetCurveTypeDescriptor() + "\"").c_str());
+    description.appendChild(descriptionValue);
     QDomElement styleUrl = aDom.createElement("styleUrl");
-    styleUrl.setNodeValue("RoadMark");
+    QDomText styleUrlValue = aDom.createTextNode("Paint");
+    styleUrl.appendChild(styleUrlValue);
     QDomElement altitudeMode = aDom.createElement("altitudeMode");
-    altitudeMode.setNodeValue("absolute");
+    styleUrl.appendChild(styleUrlValue);
+    QDomText altitudeModeVale = aDom.createTextNode("absolute");
+    altitudeMode.appendChild(altitudeModeVale);
     QDomElement lineString = aDom.createElement("LineString");
     QDomElement coordinates = aDom.createElement("coordinates");
-
-    writeLaneBoundaryCoordinates(coordinates, aCurve, aTile);
+    writeLaneBoundaryCoordinates(coordinates, aDom, aCurve, aTile);
     lineString.appendChild(coordinates);
     placemark.appendChild(name);
     placemark.appendChild(description);
@@ -352,13 +394,14 @@ void Model::KMLInterpreter::writeLaneBoundary(QDomElement& aElement,
 }
 
 void Model::KMLInterpreter::writeLaneBoundaryCoordinates(QDomElement& aElement,
+                                                         QDomDocument& aDom,
                                                          const std::shared_ptr<Curve>& aCurve,
                                                          const std::shared_ptr<Tile>& aTile)
 {
-    const static double LANE_BOUNDARY_INTERVAL = 0.1;
-    Point3DListPtr points = aCurve->CalculatePointCloud(LANE_BOUNDARY_INTERVAL);
+    Point3DListPtr points = aCurve->CalculatePointCloud(mOutputInterval);
     const Point3DPtr& referencePoint = aTile->GetReferencePoint();
     std::stringstream ss;
+    size_t pointSize = points->size();
 
     std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
     std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
@@ -379,13 +422,14 @@ void Model::KMLInterpreter::writeLaneBoundaryCoordinates(QDomElement& aElement,
         ss << strings::FormatFloat<double>(y, 10) << ",";
         ss << strings::FormatFloat<double>(z, 10);
 
-        if (points->size() - 1 != i)
+        if (pointSize - 1 != i)
         {
             ss << "\n";
         }
     }
 
-    aElement.setNodeValue(ss.str().c_str());
+    QDomText coordinates = aDom.createTextNode(ss.str().c_str());
+    aElement.appendChild(coordinates);
 }
 
 void Model::KMLInterpreter::writeTrafficSignStyle(QDomElement& aElement, QDomDocument& aDom)
@@ -401,13 +445,16 @@ void Model::KMLInterpreter::writeTrafficSignStyleCircle(QDomElement& aElement, Q
     style.setAttribute("id", "sn_placemark_circle");
     QDomElement iconStyle = aDom.createElement("IconStyle");
     QDomElement color = aDom.createElement("color");
-    color.setNodeValue("ff00ffff");
+    QDomText colorValue = aDom.createTextNode("ff00ffff");
+    color.appendChild(colorValue);
     QDomElement scale = aDom.createElement("scale");
-    scale.setNodeValue("0.5");
+    QDomText scaleValue = aDom.createTextNode("0.5");
+    scale.appendChild(scaleValue);
     QDomElement icon = aDom.createElement("Icon");
     QDomElement href = aDom.createElement("href");
-    href.setNodeValue("http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png");
-    iconStyle.appendChild(href);
+    QDomText hrefValue = aDom.createTextNode("http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png");
+    href.appendChild(hrefValue);
+    icon.appendChild(href);
     iconStyle.appendChild(icon);
     iconStyle.appendChild(scale);
     iconStyle.appendChild(color);
@@ -421,12 +468,15 @@ void Model::KMLInterpreter::writeTrafficSignStyleCircleHighlight(QDomElement& aE
     style.setAttribute("id", "sn_placemark_circle_highlight");
     QDomElement iconStyle = aDom.createElement("IconStyle");
     QDomElement color = aDom.createElement("color");
-    color.setNodeValue("ffff0000");
+    QDomText colorValue = aDom.createTextNode("#ffff0000");
+    color.appendChild(colorValue);
     QDomElement scale = aDom.createElement("scale");
-    scale.setNodeValue("0.5");
+    QDomText scaleValue = aDom.createTextNode("0.5");
+    scale.appendChild(scaleValue);
     QDomElement icon = aDom.createElement("Icon");
     QDomElement href = aDom.createElement("href");
-    href.setNodeValue("http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png");
+    QDomText hrefValue = aDom.createTextNode("http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png");
+    href.appendChild(hrefValue);
     iconStyle.appendChild(href);
     iconStyle.appendChild(icon);
     iconStyle.appendChild(scale);
@@ -443,9 +493,11 @@ void Model::KMLInterpreter::writeTrafficSignStyleMap(QDomElement& aElement, QDom
     {
        QDomElement pair = aDom.createElement("Pair");
        QDomElement key = aDom.createElement("key");
-       key.setNodeValue("normal");
+       QDomText keyValue = aDom.createTextNode("normal");
+       key.appendChild(keyValue);
        QDomElement styleUrl = aDom.createElement("styleUrl");
-       key.setNodeValue("#sn_placemark_circle");
+       QDomText styleUrlValue = aDom.createTextNode("#sn_placemark_circle");
+       styleUrl.appendChild(styleUrlValue);
        pair.appendChild(styleUrl);
        pair.appendChild(key);
        styleMap.appendChild(pair);
@@ -453,9 +505,11 @@ void Model::KMLInterpreter::writeTrafficSignStyleMap(QDomElement& aElement, QDom
     {
         QDomElement pair = aDom.createElement("Pair");
         QDomElement key = aDom.createElement("key");
-        key.setNodeValue("highlight");
+        QDomText keyValue = aDom.createTextNode("highlight");
+        key.appendChild(keyValue);
         QDomElement styleUrl = aDom.createElement("styleUrl");
-        key.setNodeValue("#sn_placemark_circle_highlight");
+        QDomText styleUrlValue = aDom.createTextNode("#sn_placemark_circle_highlight");
+        styleUrl.appendChild(styleUrlValue);
         pair.appendChild(styleUrl);
         pair.appendChild(key);
         styleMap.appendChild(pair);
@@ -471,18 +525,23 @@ void Model::KMLInterpreter::writeTrafficSign(QDomElement& aElement,
 {
     QDomElement placemark = aDom.createElement("Placemark");
     QDomElement name = aDom.createElement("name");
-    name.setNodeValue(("Traffic Sign " + std::to_string(aTrafficSign->GetTrafficSignId())).c_str());
+    QDomText nameValue = aDom.createTextNode(
+                ("Traffic Sign " + std::to_string(aTrafficSign->GetTrafficSignId())).c_str());
+    name.appendChild(nameValue);
     QDomElement description = aDom.createElement("description");
-    writeTrafficSignDescription(description, aTrafficSign);
+    writeTrafficSignDescription(description, aDom, aTrafficSign);
     QDomElement altitudeMode = aDom.createElement("altitudeMode");
-    altitudeMode.setNodeValue("absolute");
+    QDomText altitudeModeValue = aDom.createTextNode("absolute");
+    altitudeMode.appendChild(altitudeModeValue);
     QDomElement styleUrl = aDom.createElement("styleUrl");
-    styleUrl.setNodeValue("TrafficSign");
+    QDomText styleUrlValue = aDom.createTextNode("TrafficSign");
+    styleUrl.appendChild(styleUrlValue);
     QDomElement point = aDom.createElement("Point");
     QDomElement drawOrder = aDom.createElement("drawOrder");
-    drawOrder.setNodeValue("1");
+    QDomText drawOrderlValue = aDom.createTextNode("1");
+    drawOrder.appendChild(drawOrderlValue);
     QDomElement coordinates = aDom.createElement("coordinates");
-    writeTrafficSignCoordinates(coordinates, aTrafficSign);
+    writeTrafficSignCoordinates(coordinates, aDom, aTrafficSign);
     point.appendChild(coordinates);
     point.appendChild(drawOrder);
     placemark.appendChild(point);
@@ -494,6 +553,7 @@ void Model::KMLInterpreter::writeTrafficSign(QDomElement& aElement,
 }
 
 void Model::KMLInterpreter::writeTrafficSignDescription(QDomElement& aElement,
+                                                        QDomDocument& aDom,
                                                         const std::shared_ptr<TrafficSign> &aTrafficSign)
 {
     std::stringstream ss;
@@ -501,16 +561,19 @@ void Model::KMLInterpreter::writeTrafficSignDescription(QDomElement& aElement,
     ss << "height=\"" << strings::FormatFloat<double>(aTrafficSign->GetShapeHeight(), 6) << "\",";
     ss << "width=\"" << strings::FormatFloat<double>(aTrafficSign->GetShapeWidth(), 6) << "\",";
     ss << "orientation=\"" << strings::FormatFloat<double>(aTrafficSign->GetOrientation(), 6) << "\",";
-    ss << "confidence=\"" << strings::FormatFloat<double>(aTrafficSign->GetConfidence(), 6) << "\",";
-    aElement.setNodeValue(ss.str().c_str());
+    ss << "confidence=\"" << strings::FormatFloat<double>(aTrafficSign->GetConfidence(), 6);
+    QDomText description = aDom.createTextNode(ss.str().c_str());
+    aElement.appendChild(description);
 }
 
 void Model::KMLInterpreter::writeTrafficSignCoordinates(QDomElement& aElement,
+                                                        QDomDocument& aDom,
                                                         const std::shared_ptr<TrafficSign> &aTrafficSign)
 {
     std::stringstream ss;
-    ss  << strings::FormatFloat<double>(aTrafficSign->GetPosition()->GetX(), 15) << ",";
-    ss  << strings::FormatFloat<double>(aTrafficSign->GetPosition()->GetY(), 15) << ",";
-    ss  << strings::FormatFloat<double>(aTrafficSign->GetPosition()->GetZ(), 15);
-    aElement.setNodeValue(ss.str().c_str());
+    ss  << strings::FormatFloat<double>(aTrafficSign->GetGeodeticPosition()->GetX(), 15) << ",";
+    ss  << strings::FormatFloat<double>(aTrafficSign->GetGeodeticPosition()->GetY(), 15) << ",";
+    ss  << strings::FormatFloat<double>(aTrafficSign->GetGeodeticPosition()->GetZ(), 15);
+    QDomText coordinates = aDom.createTextNode(ss.str().c_str());
+    aElement.appendChild(coordinates);
 }

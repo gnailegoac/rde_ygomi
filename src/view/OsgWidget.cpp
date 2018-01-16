@@ -33,7 +33,7 @@
 
 #include <osgGA/EventQueue>
 #include <osgDB/ReadFile>
-#include <osgGA/TerrainManipulator>
+#include <osgGA/TrackballManipulator>
 #include <osgDB/WriteFile>
 
 #include <osgUtil/IntersectionVisitor>
@@ -91,7 +91,7 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
     mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
     mView->addEventHandler(mPickHandler.get());
-    osgGA::TerrainManipulator* aManipulator = new osgGA::TerrainManipulator;
+    osgGA::TrackballManipulator * aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
 
     mView->setCameraManipulator(aManipulator);
@@ -136,7 +136,7 @@ void View::OsgWidget::Refresh()
         mView->setSceneData(sceneModel->GetSceneModelRoot());
     }
     mView->getCameraManipulator()->getHomePosition(mEye, mCenter, mUp);
-    mEye = mCenter + mUp * 30000.0;
+    mEye = mCenter + osg::Vec3d(15000.0, 0.0, 0.0) + mUp * 15000.0;
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
     mView->home();
     repaint();
@@ -147,11 +147,16 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
 {
     osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
     osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
-    osg::Vec3d center = eye - direction * 30000.0;
+    osg::Vec3d center = eye - direction * 15000.0;
     osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
-    mView->getCameraManipulator()->setHomePosition(eye, center, up);
-    mView->home();
+    JumpTo(eye, center, up);
     repaint();
+}
+
+void View::OsgWidget::JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp)
+{
+    mView->getCameraManipulator()->setHomePosition(aEye, aCenter, aUp);
+    mView->home();
 }
 
 void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
@@ -212,6 +217,14 @@ void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
     {
         notifyCameraChange();
     }
+
+    // change traffic sign geometry if someone rotate or drag the camera
+    // tightly coupled implementation! maybe refactor this code next time
+    if (isMouseButtonPressed(aEvent, 3))
+    {
+        updateTrafficSignView();
+    }
+
     // Note that we have to check the buttons mask in order to see whether the
     // left button has been pressed. A call to `button()` will only result in
     // `Qt::NoButton` for mouse move events.
@@ -308,6 +321,25 @@ bool View::OsgWidget::event(QEvent* aEvent)
     return aHandled;
 }
 
+bool View::OsgWidget::isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const
+{
+    return aEvent->buttons() & aButtonMask;
+}
+
+void View::OsgWidget::updateTrafficSignView()
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+
+    if (sceneModel)
+    {
+        auto manipulator = mView->getCameraManipulator();
+        osg::Matrixd matrix = manipulator->getMatrix();
+        sceneModel->RotateTrafficSign(matrix);
+        paintGL();
+    }
+}
+
 void View::OsgWidget::onHome()
 {
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
@@ -336,7 +368,7 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 
 void View::OsgWidget::notifyCameraChange()
 {
-    osg::Matrixd mat = dynamic_cast<osgGA::TerrainManipulator*>(mView->getCameraManipulator())->getMatrix();
+    osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
 }

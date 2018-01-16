@@ -13,6 +13,8 @@
 
 #include "KMLSerializer.h"
 
+#include <QDebug>
+
 #include "../MemoryModel.h"
 #include "KMLInterpreter.h"
 
@@ -38,9 +40,10 @@ Model::KMLSerializer::~KMLSerializer()
 
 bool Model::KMLSerializer::Serialize(const Model::MemoryModelPtr& aMemoryModel)
 {
-    KMLInterpreterPtr kmlInterpreter = std::make_shared<KMLInterpreter>(mOuputFolder);
+    KMLInterpreterPtr kmlInterpreter = std::make_shared<KMLInterpreter>(mOuputFolder, 0.1);
     const TileMapPtr& tiles = aMemoryModel->GetTileMap();
 
+    // create directory trees
     if (!kmlInterpreter->TouchKMLDirectories())
     {
         return false;
@@ -50,17 +53,10 @@ bool Model::KMLSerializer::Serialize(const Model::MemoryModelPtr& aMemoryModel)
     {
         const TilePtr tile = iterTile.second;
 
-        if (!kmlInterpreter->StorePaint(tile))
-        {
-            return false;
-        }
-
-        if (!kmlInterpreter->StoreLaneBoundary(tile))
-        {
-            return false;
-        }
-
-        if (!kmlInterpreter->StoreTrafficSign(tile))
+        // serialize all kinds of elements to each directory
+        if (!kmlInterpreter->SaveKMLPaint(tile)
+            || !kmlInterpreter->SaveKMLLaneBoundary(tile)
+            || !kmlInterpreter->SaveKMLTrafficSign(tile))
         {
             return false;
         }

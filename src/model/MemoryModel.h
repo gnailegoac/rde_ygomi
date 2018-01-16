@@ -52,6 +52,8 @@ public:
 
     TilePtr GetTileByLaneId(const std::uint64_t& aLaneId);
     std::shared_ptr<Model::Lane> GetLaneById(const std::uint64_t& aLaneId);
+    std::shared_ptr<Model::Road> GetRoadById(const std::uint64_t& aRoadId);
+    std::shared_ptr<Model::Line> GetLineById(const std::uint64_t& aLineId);
 private:
     TileMapPtr mTileMap;
     CurveIdMapPtr mCurveIdMap;
