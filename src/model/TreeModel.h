@@ -18,7 +18,8 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "model/Curve.h"
+//#include "model/Curve.h"
+
 namespace Model {
 
 class MemoryModel;
@@ -72,8 +73,10 @@ private:
     bool isNodeNameMatch(const QString& aName, const QString& aNodeName) const;
 
     TreeItem *getItem(const QModelIndex& aIndex) const;
+
 private:
     TreeItem* mRoot;
+    std::shared_ptr<Model::MemoryModel> mMemoryModel;
 };
 
 }
