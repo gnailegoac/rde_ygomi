@@ -27,12 +27,13 @@ class KMLSerializer : public ISerializer
 {
 public:
     KMLSerializer();
-    KMLSerializer(double aInterval);
+    KMLSerializer(const std::string& aOuputFolder, const double& aInterval);
     ~KMLSerializer();
 
     bool Serialize(const MemoryModelPtr& aMemoryModel) override;
 
 private:
+    std::string mOuputFolder;
     double mInterval;
 };
 

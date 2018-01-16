@@ -99,7 +99,6 @@ Model::PaintListPtr Model::NurbsCurve::CalculatePaintPointCloud(
                 Point3DPtr point = poly->GetPosition(t);
                 paint->push_back(point);
             }
-
         }
 
         if (1 < paint->size())

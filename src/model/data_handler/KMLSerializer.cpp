@@ -14,15 +14,18 @@
 #include "KMLSerializer.h"
 
 #include "../MemoryModel.h"
-#include "DbRepository.h"
+#include "KMLInterpreter.h"
 
 Model::KMLSerializer::KMLSerializer():
+    mOuputFolder("."),
     mInterval(0.1)
 {
 
 }
 
-Model::KMLSerializer::KMLSerializer(double aInterval):
+Model::KMLSerializer::KMLSerializer(const std::string& aOuputFolder,
+                                    const double& aInterval):
+    mOuputFolder(aOuputFolder),
     mInterval(aInterval)
 {
 
@@ -35,5 +38,33 @@ Model::KMLSerializer::~KMLSerializer()
 
 bool Model::KMLSerializer::Serialize(const Model::MemoryModelPtr& aMemoryModel)
 {
-    return false;
+    KMLInterpreterPtr kmlInterpreter = std::make_shared<KMLInterpreter>(mOuputFolder);
+    const TileMapPtr& tiles = aMemoryModel->GetTileMap();
+
+    if (!kmlInterpreter->TouchKMLDirectories())
+    {
+        return false;
+    }
+
+    for (const auto& iterTile : * tiles)
+    {
+        const TilePtr tile = iterTile.second;
+
+        if (!kmlInterpreter->StorePaint(tile))
+        {
+            return false;
+        }
+
+        if (!kmlInterpreter->StoreLaneBoundary(tile))
+        {
+            return false;
+        }
+
+        if (!kmlInterpreter->StoreTrafficSign(tile))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

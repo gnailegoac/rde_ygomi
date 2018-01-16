@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl webenginewidgets
+QT       += core gui opengl webenginewidgets xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = RoadDBExplorer
@@ -74,7 +74,8 @@ SOURCES +=\
     model/FitNurbs.cpp \
     model/GeoJsonConverter.cpp \
     model/data_handler/KMLFactory.cpp \
-    model/data_handler/KMLSerializer.cpp
+    model/data_handler/KMLSerializer.cpp \
+    model/data_handler/KMLInterpreter.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -127,7 +128,8 @@ HEADERS  += view/MainWindow.h \
     model/TreeModel.h \
     model/GeoJsonConverter.h \
     model/data_handler/KMLFactory.h \
-    model/data_handler/KMLSerializer.h
+    model/data_handler/KMLSerializer.h \
+    model/data_handler/KMLInterpreter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
