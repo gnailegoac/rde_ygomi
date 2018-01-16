@@ -49,9 +49,7 @@ public:
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
 
     QTreeView* GetTreeView() const;
-    void JumpTo(const osg::Vec3d& aEye,
-                const osg::Vec3d& aCenter,
-                const osg::Vec3d& aUp = osg::Vec3d(0.0f, 1.0f, 0.0f));
+    void JumpToCenter(const osg::Vec3d& aCenter);
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;

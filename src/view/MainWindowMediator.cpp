@@ -45,7 +45,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::SELECT_LANE_ON_TREE);
     result->get().push_back(ApplicationFacade::SELECT_LINE_ON_TREE);
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
-    result->get().push_back(ApplicationFacade::JUMP_TO_NODE);
+    result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
     return NotificationNames(result);
 }
 
@@ -98,13 +98,15 @@ void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::Til
                                                 const std::shared_ptr<Model::Lane>& aLane,
                                                 const std::shared_ptr<Model::Line>& aLine)
 {
-    if(aSegment == nullptr || aRoad == nullptr)
+    if(!getMainWindow()->GetTreeView()->isVisible()
+       || aSegment == nullptr
+       || aRoad == nullptr)
     {
         return;
     }
 
     QModelIndex currentIndex;
-    QTreeView* roadInfoView= getMainWindow()->GetTreeView();
+    QTreeView* roadInfoView = getMainWindow()->GetTreeView();
     QAbstractItemModel* model = roadInfoView->model();
     Model::TreeModel* treeModel = dynamic_cast<Model::TreeModel*>(model);
     QModelIndex segmentIndex = treeModel->GetItemIndex("Segment",
@@ -214,10 +216,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         getMainWindow()->GetTreeView()->clearSelection();
     }
-    else if(noteName == ApplicationFacade::JUMP_TO_NODE)
+    else if(noteName == ApplicationFacade::JUMP_TO_CENTER)
     {
-        std::pair<osg::Vec3d, osg::Vec3d> cameraPair = *CommonFunction::ConvertToNonConstType<std::pair<osg::Vec3d, osg::Vec3d>>(aNotification.getBody());
-        getMainWindow()->JumpTo(cameraPair.first, cameraPair.second);
+        osg::Vec3d center = *CommonFunction::ConvertToNonConstType<osg::Vec3d>(aNotification.getBody());
+        getMainWindow()->JumpToCenter(center);
     }
 }
 

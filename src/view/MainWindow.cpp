@@ -47,20 +47,20 @@ void View::MainWindow::PopupWarningMessage(const QString &aWarning)
 
 osg::Polytope View::MainWindow::GetPolytope()
 {
-    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     return viewer->GetPolytope();
 }
 
 void View::MainWindow::UpdateView()
 {
-    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     viewer->Refresh();
 }
 
-void View::MainWindow::JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp)
+void View::MainWindow::JumpToCenter(const osg::Vec3d& aCenter)
 {
-    View::OsgWidget *viewer = dynamic_cast<View::OsgWidget *>(centralWidget());
-    viewer->JumpTo(aEye, aCenter, aUp);
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    viewer->JumpToCenter(aCenter);
 }
 
 void View::MainWindow::ShowRoadInfo()
@@ -144,7 +144,7 @@ void View::MainWindow::setupConnections()
     });
 }
 
-void View::MainWindow::onSelectTypeChange(const Model::SelectType &aSelectType, bool aIsChecked)
+void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)
 {
     ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
     Model::SelectType selectType = aSelectType;
