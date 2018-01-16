@@ -29,7 +29,8 @@ namespace  Model
 Model::SceneModel::SceneModel() :
     mSceneModelRoot(new osg::Group)
 {
-
+    mSceneModelRoot->getOrCreateStateSet()->setMode(GL_LIGHTING,
+                                                    osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 }
 
 const osg::ref_ptr<osg::Group>& Model::SceneModel::GetSceneModelRoot() const

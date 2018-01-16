@@ -149,14 +149,25 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
     osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
     osg::Vec3d center = eye - direction * 15000.0;
     osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
-    JumpTo(eye, center, up);
+    mView->getCameraManipulator()->setHomePosition(eye, center, up);
+    mView->home();
     repaint();
 }
 
-void View::OsgWidget::JumpTo(const osg::Vec3d& aEye, const osg::Vec3d& aCenter, const osg::Vec3d& aUp)
+void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
 {
-    mView->getCameraManipulator()->setHomePosition(aEye, aCenter, aUp);
+    osg::Vec3d eye;
+    osg::Vec3d center;
+    osg::Vec3d up;
+    mView->getCameraManipulator()->getHomePosition(eye, center, up);
+    eye[0] = aCenter.x();
+    eye[1] = aCenter.y();
+    center[0] = aCenter.x();
+    center[1] = aCenter.y();
+    mView->getCameraManipulator()->setHomePosition(eye, center, up);
     mView->home();
+    repaint();
+    notifyCameraChange();
 }
 
 void View::OsgWidget::paintEvent(QPaintEvent* aPaintEvent)
