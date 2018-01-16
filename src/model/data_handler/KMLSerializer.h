@@ -1,31 +1,39 @@
 /**
  *******************************************************************************
  *                       Continental Confidential
- *                  Copyright (c) Continental AG. 2017
+ *                  Copyright (c) Continental AG. 2018
  *
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    Factory.h
+ * @file    KMLSerializer.h
  * @brief
  *******************************************************************************
  */
 
 #pragma once
 
-#include "IFactory.h"
+#include "../Common.h"
+#include "ISerializer.h"
 
 namespace Model
 {
 
-class Factory
+class Tile;
+typedef std::shared_ptr<Tile> TilePtr;
+
+class KMLSerializer : public ISerializer
 {
 public:
-    static IFactoryPtr CreateLogicDbFactory(const std::vector<std::string>& aDbPathList);
+    KMLSerializer();
+    KMLSerializer(const std::string& aOuputFolder, const double& aInterval);
+    ~KMLSerializer();
 
-    static IFactoryPtr CreateLogicDbFactory(const std::string& aDbPath);
+    bool Serialize(const MemoryModelPtr& aMemoryModel) override;
 
-    static IFactoryPtr CreateKMLFactory(const std::string& aKMLFolder, const double& aInterval);
+private:
+    std::string mOuputFolder;
+    double mInterval;
 };
 
 }

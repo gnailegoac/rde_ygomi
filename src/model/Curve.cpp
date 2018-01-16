@@ -79,6 +79,29 @@ Model::CurveType Model::Curve::GetCurveType() const
     return mCurveType;
 }
 
+std::string Model::Curve::GetCurveTypeDescriptor() const
+{
+    switch (mCurveType)
+    {
+    case CurveType::Solid:
+        return "SOLID";
+    case CurveType::Dashed:
+        return "DASHED";
+    case CurveType::Imputed:
+        return "IMPUTED";
+    case CurveType::SlamTrace:
+        return "SLAMTRACE";
+    case CurveType::UnKnown:
+        return "UNKNOWN";
+    case CurveType::UnDefined:
+        return "UNDEFINED";
+    default:
+        break;
+    }
+
+    return TEXT_NAN;
+}
+
 void Model::Curve::SetCurveType(CurveType aCurveType)
 {
     mCurveType = aCurveType;

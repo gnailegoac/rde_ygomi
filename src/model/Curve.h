@@ -53,6 +53,7 @@ public:
     void SetLength(float aLength);
 
     CurveType GetCurveType() const;
+    std::string GetCurveTypeDescriptor() const;
     void SetCurveType(CurveType aCurveType);
 
     std::uint32_t GetIndexInLine() const;

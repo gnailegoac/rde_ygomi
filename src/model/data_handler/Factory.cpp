@@ -18,6 +18,7 @@
 
 #include "../Common.h"
 #include "LogicDbFactory.h"
+#include "KMLFactory.h"
 
 Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::vector<std::string>& aDbPathList)
 {
@@ -42,4 +43,12 @@ Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::string& aDbPa
     }
 
     return std::move(logicDbFactory);
+}
+
+Model::IFactoryPtr Model::Factory::CreateKMLFactory(const std::string& aKMLFolder,
+                                                    const double &aInterval)
+{
+    std::unique_ptr<KMLFactory> kmlFactory(new KMLFactory(aKMLFolder));
+    kmlFactory->SetOutputInterval(aInterval);
+    return std::move(kmlFactory);
 }
