@@ -47,7 +47,6 @@ private:
     bool saveKMLFile(const std::string& aPath, QDomDocument& aDocument) const;
     bool touchKMLDirectory(const std::string& aPath) const;
 
-
     //===============================================================================
     void writeInstructions(QDomDocument& aDom);
     void writeGoogleEarth(QDomElement& aElement);

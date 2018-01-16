@@ -162,7 +162,7 @@ bool Model::KMLInterpreter::SaveKMLTrafficSign(const std::shared_ptr<Tile>& aTil
 
     for (auto& iterTrafficSign : *trafficSignMap)
     {
-        const TrafficSignPtr trafficSign = iterTrafficSign.second;
+        const TrafficSignPtr& trafficSign = iterTrafficSign.second;
         writeTrafficSign(folder, domDocument, trafficSign, aTile);
     }
 
@@ -326,7 +326,7 @@ void Model::KMLInterpreter::writePaintCoordinates(QDomElement& aElement,
         ss << strings::FormatFloat<double>(y, 10) << ",";
         ss << strings::FormatFloat<double>(z, 10);
 
-        if (i != pointSize - 1 )
+        if (pointSize - 1 != i)
         {
             ss << "\n";
         }
@@ -520,7 +520,7 @@ void Model::KMLInterpreter::writeTrafficSignStyleMap(QDomElement& aElement, QDom
 
 void Model::KMLInterpreter::writeTrafficSign(QDomElement& aElement,
                                              QDomDocument& aDom,
-                                             const std::shared_ptr<TrafficSign> &aTrafficSign,
+                                             const std::shared_ptr<TrafficSign>& aTrafficSign,
                                              const std::shared_ptr<Tile>& aTile)
 {
     QDomElement placemark = aDom.createElement("Placemark");

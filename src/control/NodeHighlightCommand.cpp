@@ -187,13 +187,8 @@ void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotificatio
 void Controller::NodeHighlightCommand::jumpToNode(const osg::Node* aNode)
 {
     const osg::BoundingSphere& sphere = aNode->getBound();
-    osg::Vec3 sphereCenter = sphere.center();
-    double cameraHeight = sphere.radius() * 4;
-    osg::Vec3d eye(sphereCenter.x(), sphereCenter.y(), cameraHeight);
-    osg::Vec3d center(sphereCenter.x(), sphereCenter.y(), 0);
-    //default up     osg::Vec3d up(0, 1, 0);
-    std::pair<osg::Vec3d, osg::Vec3d> cameraPara = std::make_pair(eye, center);
-    ApplicationFacade::SendNotification(ApplicationFacade::JUMP_TO_NODE, &cameraPara);
+    osg::Vec3d sphereCenter = sphere.center();
+    ApplicationFacade::SendNotification(ApplicationFacade::JUMP_TO_CENTER, &sphereCenter);
 }
 
 void Controller::NodeHighlightCommand::selectNodeIn3DView(const std::string& aName, const std::string& aValue)
@@ -224,10 +219,10 @@ void Controller::NodeHighlightCommand::selectNodeIn3DView(const std::string& aNa
     }
 
     highlightNode();
-    //    if(mSelectNodes.size() > 0)
-    //    {
-    //        jumpToNode(mSelectNodes[0]);
-    //    }
+    if(mSelectNodes.size() > 0)
+    {
+        jumpToNode(mSelectNodes[0]);
+    }
 }
 
 std::string Controller::NodeHighlightCommand::GetCommandName()
