@@ -74,11 +74,9 @@ private:
     bool changeLineInfo(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const QVariant& aValue);
     bool changeTrafficSignInfo(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const QVariant& aValue);
     bool changeLaneInfo(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const QVariant& aValue);
-    void changeTrafficSignId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
+    bool changeLineId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
                             const std::uint64_t& aOldId, const std::uint64_t& aNewId);
-    void changeLineId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
-                            const std::uint64_t& aOldId, const std::uint64_t& aNewId);
-    void changeLaneId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
+    bool changeLaneId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
                             const std::uint64_t& aOldId, const std::uint64_t& aNewId);
 
 private:

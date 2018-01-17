@@ -90,14 +90,18 @@ bool Model::TreeItem::SetData(int aColumn, const QVariant& aValue,
         return false;
     }
 
-    bool dataChanged = changeTrafficSignInfo(aMemoryModel, aValue)
-                       | changeLineInfo(aMemoryModel, aValue)
-                       | changeLaneInfo(aMemoryModel, aValue);
+    bool dataChanged = false;
 
-
-    if (dataChanged)
+    if (aValue != mData[1])
     {
-        mData[aColumn] = aValue;
+        dataChanged = changeTrafficSignInfo(aMemoryModel, aValue)
+                      | changeLineInfo(aMemoryModel, aValue)
+                      | changeLaneInfo(aMemoryModel, aValue);
+
+        if (dataChanged)
+        {
+            mData[aColumn] = aValue;
+        }
     }
 
     return dataChanged;
@@ -115,10 +119,10 @@ bool Model::TreeItem::changeLineInfo(const std::shared_ptr<Model::MemoryModel>& 
         if (ItemName::scType == mData[0].toString())
         {
             // To change line type.
-            Model::CurveType curveType;
+            CurveType curveType;
             if (IsValidLineType(aValue.toString(), curveType))
             {
-                std::shared_ptr<Model::Line> linePtr = aMemoryModel->GetLineById(lineId);
+                LinePtr linePtr = aMemoryModel->GetLineById(lineId);
                 if (linePtr)
                 {
                     for (auto& curve: *(linePtr->GetCurveList()))
@@ -135,8 +139,10 @@ bool Model::TreeItem::changeLineInfo(const std::shared_ptr<Model::MemoryModel>& 
             if (aValue.canConvert(QMetaType::ULongLong))
             {
                 std::uint64_t newLineId = aValue.toULongLong();
-                changeLineId(aMemoryModel, lineId, newLineId);
-                dataChanged = true;
+                if (lineId != newLineId)
+                {
+                    dataChanged = changeLineId(aMemoryModel, lineId, newLineId);
+                }
             }
         }
     }
@@ -148,30 +154,19 @@ bool Model::TreeItem::changeTrafficSignInfo(const std::shared_ptr<Model::MemoryM
 {
     bool dataChanged = false;
 
-    if (ItemName::scTrafficSign == mData[0].toString())
-    {
-        // To change traffic sign id.
-        if (aValue.canConvert(QMetaType::ULongLong))
-        {
-            std::uint64_t trafficSignId = mData[1].toULongLong();
-            std::uint64_t newTrafficSignId = aValue.toULongLong();
-            changeTrafficSignId(aMemoryModel, trafficSignId, newTrafficSignId);
-            dataChanged = true;
-        }
-    }
-    else if (mParent && ItemName::scTrafficSign == mParent->Data(0).toString())
+    if (mParent && ItemName::scTrafficSign == mParent->Data(0).toString())
     {
         std::uint64_t trafficSignId = mParent->Data(1).toULongLong();
-        std::shared_ptr<Model::TrafficSign> trafficSignPtr = aMemoryModel->GetTrafficSignById(trafficSignId);
+        TrafficSignPtr trafficSignPtr = aMemoryModel->GetTrafficSignById(trafficSignId);
         // Actually, the trafficSignPtr should always be valid.
         if (trafficSignPtr)
         {
             if (ItemName::scType == mData[0].toString()
                 && aValue.canConvert(QMetaType::ULongLong)
-                && Model::LookUpTable::mTrafficSignImageMap.count(aValue.toULongLong()))
+                && LookUpTable::mTrafficSignImageMap.count(aValue.toULongLong()))
             {
                 // To change traffic sign type.
-                // Should we notify 3D viewer the type change and repaint?
+                // Notify 3D viewer the type change and repaint
                 trafficSignPtr->SetTrafficSignType(aValue.toULongLong());
                 dataChanged = true;
             }
@@ -228,42 +223,48 @@ bool Model::TreeItem::changeLaneInfo(const std::shared_ptr<Model::MemoryModel>& 
         if (aValue.canConvert(QMetaType::ULongLong))
         {
             std::uint64_t laneId = mData[1].toULongLong();
-
             std::uint64_t newLaneId = aValue.toULongLong();
-            changeLaneId(aMemoryModel, laneId, newLaneId);
-            dataChanged = true;
+            dataChanged = changeLaneId(aMemoryModel, laneId, newLaneId);
         }
     }
     else if (mParent && ItemName::scLane == mParent->Data(0).toString())
     {
         std::uint64_t laneId = mParent->Data(1).toULongLong();
-        std::shared_ptr<Model::Lane> lanePtr = aMemoryModel->GetLaneById(laneId);
+        LanePtr lanePtr = aMemoryModel->GetLaneById(laneId);
         if (lanePtr && aValue.canConvert(QMetaType::ULongLong))
         {
             std::uint64_t newLaneId = aValue.toULongLong();
-            if (ItemName::scPreLaneId == mData[0].toString())
+            LanePtr newLanePtr = aMemoryModel->GetLaneById(newLaneId);
+            if (newLanePtr)
             {
-                // To change predecessor lane id.
-                lanePtr->SetPredecessorLaneId(newLaneId);
-                dataChanged = true;
-            }
-            else if (ItemName::scSuccLaneId == mData[0].toString())
-            {
-                // To change successor lane id.
-                lanePtr->SetSuccessorLaneId(newLaneId);
-                dataChanged = true;
-            }
-            else if (ItemName::scLeftLaneId == mData[0].toString())
-            {
-                // To change left lane id.
-                lanePtr->SetLeftLaneId(newLaneId);
-                dataChanged = true;
-            }
-            else if (ItemName::scRightLaneId == mData[0].toString())
-            {
-                // To change right lane id.
-                lanePtr->SetRightLaneId(newLaneId);
-                dataChanged = true;
+                if (ItemName::scPreLaneId == mData[0].toString())
+                {
+                    // To change predecessor lane id.
+                    lanePtr->SetPredecessorLaneId(newLaneId);
+                    newLanePtr->SetSuccessorLaneId(laneId);
+                    dataChanged = true;
+                }
+                else if (ItemName::scSuccLaneId == mData[0].toString())
+                {
+                    // To change successor lane id.
+                    lanePtr->SetSuccessorLaneId(newLaneId);
+                    newLanePtr->SetPredecessorLaneId(laneId);
+                    dataChanged = true;
+                }
+                else if (ItemName::scLeftLaneId == mData[0].toString())
+                {
+                    // To change left lane id.
+                    lanePtr->SetLeftLaneId(newLaneId);
+                    newLanePtr->SetRightLaneId(laneId);
+                    dataChanged = true;
+                }
+                else if (ItemName::scRightLaneId == mData[0].toString())
+                {
+                    // To change right lane id.
+                    lanePtr->SetRightLaneId(newLaneId);
+                    newLanePtr->SetLeftLaneId(laneId);
+                    dataChanged = true;
+                }
             }
         }
     }
@@ -271,23 +272,58 @@ bool Model::TreeItem::changeLaneInfo(const std::shared_ptr<Model::MemoryModel>& 
     return dataChanged;
 }
 
-void Model::TreeItem::changeLineId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
+bool Model::TreeItem::changeLineId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
                                    const uint64_t& aOldId, const uint64_t& aNewId)
 {
     // Remove old line from Tile's mLineMap and add new pair.
-    std::shared_ptr<Model::Line> linePtr = aMemoryModel->GetLineById(aOldId);
+    bool dataChanged = false;
+
+    LinePtr linePtr = aMemoryModel->GetLineById(aOldId);
+    if (linePtr)
+    {
+        LanePtr lanePtr = linePtr->GetLane();
+        if (lanePtr)
+        {
+            RoadPtr roadPtr = lanePtr->GetRoad();
+            if (roadPtr)
+            {
+                TilePtr tilePtr = roadPtr->GetTile();
+                if (tilePtr)
+                {
+                    LineMapPtr lineMapPtr = tilePtr->GetMutableLineMap();
+                    lineMapPtr->erase(aOldId);
+                    linePtr->SetLineId(aNewId);
+                    lineMapPtr->insert(std::make_pair(aNewId, linePtr));
+                    dataChanged = true;
+                }
+            }
+        }
+    }
+
+    return dataChanged;
 }
 
-void Model::TreeItem::changeLaneId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
+bool Model::TreeItem::changeLaneId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
                                    const uint64_t& aOldId, const uint64_t& aNewId)
 {
     // Remove old lane from Tile's mLaneMap and add new pair.
-    std::shared_ptr<Model::Lane> lanePtr = aMemoryModel->GetLaneById(aOldId);
-}
-
-void Model::TreeItem::changeTrafficSignId(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
-                                         const uint64_t& aOldId, const uint64_t& aNewId)
-{
-    // Remove old traffic sign from Tile's mTrafficSignMap and add the new pair.
-    std::shared_ptr<Model::TrafficSign> trafficSignPtr = aMemoryModel->GetTrafficSignById(aOldId);
+    bool dataChanged = false;
+    LanePtr lanePtr = aMemoryModel->GetLaneById(aOldId);
+    if (lanePtr)
+    {
+        RoadPtr roadPtr = lanePtr->GetRoad();
+        if (roadPtr)
+        {
+            TilePtr tilePtr = roadPtr->GetTile();
+            if (tilePtr)
+            {
+                LaneMapPtr laneMapPtr = tilePtr->GetMutableLaneMap();
+                laneMapPtr->erase(aOldId);
+                lanePtr->SetLaneId(aNewId);
+                laneMapPtr->insert(std::make_pair(aNewId, lanePtr));
+                dataChanged = true;
+            }
+        }
+    }
+    return dataChanged;
 }
