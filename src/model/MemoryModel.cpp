@@ -166,3 +166,18 @@ std::shared_ptr<Model::Line> Model::MemoryModel::GetLineById(const std::uint64_t
 
     return nullptr;
 }
+
+std::shared_ptr<Model::TrafficSign> Model::MemoryModel::GetTrafficSignById(const uint64_t& aTrafficSignId)
+{
+    for (const auto& itor : *mTileMap)
+    {
+        TilePtr tile = itor.second;
+        const TrafficSignMapPtr& trafficSignMap = tile->GetTrafficSignMap();
+
+        if (trafficSignMap->count(aTrafficSignId) > 0)
+        {
+            return trafficSignMap->at(aTrafficSignId);
+        }
+    }
+    return nullptr;
+}

@@ -18,7 +18,6 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "model/Curve.h"
 namespace Model {
 
 class MemoryModel;
@@ -48,6 +47,8 @@ public:
     QModelIndex parent(const QModelIndex& aIndex) const override;
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
+    bool setData(const QModelIndex& aIndex, const QVariant& aValue,
+                     int aRole = Qt::EditRole) override;
 
     QModelIndex GetItemIndex(
             const QString& aName,
@@ -68,8 +69,12 @@ private:
     void createUint64Node(const QString& aName, const uint64_t& aValue, Model::TreeItem* aParent);
     void createDoubleNode(const QString& aName, const double& aValue, Model::TreeItem* aParent);
     bool isNodeNameMatch(const QString& aName, const QString& aNodeName) const;
+
+    TreeItem *getItem(const QModelIndex& aIndex) const;
+
 private:
     TreeItem* mRoot;
+    std::shared_ptr<Model::MemoryModel> mMemoryModel;
 };
 
 }
