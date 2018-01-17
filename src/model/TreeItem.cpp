@@ -163,7 +163,7 @@ bool Model::TreeItem::changeTrafficSignInfo(const std::shared_ptr<Model::MemoryM
         {
             if (ItemName::scType == mData[0].toString()
                 && aValue.canConvert(QMetaType::ULongLong)
-                && LookUpTable::mTrafficSignImageMap.count(aValue.toULongLong()))
+                && LookUpTable::mTrafficSignImageMap.count(aValue.toULongLong()) > 0)
             {
                 // To change traffic sign type.
                 // Notify 3D viewer the type change and repaint

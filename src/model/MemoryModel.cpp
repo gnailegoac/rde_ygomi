@@ -174,7 +174,7 @@ std::shared_ptr<Model::TrafficSign> Model::MemoryModel::GetTrafficSignById(const
         TilePtr tile = itor.second;
         const TrafficSignMapPtr& trafficSignMap = tile->GetTrafficSignMap();
 
-        if (trafficSignMap->count(aTrafficSignId))
+        if (trafficSignMap->count(aTrafficSignId) > 0)
         {
             return trafficSignMap->at(aTrafficSignId);
         }
