@@ -18,8 +18,6 @@
 #include <QModelIndex>
 #include <QVariant>
 
-//#include "model/Curve.h"
-
 namespace Model {
 
 class MemoryModel;

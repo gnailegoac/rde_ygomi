@@ -307,6 +307,9 @@ bool Model::TreeItem::changeLaneId(const std::shared_ptr<Model::MemoryModel>& aM
                                    const uint64_t& aOldId, const uint64_t& aNewId)
 {
     // Remove old lane from Tile's mLaneMap and add new pair.
+    // The id in memory model is int, but string in logicDB
+    // Should make sure the id already exists in DB
+    // When edit/create line/lane later, need allocate id first
     bool dataChanged = false;
     LanePtr lanePtr = aMemoryModel->GetLaneById(aOldId);
     if (lanePtr)
