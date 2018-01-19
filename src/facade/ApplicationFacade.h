@@ -42,6 +42,7 @@ public:
     static const std::string SELECT_ROAD_ON_TREE;
     static const std::string SELECT_LANE_ON_TREE;
     static const std::string SELECT_LINE_ON_TREE;
+    static const std::string SELECT_SIGN_ON_TREE;
     static const std::string UNSELECT_NODE_ON_TREE;
     static const std::string SELECT_NODE_IN_3DVIEW;
     static const std::string JUMP_TO_CENTER;

@@ -44,6 +44,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::SELECT_ROAD_ON_TREE);
     result->get().push_back(ApplicationFacade::SELECT_LANE_ON_TREE);
     result->get().push_back(ApplicationFacade::SELECT_LINE_ON_TREE);
+    result->get().push_back(ApplicationFacade::SELECT_SIGN_ON_TREE);
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
     return NotificationNames(result);
@@ -91,6 +92,28 @@ View::MainWindow* View::MainWindowMediator::getMainWindow()
 {
     View::MainWindow* mainWindow = CommonFunction::ConvertToNonConstType<View::MainWindow>(getViewComponent());
     return mainWindow;
+}
+
+void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::TrafficSign>& aTrafficSign)
+{
+    if(!getMainWindow()->GetTreeView()->isVisible() || aTrafficSign == nullptr)
+    {
+        return;
+    }
+
+    QModelIndex currentIndex;
+    QTreeView* roadInfoView = getMainWindow()->GetTreeView();
+    QAbstractItemModel* model = roadInfoView->model();
+    Model::TreeModel* treeModel = dynamic_cast<Model::TreeModel*>(model);
+    QModelIndex segmentIndex = treeModel->GetItemIndex("Segment",
+                                                       aTrafficSign->GetTile()->GetTileId(),
+                                                       roadInfoView->rootIndex());
+    roadInfoView->expand(segmentIndex);
+
+    QModelIndex signModelIndex = treeModel->GetItemIndex("TrafficSign",
+                                                         aTrafficSign->GetTrafficSignId(),
+                                                         segmentIndex);
+    roadInfoView->setCurrentIndex(signModelIndex);
 }
 
 void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::Tile>& aSegment,
@@ -211,6 +234,11 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             Model::RoadPtr road = lane->GetRoad();
             selectNodeOnTree(road->GetTile(), road, lane, line);
         }
+    }
+    else if(noteName == ApplicationFacade::SELECT_SIGN_ON_TREE)
+    {
+        uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        selectNodeOnTree(getMainProxy()->GetMemoryModel()->GetTrafficSignById(id));
     }
     else if(noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
     {

@@ -41,6 +41,7 @@ const std::string ApplicationFacade::CHANGE_CAMERA = "ChangeCamera";
 const std::string ApplicationFacade::SELECT_ROAD_ON_TREE = "SelectRoadOnTree";
 const std::string ApplicationFacade::SELECT_LANE_ON_TREE = "SelectLaneOnTree";
 const std::string ApplicationFacade::SELECT_LINE_ON_TREE = "SelectLineOnTree";
+const std::string ApplicationFacade::SELECT_SIGN_ON_TREE = "SelectSignOnTree";
 const std::string ApplicationFacade::UNSELECT_NODE_ON_TREE = "UnselectNodeOnTree";
 const std::string ApplicationFacade::SELECT_NODE_IN_3DVIEW = "SelectNodeIn3DView";
 const std::string ApplicationFacade::JUMP_TO_CENTER = "JumpToCenter";

@@ -24,7 +24,8 @@ Model::TrafficSign::TrafficSign():
     mShapeHeight(0.0),
     mConfidence(0.0),
     mGeodeticPosition(std::make_shared<Point3D>()),
-    mViewPosition(std::make_shared<Point3D>())
+    mViewPosition(std::make_shared<Point3D>()),
+    mTile(nullptr)
 {
 
 }
@@ -137,4 +138,14 @@ const std::string& Model::TrafficSign::GetImagePath() const
     }
 
     return Model::LookUpTable::mDefaultTrafficSignImagePath;
+}
+
+const std::shared_ptr<Model::Tile> Model::TrafficSign::GetTile() const
+{
+    return mTile;
+}
+
+void Model::TrafficSign::SetTile(const std::shared_ptr<Model::Tile>& aTile)
+{
+    mTile = aTile;
 }

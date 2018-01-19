@@ -43,7 +43,8 @@ enum class SelectType
 {
     Road,
     Lane,
-    Line
+    Line,
+    TrafficSign
 };
 
 }

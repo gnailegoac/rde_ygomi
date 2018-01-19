@@ -20,6 +20,7 @@
 #include <osg/ref_ptr>
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/GraphicsWindow>
+#include "model/Common.h"
 
 namespace Controller
 {
@@ -54,6 +55,7 @@ public:
     void Refresh();
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
     void JumpToCenter(const osg::Vec3d& aCenter);
+    void SetSelectType(const Model::SelectType& aSelectType);
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;
@@ -71,7 +73,6 @@ protected:
 
 private:
     bool isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const;
-    void updateTrafficSignView();
 
     virtual void onHome();
     virtual void onResize(int aWidth, int aHeight);

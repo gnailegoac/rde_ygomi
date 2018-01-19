@@ -236,7 +236,6 @@ double StrokeIntersector::squreDistanceSegmentToSegment(const osg::Vec3d& aFirst
 
 void StrokeIntersector::intersect(osgUtil::IntersectionVisitor& aIntersectionVisitor, osg::Drawable* aDrawable)
 {
-    std::string nodeName = aDrawable->getName();
     osg::BoundingBox bb = aDrawable->getBoundingBox();
     bb.xMin() -= m_offset;
     bb.xMax() += m_offset;

@@ -154,6 +154,11 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
     repaint();
 }
 
+void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
+{
+    mPickHandler->SetSelectType(aSelectType);
+}
+
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
 {
     osg::Vec3d eye;
@@ -231,11 +236,6 @@ void View::OsgWidget::mouseMoveEvent(QMouseEvent* aEvent)
 
     // change traffic sign geometry if someone rotate or drag the camera
     // tightly coupled implementation! maybe refactor this code next time
-    if (isMouseButtonPressed(aEvent, 3))
-    {
-        updateTrafficSignView();
-    }
-
     // Note that we have to check the buttons mask in order to see whether the
     // left button has been pressed. A call to `button()` will only result in
     // `Qt::NoButton` for mouse move events.
@@ -335,20 +335,6 @@ bool View::OsgWidget::event(QEvent* aEvent)
 bool View::OsgWidget::isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const
 {
     return aEvent->buttons() & aButtonMask;
-}
-
-void View::OsgWidget::updateTrafficSignView()
-{
-    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
-
-    if (sceneModel)
-    {
-        auto manipulator = mView->getCameraManipulator();
-        osg::Matrixd matrix = manipulator->getMatrix();
-        sceneModel->RotateTrafficSign(matrix);
-        paintGL();
-    }
 }
 
 void View::OsgWidget::onHome()
