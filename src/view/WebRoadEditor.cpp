@@ -13,11 +13,13 @@
 
 #include <QJsonDocument>
 
+#include "facade/ApplicationFacade.h"
 #include "WebRoadEditor.h"
 
 namespace
 {
 const QString scCameraMatrixChange = "dataHandler.setCameraMatrix(%1)";
+const QString scPushRoadTile = "dataHandler.pushRoadTile(%1)";
 }
 
 WebGlobeChannelObject::WebGlobeChannelObject(QObject* aParent) :
@@ -40,6 +42,13 @@ void WebGlobeChannelObject::setCameraMatrix(QJsonArray aMatrix)
     emit cameraMatrixChanged(matrix);
 }
 
+void WebGlobeChannelObject::fetchRoadListByTile(QJsonValue aLevel, QJsonValue aTileId)
+{
+    int level = aLevel.toInt();
+    std::uint64_t tileId = static_cast<std::uint64_t>(aTileId.toDouble());
+    emit requestRoadsInTile(level, tileId);
+}
+
 WebRoadEditor::WebRoadEditor() :
     mWebChannelObject(new WebGlobeChannelObject())
 {
@@ -50,7 +59,7 @@ WebRoadEditor::WebRoadEditor() :
 
 WebRoadEditor::~WebRoadEditor()
 {
-
+    mWebChannel.deregisterObject(mWebChannelObject.data());
 }
 
 void WebRoadEditor::ChangeCameraMatrix(const QJsonArray& aMatrix)
@@ -60,11 +69,25 @@ void WebRoadEditor::ChangeCameraMatrix(const QJsonArray& aMatrix)
     page()->runJavaScript(command);
 }
 
+void WebRoadEditor::SendRoadsInTile(const QJsonArray& aRoadArray)
+{
+    QString roadString(QJsonDocument(aRoadArray).toJson());
+    QString command = scPushRoadTile.arg(roadString);
+    page()->runJavaScript(command);
+}
+
 void WebRoadEditor::setupConnections()
 {
     connect(mWebChannelObject.data(), &WebGlobeChannelObject::cameraMatrixChanged,
             [=](const osg::Matrixd& aMatrix)
     {
         emit cameraMatrixChanged(aMatrix);
+    });
+
+    connect(mWebChannelObject.data(), &WebGlobeChannelObject::requestRoadsInTile,
+            [=](const std::uint64_t& aLevel, const std::uint64_t& aTileId)
+    {
+        std::pair<std::uint64_t, std::uint64_t> tileInfo = std::make_pair(aLevel, aTileId);
+        ApplicationFacade::SendNotification(ApplicationFacade::REQUEST_ROADS_IN_TILE, &tileInfo);
     });
 }

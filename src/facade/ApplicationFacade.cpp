@@ -44,6 +44,7 @@ const std::string ApplicationFacade::SELECT_LINE_ON_TREE = "SelectLineOnTree";
 const std::string ApplicationFacade::UNSELECT_NODE_ON_TREE = "UnselectNodeOnTree";
 const std::string ApplicationFacade::SELECT_NODE_IN_3DVIEW = "SelectNodeIn3DView";
 const std::string ApplicationFacade::JUMP_TO_CENTER = "JumpToCenter";
+const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {

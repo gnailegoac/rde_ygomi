@@ -14,16 +14,25 @@
 #pragma once
 
 #include <QJsonArray>
+#include <QJsonObject>
 #include <osg/Matrixd>
+
+#include "model/Tile.h"
+#include "model/Line.h"
 
 namespace Model
 {
 
 class GeoJsonConverter
 {
-  public:
+public:
     GeoJsonConverter();
 
     QJsonArray Convert(const osg::Matrixd &aMatrix);
+    QJsonArray Convert(int aLevel, TileConstPtr& aTile);
+
+private:
+    QJsonObject convert(int aLevel, const LinePtr& aLine);
+    QJsonArray convert(const PaintListPtr& aPaintList);
 };
 }

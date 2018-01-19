@@ -80,6 +80,11 @@ void View::MainWindow::ChangeCameraMatrix(const QJsonArray& aMatrix)
     ui->webRoadEditor->ChangeCameraMatrix(aMatrix);
 }
 
+void View::MainWindow::SendRoadsInTile(const QJsonArray& aRoadArray)
+{
+    ui->webRoadEditor->SendRoadsInTile(aRoadArray);
+}
+
 QTreeView* View::MainWindow::GetTreeView() const
 {
     return mRoadInfoView;
