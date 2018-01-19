@@ -25,6 +25,7 @@ class Tile;
 class Road;
 class Lane;
 class Line;
+class TrafficSign;
 }
 
 class MainProxy;
@@ -46,6 +47,7 @@ private:
                           const std::shared_ptr<Model::Road> aRoad,
                           const std::shared_ptr<Model::Lane>& aLane = nullptr,
                           const std::shared_ptr<Model::Line>& aLine = nullptr);
+    void selectNodeOnTree(const std::shared_ptr<Model::TrafficSign>& aTrafficSign);
 private:
     View::MainWindow* getMainWindow();
     MainProxy* getMainProxy();

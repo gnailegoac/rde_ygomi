@@ -14,6 +14,8 @@
 #pragma once
 
 #include <osgGA/GUIEventHandler>
+#include <osgUtil/PolytopeIntersector>
+#include "model/Common.h"
 
 class StrokeIntersector;
 namespace Controller
@@ -27,8 +29,18 @@ public:
     bool handle(const osgGA::GUIEventAdapter& aEventAdapter,
                         osgGA::GUIActionAdapter& aActionAdapter) override;
 
+    void SetSelectType(const Model::SelectType& aSelectType);
+
 private:
     osg::ref_ptr<StrokeIntersector> getStrokeIntersector(const osgGA::GUIEventAdapter& aEventAdapter);
+    osg::ref_ptr<osgUtil::PolytopeIntersector> getPolytopeIntersector(
+        const osgGA::GUIEventAdapter& aEventAdapter,
+        const double& aWidth = 0.01,
+        const double& aHeight = 0.01);
+    std::vector<osg::Node*> getNodesFromPolytopeIntersector(const osg::ref_ptr<osgUtil::PolytopeIntersector>& aPolytopeIntersector);
+    std::vector<osg::Node*> getNodesFromStrokeIntersector(const osg::ref_ptr<StrokeIntersector>& aStrokeIntersector);
+private:
     double mDevicePixelRatio;
+    Model::SelectType mSelectType;
 };
 }

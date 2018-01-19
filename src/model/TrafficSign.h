@@ -27,6 +27,7 @@ class ICoordinateTransform;
 namespace Model
 {
 
+class Tile;
 class TrafficSign : public Element
 {
 public:
@@ -60,6 +61,8 @@ public:
 
     const std::string& GetImagePath() const;
 
+    const std::shared_ptr<Model::Tile> GetTile() const;
+    void SetTile(const std::shared_ptr<Model::Tile>& aTile);
 private:
     std::uint64_t mTrafficSignId;
     std::uint64_t mTrafficSignType;
@@ -69,6 +72,7 @@ private:
     float mConfidence;
     Point3DPtr mGeodeticPosition;
     Point3DPtr mViewPosition;
+    std::shared_ptr<Model::Tile> mTile;
 };
 
 typedef std::shared_ptr<TrafficSign> TrafficSignPtr;

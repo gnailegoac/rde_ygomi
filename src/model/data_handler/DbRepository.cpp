@@ -358,6 +358,7 @@ void Model::DbRepository::queryTrafficSigns(std::shared_ptr<MemoryModel>& aMemor
                 TrafficSignPtr trafficSign = tile->GetMutableTrafficSign(trafficSignId);
 
                 trafficSign->SetTrafficSignId(trafficSignId);
+                trafficSign->SetTile(tile);
                 trafficSign->SetOrientation(query.getColumn(3).getDouble());
                 trafficSign->SetTrafficSignType((std::uint64_t)query.getColumn(2).getInt64());
                 trafficSign->SetConfidence(query.getColumn(6).getDouble());

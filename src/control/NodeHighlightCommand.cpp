@@ -14,6 +14,7 @@
 #include <QString>
 #include <osg/Node>
 #include <osg/Material>
+#include <osg/ShapeDrawable>
 #include "facade/ApplicationFacade.h"
 #include "CommonFunction.h"
 #include "model/Utilities.h"
@@ -120,6 +121,12 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
             mSelectNodeName = nodeName;
             break;
         }
+        else if(mSelectType == Model::SelectType::TrafficSign && nodeName.find("Sign") != std::string::npos)
+        {
+            nodeList.push_back(node);
+            mSelectNodeName = nodeName;
+            break;
+        }
     }
 
     return nodeList;
@@ -139,6 +146,10 @@ void Controller::NodeHighlightCommand::highlightNodeOnTreeView()
     else if(mSelectType == Model::SelectType::Line)
     {
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_LINE_ON_TREE, &id);
+    }
+    else if(mSelectType == Model::SelectType::TrafficSign)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_SIGN_ON_TREE, &id);
     }
 }
 
@@ -213,6 +224,11 @@ void Controller::NodeHighlightCommand::selectNodeIn3DView(const std::string& aNa
         std::shared_ptr<Model::SceneModel> sceneModel = getMainProxy()->GetSceneModel();
         mSelectNodes.push_back(sceneModel->GetLineNodeById(QString::fromStdString(aValue).toULongLong()));
     }
+    else if(aName == "TrafficSign")
+    {
+        std::shared_ptr<Model::SceneModel> sceneModel = getMainProxy()->GetSceneModel();
+        mSelectNodes.push_back(sceneModel->GetTrafficSignNodeById(QString::fromStdString(aValue).toULongLong()));
+    }
     else
     {
         return;
@@ -230,16 +246,32 @@ std::string Controller::NodeHighlightCommand::GetCommandName()
     return "NodeHighlightCommand";
 }
 
+void Controller::NodeHighlightCommand::setSignNodeColor(osg::Node* aSignNode, const osg::Vec4& aColor)
+{
+    osg::Geode* geode = dynamic_cast<osg::Geode*>(aSignNode);
+    osg::Drawable* drawable = geode->getDrawable(0);
+    osg::ShapeDrawable* shapeDrawable = dynamic_cast<osg::ShapeDrawable*>(drawable);
+    shapeDrawable->setColor(aColor);
+}
+
 void Controller::NodeHighlightCommand::highlightNode()
 {
     for(auto node : mSelectNodes)
     {
-        osg::ref_ptr<osg::Material> material = new osg::Material;
-        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-        material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
-        node->getOrCreateStateSet()->setAttributeAndModes(material,
-                                                          osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+        std::string name = node->getName();
+        if(name.find("Sign") != std::string::npos)
+        {
+            setSignNodeColor(node, osg::Vec4(1.0, 0.0, 0.0, 0.9));
+        }
+        else
+        {
+            osg::ref_ptr<osg::Material> material = new osg::Material;
+            material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+            material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+            material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
+            node->getOrCreateStateSet()->setAttributeAndModes(material,
+                                                              osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+        }
     }
 }
 
@@ -247,11 +279,19 @@ void Controller::NodeHighlightCommand::dehighlightNode()
 {
     for(auto node : mSelectNodes)
     {
-        osg::ref_ptr<osg::Material> material = new osg::Material;
-        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-        material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
-        node->getOrCreateStateSet()->setAttributeAndModes(material,
-                                                          osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+        std::string name = node->getName();
+        if(name.find("Sign") != std::string::npos)
+        {
+             setSignNodeColor(node, osg::Vec4(1.0, 1.0, 1.0, 0.9));
+        }
+        else
+        {
+            osg::ref_ptr<osg::Material> material = new osg::Material;
+            material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0, 0.0, 1.0));
+            material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0, 0.0, 1.0));
+            material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
+            node->getOrCreateStateSet()->setAttributeAndModes(material,
+                                                              osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+        }
     }
 }

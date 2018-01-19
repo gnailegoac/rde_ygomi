@@ -63,6 +63,7 @@
     <addaction name="actionSelectRoad"/>
     <addaction name="actionSelectLane"/>
     <addaction name="actionSelectLine"/>
+    <addaction name="actionSelectSign"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -147,8 +148,16 @@
    </property>
    <property name="text">
     <string>Select Line</string>
-    </property>
-   </action>
+   </property>
+  </action>
+  <action name="actionSelectSign">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Sign</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

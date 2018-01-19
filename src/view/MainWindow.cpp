@@ -126,6 +126,10 @@ void View::MainWindow::setupConnections()
         onSelectTypeChange(Model::SelectType::Line, ui->actionSelectLine->isChecked());
     });
 
+    connect(ui->actionSelectSign, &QAction::triggered, [=]() {
+        onSelectTypeChange(Model::SelectType::TrafficSign, ui->actionSelectSign->isChecked());
+    });
+
     connect(ui->webRoadEditor, &WebRoadEditor::cameraMatrixChanged,
             [=](const osg::Matrixd& aMatrix)
     {
@@ -159,6 +163,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         {
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectLane->setChecked(false);
+            ui->actionSelectSign->setChecked(false);
         }
     }
     else if (aSelectType == Model::SelectType::Lane)
@@ -172,6 +177,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         {
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectRoad->setChecked(false);
+            ui->actionSelectSign->setChecked(false);
         }
     }
     else if (aSelectType == Model::SelectType::Line)
@@ -185,6 +191,21 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         {
             ui->actionSelectRoad->setChecked(false);
             ui->actionSelectLane->setChecked(false);
+            ui->actionSelectSign->setChecked(false);
+        }
+    }
+    else if (aSelectType == Model::SelectType::TrafficSign)
+    {
+        if (!aIsChecked)
+        {
+            ui->actionSelectLine->setChecked(true);
+            selectType = Model::SelectType::Line;
+        }
+        else
+        {
+            ui->actionSelectRoad->setChecked(false);
+            ui->actionSelectLane->setChecked(false);
+            ui->actionSelectLine->setChecked(false);
         }
     }
     else
@@ -192,6 +213,8 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         return;
     }
 
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    viewer->SetSelectType(aSelectType);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_SELECT_TYPE, &selectType);
 }
 

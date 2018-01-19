@@ -22,7 +22,8 @@
 #include "facade/ApplicationFacade.h"
 
 Controller::PickHandler::PickHandler(double aDevicePixelRatio):
-    mDevicePixelRatio(aDevicePixelRatio)
+    mDevicePixelRatio(aDevicePixelRatio),
+    mSelectType(Model::SelectType::Line)
 {
 }
 
@@ -42,6 +43,68 @@ osg::ref_ptr<StrokeIntersector> Controller::PickHandler::getStrokeIntersector(co
     return picker;
 }
 
+void Controller::PickHandler::SetSelectType(const Model::SelectType& aSelectType)
+{
+    mSelectType = aSelectType;
+}
+
+osg::ref_ptr<osgUtil::PolytopeIntersector> Controller::PickHandler::getPolytopeIntersector(
+    const osgGA::GUIEventAdapter& aEventAdapter,
+    const double& aWidth,
+    const double& aHeight)
+{
+    float centerX = aEventAdapter.getXnormalized();
+    float centerY = aEventAdapter.getYnormalized();
+    osg::ref_ptr<osgUtil::PolytopeIntersector> picker(
+        new osgUtil::PolytopeIntersector(
+                osgUtil::Intersector::PROJECTION,
+                centerX - aWidth,
+                centerY - aHeight,
+                centerX + aWidth,
+                centerY + aHeight));
+    return picker;
+}
+
+std::vector<osg::Node*> Controller::PickHandler::getNodesFromStrokeIntersector(const osg::ref_ptr<StrokeIntersector>& aStrokeIntersector)
+{
+    std::vector<osg::Node*> nodeList;
+    if(!aStrokeIntersector->containsIntersections())
+    {
+        return nodeList;
+    }
+
+    for(auto intersection : aStrokeIntersector->getIntersections())
+    {
+       const osg::NodePath& intersectionNodes = intersection.nodePath;
+       for(osg::Node* node : intersectionNodes)
+       {
+           nodeList.push_back(node);
+       }
+    }
+
+    return nodeList;
+}
+
+std::vector<osg::Node*> Controller::PickHandler::getNodesFromPolytopeIntersector(const osg::ref_ptr<osgUtil::PolytopeIntersector>& aPolytopeIntersector)
+{
+    std::vector<osg::Node*> nodeList;
+    if(!aPolytopeIntersector->containsIntersections())
+    {
+        return nodeList;
+    }
+
+    for(auto intersection : aPolytopeIntersector->getIntersections())
+    {
+       const osg::NodePath& intersectionNodes = intersection.nodePath;
+       for(osg::Node* node : intersectionNodes)
+       {
+           nodeList.push_back(node);
+       }
+    }
+
+    return nodeList;
+}
+
 bool Controller::PickHandler::handle(const osgGA::GUIEventAdapter& aEventAdapter,
                                      osgGA::GUIActionAdapter& aActionAdapter)
 {
@@ -55,33 +118,44 @@ bool Controller::PickHandler::handle(const osgGA::GUIEventAdapter& aEventAdapter
 
     if(viewer != nullptr)
     {
-        osg::ref_ptr<StrokeIntersector> strokeIntersector = getStrokeIntersector(aEventAdapter);
-        osgUtil::IntersectionVisitor intersectionVisitor(strokeIntersector);
+        osg::ref_ptr<osgUtil::IntersectionVisitor> intersectionVisitor;
+        osg::ref_ptr<StrokeIntersector> strokeIntersector;
+        osg::ref_ptr<osgUtil::PolytopeIntersector> polytopeIntersector;
+        if(mSelectType != Model::SelectType::TrafficSign)
+        {
+            strokeIntersector = getStrokeIntersector(aEventAdapter);
+            intersectionVisitor = new osgUtil::IntersectionVisitor(strokeIntersector);
+        }
+        else
+        {
+            polytopeIntersector = getPolytopeIntersector(aEventAdapter);
+            intersectionVisitor = new osgUtil::IntersectionVisitor(polytopeIntersector);
+        }
+
         osg::Camera* aCamera = viewer->getCamera();
         if(aCamera == nullptr)
         {
             return false;
         }
 
-        aCamera->accept(intersectionVisitor);
+        aCamera->accept(*intersectionVisitor);
 
         std::vector<osg::Node*> nodeList;
-        if(!strokeIntersector->containsIntersections())
+        if(strokeIntersector != nullptr)
         {
-            ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE, &nodeList);
-            return false;
+            nodeList = getNodesFromStrokeIntersector(strokeIntersector);
         }
-
-        for(auto intersection : strokeIntersector->getIntersections())
+        else if(polytopeIntersector != nullptr)
         {
-           const osg::NodePath& intersectionNodes = intersection.nodePath;
-           for(osg::Node* node : intersectionNodes)
-           {
-               nodeList.push_back(node);
-           }
+            nodeList = getNodesFromPolytopeIntersector(polytopeIntersector);
         }
 
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE, &nodeList);
+
+        if(nodeList.empty())
+        {
+            return false;
+        }
     }
 
     return true;

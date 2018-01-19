@@ -14,6 +14,7 @@
 
 #include "BasicCommand.h"
 #include "model/Common.h"
+#include <osg/Vec4>
 
 namespace osg
 {
@@ -39,6 +40,7 @@ private:
     void clearSelectNodes(bool aNeedClearNodeOnTree = true);
     void selectNodeIn3DView(const std::string& aName, const std::string& aValue);
     void jumpToNode(const osg::Node* aNode);
+    void setSignNodeColor(osg::Node* aSignNode, const osg::Vec4& aColor);
 private:
     std::vector<osg::Node*> mSelectNodes;
     Model::SelectType mSelectType;
