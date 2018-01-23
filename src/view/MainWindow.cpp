@@ -33,6 +33,7 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
     this->setCentralWidget(new View::OsgWidget(this));
     restoreSettings();
     setupConnections();
+    EnableSaveAction(false);
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
     mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
@@ -295,4 +296,10 @@ void View::MainWindow::on_actionKML_triggered()
     {
         ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
     }
+}
+
+void View::MainWindow::EnableSaveAction(bool aEnable)
+{
+    ui->actionSave->setEnabled(aEnable);
+    ui->actionKML->setEnabled(aEnable);
 }

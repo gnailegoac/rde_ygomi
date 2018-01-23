@@ -51,6 +51,8 @@ public:
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
+    void EnableSaveAction(bool aEnable);
+
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;

@@ -171,6 +171,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     std::string noteName = aNotification.getName();
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
+        getMainWindow()->EnableSaveAction(true);
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
         ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
     }
@@ -180,6 +181,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
+            getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
         }
         else
