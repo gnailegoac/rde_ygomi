@@ -19,7 +19,8 @@
 namespace
 {
 const QString scCameraMatrixChange = "dataHandler.setCameraMatrix(%1)";
-const QString scPushRoadTile = "dataHandler.pushRoadTile(%1)";
+const QString scPushRoadTile = "dataHandler.pushRoadTile(%1,%2)";
+const QString scEntireRoadTiles = "dataHandler.pushEntireRoadTilesExtent(%1)";
 }
 
 WebGlobeChannelObject::WebGlobeChannelObject(QObject* aParent) :
@@ -69,10 +70,17 @@ void WebRoadEditor::ChangeCameraMatrix(const QJsonArray& aMatrix)
     page()->runJavaScript(command);
 }
 
-void WebRoadEditor::SendRoadsInTile(const QJsonArray& aRoadArray)
+void WebRoadEditor::SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray)
 {
     QString roadString(QJsonDocument(aRoadArray).toJson());
-    QString command = scPushRoadTile.arg(roadString);
+    QString command = scPushRoadTile.arg(aLevel).arg(roadString);
+    page()->runJavaScript(command);
+}
+
+void WebRoadEditor::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
+{
+    QString tileArray(QJsonDocument(aTileArray).toJson());
+    QString command = scEntireRoadTiles.arg(tileArray);
     page()->runJavaScript(command);
 }
 

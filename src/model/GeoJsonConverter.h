@@ -19,6 +19,7 @@
 
 #include "model/Tile.h"
 #include "model/Line.h"
+#include "model/MemoryModel.h"
 
 namespace Model
 {
@@ -30,9 +31,11 @@ public:
 
     QJsonArray Convert(const osg::Matrixd &aMatrix);
     QJsonArray Convert(int aLevel, TileConstPtr& aTile);
+    QJsonArray GetTileExtent(const std::shared_ptr<MemoryModel>& aMemoryModel);
 
 private:
     QJsonObject convert(int aLevel, const LinePtr& aLine);
     QJsonArray convert(const PaintListPtr& aPaintList);
+    QJsonObject getTileBound(const TilePtr& aTile);
 };
 }

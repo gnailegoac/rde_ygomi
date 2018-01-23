@@ -169,6 +169,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
+        // send tiles to web viewer.
+        QJsonArray tileArray;
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if (memoryModel != nullptr)
+        {
+            tileArray = Model::GeoJsonConverter().GetTileExtent(memoryModel);
+            getMainWindow()->PushEntireRoadTilesExtent(tileArray);
+        }
         mainWindow->SetTreeModel(getMainProxy()->GetTreeModel());
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
@@ -234,9 +242,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             Model::TileConstPtr tilePtr = memoryModel->GetTile(tileInfo.second);
             if (tilePtr != nullptr)
             {
-                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
+//                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
+                roadsArray = Model::GeoJsonConverter().Convert(1, tilePtr);
             }
-            getMainWindow()->SendRoadsInTile(roadsArray);
+            getMainWindow()->SendRoadsInTile(tileInfo.first, roadsArray);
         }
     }
 }

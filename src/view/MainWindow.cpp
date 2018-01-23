@@ -80,9 +80,14 @@ void View::MainWindow::ChangeCameraMatrix(const QJsonArray& aMatrix)
     ui->webRoadEditor->ChangeCameraMatrix(aMatrix);
 }
 
-void View::MainWindow::SendRoadsInTile(const QJsonArray& aRoadArray)
+void View::MainWindow::SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray)
 {
-    ui->webRoadEditor->SendRoadsInTile(aRoadArray);
+    ui->webRoadEditor->SendRoadsInTile(aLevel, aRoadArray);
+}
+
+void View::MainWindow::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
+{
+    ui->webRoadEditor->PushEntireRoadTilesExtent(aTileArray);
 }
 
 QTreeView* View::MainWindow::GetTreeView() const

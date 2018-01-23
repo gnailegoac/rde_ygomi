@@ -42,7 +42,8 @@ public:
     ~WebRoadEditor();
 
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
-    void SendRoadsInTile(const QJsonArray& aRoadArray);
+    void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
+    void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);

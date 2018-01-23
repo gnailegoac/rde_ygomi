@@ -17,6 +17,7 @@
 #include <QVector>
 
 #include "CoordinateTransform/Factory.h"
+#include "model/MemoryModel.h"
 
 Model::GeoJsonConverter::GeoJsonConverter()
 {
@@ -105,6 +106,29 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
     return roadArray;
 }
 
+QJsonObject Model::GeoJsonConverter::getTileBound(const Model::TilePtr& aTile)
+{
+    QJsonObject tileObj;
+    tileObj["id"] = static_cast<double>(aTile->GetTileId());
+    const Point3DPtr& refPt = aTile->GetReferencePoint();
+    double ut = 180.0 / std::pow(2, 13);
+    QJsonArray leftBottom({refPt->GetX(), refPt->GetY()});
+    QJsonArray rightTop({refPt->GetX() + ut, refPt->GetY() + ut});
+    tileObj["extent"] = QJsonArray({leftBottom, rightTop});
+    return tileObj;
+}
+
+QJsonArray Model::GeoJsonConverter::GetTileExtent(const std::shared_ptr<Model::MemoryModel>& aMemoryModel)
+{
+    QJsonArray tileExtent;
+    const TileMapPtr& tileMap = aMemoryModel->GetTileMap();
+    for (const auto& tile : (*tileMap))
+    {
+        tileExtent.append(getTileBound(tile.second));
+    }
+    return tileExtent;
+}
+
 QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& aLine)
 {
     QJsonObject lineObj;
@@ -114,8 +138,8 @@ QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& a
         switch (aLine->GetCurve(0)->GetCurveType())
         {
         case CurveType::Solid:
-            lineObj["type"] = "solid";
-            break;
+//            lineObj["type"] = "solid";
+//            break;
         case CurveType::Dashed:
             lineObj["type"] = "dash";
             break;
@@ -153,6 +177,11 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
                 ecefToWgs84->Transform(x, y, z);
                 pointList.push_back(QJsonArray({x, y, z}));
             }
+//            if (aPaintList->size() == 1)
+//            {
+//                // for solid line, the JSON content should be an array of points.
+//                return pointList;
+//            }
             pointListArray.push_back(pointList);
         }
     }
