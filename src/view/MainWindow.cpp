@@ -284,7 +284,7 @@ void View::MainWindow::on_actionSave_triggered()
     QString folderPath = getSelectedDirectory();
     if (folderPath.length() > 0)
     {
-        ApplicationFacade::SendNotification(ApplicationFacade::LOGICDB_SAVE, &folderPath);
+        ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
     }
 }
 

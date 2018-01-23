@@ -46,7 +46,7 @@ public:
     static const std::string UNSELECT_NODE_ON_TREE;
     static const std::string SELECT_NODE_IN_3DVIEW;
     static const std::string JUMP_TO_CENTER;
-    static const std::string LOGICDB_SAVE;
+    static const std::string SAVE_LOGICDB;
     static const std::string EXPORT_TO_KML;
     static const std::string NOTIFY_RESULT;
 

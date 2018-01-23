@@ -46,7 +46,7 @@ const std::string ApplicationFacade::SELECT_SIGN_ON_TREE = "SelectSignOnTree";
 const std::string ApplicationFacade::UNSELECT_NODE_ON_TREE = "UnselectNodeOnTree";
 const std::string ApplicationFacade::SELECT_NODE_IN_3DVIEW = "SelectNodeIn3DView";
 const std::string ApplicationFacade::JUMP_TO_CENTER = "JumpToCenter";
-const std::string ApplicationFacade::LOGICDB_SAVE = "LogicDBSave";
+const std::string ApplicationFacade::SAVE_LOGICDB = "SaveLogicDB";
 const std::string ApplicationFacade::EXPORT_TO_KML = "ExportToKML";
 const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 
@@ -117,7 +117,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[START_UP] = Controller::StartUpCommand::GetCommandName();
     mMessageList[FOLDER_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
-    mMessageList[LOGICDB_SAVE] = Controller::FileSerializeCommand::GetCommandName();
+    mMessageList[SAVE_LOGICDB] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[EXPORT_TO_KML] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
     mMessageList[SELECT_NODE] = Controller::NodeHighlightCommand::GetCommandName();

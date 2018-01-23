@@ -40,7 +40,7 @@ void Controller::FileSerializeCommand::execute(const PureMVC::Interfaces::INotif
     {
         QString folderPath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
 
-        if (aNotification.getName() == ApplicationFacade::LOGICDB_SAVE)
+        if (aNotification.getName() == ApplicationFacade::SAVE_LOGICDB)
         {
             Model::IFactoryPtr factory = Model::Factory::CreateLogicDbFactory(folderPath.toStdString());
             Model::ISerializerPtr serializer = factory->CreateSerializer();
