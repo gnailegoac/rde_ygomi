@@ -301,5 +301,5 @@ void View::MainWindow::on_actionKML_triggered()
 void View::MainWindow::EnableSaveAction(bool aEnable)
 {
     ui->actionSave->setEnabled(aEnable);
-    ui->actionKML->setEnabled(aEnable);
+    ui->menuExport->setEnabled(aEnable);
 }
