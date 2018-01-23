@@ -47,6 +47,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::SELECT_SIGN_ON_TREE);
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
+    result->get().push_back(ApplicationFacade::NOTIFY_RESULT);
     return NotificationNames(result);
 }
 
@@ -205,7 +206,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
         mainWindow->ChangeCameraMatrix(cameraMatrix);
     }
-    else if(noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::RoadPtr road = getMainProxy()->GetMemoryModel()->GetRoadById(id);
@@ -214,7 +215,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_LANE_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_LANE_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::LanePtr lane = getMainProxy()->GetMemoryModel()->GetLaneById(id);
@@ -224,7 +225,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road, lane);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_LINE_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_LINE_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::LinePtr line = getMainProxy()->GetMemoryModel()->GetLineById(id);
@@ -235,19 +236,24 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road, lane, line);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_SIGN_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_SIGN_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         selectNodeOnTree(getMainProxy()->GetMemoryModel()->GetTrafficSignById(id));
     }
-    else if(noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
+    else if (noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
     {
         getMainWindow()->GetTreeView()->clearSelection();
     }
-    else if(noteName == ApplicationFacade::JUMP_TO_CENTER)
+    else if (noteName == ApplicationFacade::JUMP_TO_CENTER)
     {
         osg::Vec3d center = *CommonFunction::ConvertToNonConstType<osg::Vec3d>(aNotification.getBody());
         getMainWindow()->JumpToCenter(center);
+    }
+    else if (noteName == ApplicationFacade::NOTIFY_RESULT)
+    {
+        QString message = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
+        getMainWindow()->PopupInfoMessage(message);
     }
 }
 

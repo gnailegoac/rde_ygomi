@@ -45,6 +45,11 @@ void View::MainWindow::PopupWarningMessage(const QString &aWarning)
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
 }
 
+void View::MainWindow::PopupInfoMessage(const QString& aMessage)
+{
+    QMessageBox::information(this, windowTitle(), aMessage, "Close");
+}
+
 osg::Polytope View::MainWindow::GetPolytope()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
@@ -257,4 +262,37 @@ void View::MainWindow::writeSettings()
     settings.beginGroup("ui");
     settings.setValue("mainwindow/geometry", saveGeometry());
     settings.endGroup();
+}
+
+QString View::MainWindow::getSelectedDirectory()
+{
+    QString folderPath;
+    QFileDialog fileDialog(this, "Select Output Folder", "/");
+    fileDialog.setFileMode(QFileDialog::Directory);
+    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
+    fileDialog.setLabelText(QFileDialog::Accept, "Save");
+    if (fileDialog.exec())
+    {
+        QDir dir = fileDialog.directory();
+        folderPath = dir.absolutePath();
+    }
+    return folderPath;
+}
+
+void View::MainWindow::on_actionSave_triggered()
+{
+    QString folderPath = getSelectedDirectory();
+    if (folderPath.length() > 0)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::LOGICDB_SAVE, &folderPath);
+    }
+}
+
+void View::MainWindow::on_actionKML_triggered()
+{
+    QString folderPath = getSelectedDirectory();
+    if (folderPath.length() > 0)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
+    }
 }

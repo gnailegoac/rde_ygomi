@@ -42,6 +42,7 @@ public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
+    void PopupInfoMessage(const QString& aMessage);
     osg::Polytope GetPolytope();
     void UpdateView();
     void ShowRoadInfo();
@@ -54,7 +55,12 @@ protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
 
+private slots:
+    void on_actionSave_triggered();
+    void on_actionKML_triggered();
+
 private:
+    QString getSelectedDirectory();
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();

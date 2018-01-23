@@ -76,7 +76,8 @@ SOURCES +=\
     model/data_handler/KMLFactory.cpp \
     model/data_handler/KMLSerializer.cpp \
     model/data_handler/KMLInterpreter.cpp \
-    model/LookUpTable.cpp
+    model/LookUpTable.cpp \
+    control/FileSerializeCommand.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -132,7 +133,8 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/KMLSerializer.h \
     model/data_handler/KMLInterpreter.h \
     model/LookUpTable.h \
-    model/GeoJsonConverter.h
+    model/GeoJsonConverter.h \
+    control/FileSerializeCommand.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
