@@ -16,6 +16,7 @@
 #include "SQLiteCpp/Database.h"
 #include "SQLiteCpp/Transaction.h"
 #include "SQLiteCpp/Statement.h"
+#include "CoordinateTransform/Factory.h"
 
 #include "DbParseException.h"
 #include "../MemoryModel.h"
@@ -729,6 +730,7 @@ void Model::DbRepository::storeLanes(const std::shared_ptr<MemoryModel>& aMemory
 void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& aMemoryModel) const
 {
     std::string sqlText("");
+    std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
 
     try
     {
@@ -738,11 +740,25 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
             TilePtr tile = aMemoryModel->GetMutableTile(segmentId);
             const TrafficSignMapPtr& trafficSignMap = tile->GetTrafficSignMap();
 
+            const Point3DPtr& referencePoint = tile->GetReferencePoint();
+            std::unique_ptr<CRS::ICoordinateTransform> wgs84ToRelative =
+                            factory->CreateRelativeTransform(CRS::CoordinateType::Wgs84,
+                                                             CRS::CoordinateType::Relative,
+                                                             referencePoint->GetX(),
+                                                             referencePoint->GetY(),
+                                                             referencePoint->GetZ());
+
             SQLite::Transaction transaction(*mDatabase);
 
             for (auto& itorTrafficSign : *trafficSignMap)
             {
                 const TrafficSignPtr& trafficSign = itorTrafficSign.second;
+                const Point3DPtr& geodetic = trafficSign->GetGeodeticPosition();
+                double l = geodetic->GetX();
+                double b = geodetic->GetY();
+                double z = geodetic->GetZ();
+                wgs84ToRelative->Transform(l, b, z);
+                Point3D relative(l, b, z);
 
                 sqlText = "INSERT INTO " + trafficSignTable
                           + "(ID,SegmentID,Type,Orientation,ShapeWidth,ShapeHeight,Confidence,GPS) VALUES ("
@@ -753,7 +769,7 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                           + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ",'"
-                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + "')";
+                          + relative.FormatPoint(13, 13, 13) + "')";
                 mDatabase->exec(sqlText);
             }
 
