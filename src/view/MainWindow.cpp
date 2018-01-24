@@ -111,6 +111,22 @@ void View::MainWindow::setupConnections()
         }
     });
 
+    connect(ui->actionSave, &QAction::triggered, [=]() {
+        QString folderPath = getSelectedDirectory();
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
+        }
+    });
+
+    connect(ui->actionKML, &QAction::triggered, [=]() {
+        QString folderPath = getSelectedDirectory();
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
+        }
+    });
+
     connect(ui->actionPreference, &QAction::triggered, [=]() {
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
@@ -278,24 +294,6 @@ QString View::MainWindow::getSelectedDirectory()
         folderPath = dir.absolutePath();
     }
     return folderPath;
-}
-
-void View::MainWindow::on_actionSave_triggered()
-{
-    QString folderPath = getSelectedDirectory();
-    if (folderPath.length() > 0)
-    {
-        ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
-    }
-}
-
-void View::MainWindow::on_actionKML_triggered()
-{
-    QString folderPath = getSelectedDirectory();
-    if (folderPath.length() > 0)
-    {
-        ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
-    }
 }
 
 void View::MainWindow::EnableSaveAction(bool aEnable)

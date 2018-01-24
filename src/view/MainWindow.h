@@ -57,10 +57,6 @@ protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
 
-private slots:
-    void on_actionSave_triggered();
-    void on_actionKML_triggered();
-
 private:
     QString getSelectedDirectory();
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
