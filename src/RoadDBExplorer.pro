@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../external.pri)
 
-LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl
+LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl -lprotobuf
 
 SOURCES +=\
     RoadDBExplorer.cpp \
@@ -77,7 +77,11 @@ SOURCES +=\
     model/data_handler/KMLSerializer.cpp \
     model/data_handler/KMLInterpreter.cpp \
     model/LookUpTable.cpp \
-    control/FileSerializeCommand.cpp
+    control/FileSerializeCommand.cpp \
+    model/data_handler/RoadSection.pb.cpp \
+    model/data_handler/ProtoBufferFactory.cpp \
+    model/data_handler/ProtoBufferSerializer.cpp \
+    model/data_handler/ProtoBufferInterpreter.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -134,7 +138,11 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/KMLInterpreter.h \
     model/LookUpTable.h \
     model/GeoJsonConverter.h \
-    control/FileSerializeCommand.h
+    control/FileSerializeCommand.h \
+    model/data_handler/RoadSection.pb.h \
+    model/data_handler/ProtoBufferFactory.h \
+    model/data_handler/ProtoBufferSerializer.h \
+    model/data_handler/ProtoBufferInterpreter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui
