@@ -297,6 +297,8 @@ void Model::DbRepository::queryLanes(std::shared_ptr<MemoryModel>& aMemoryModel)
                 avgSlamTrace->SetLane(lane);
 
                 std::uint64_t roadId = (std::uint64_t)query.getColumn(0).getInt64();
+                aMemoryModel->SaveRoadId(roadId);
+
                 RoadPtr road = tile->GetMutableRoad(roadId);
                 road->SetTile(tile);
                 lane->SetRoad(road);

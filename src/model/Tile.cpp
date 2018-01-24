@@ -25,6 +25,17 @@ Model::Tile::Tile():
 
 }
 
+Model::Tile::Tile(const std::int64_t& aTileId):
+    mTileId(aTileId),
+    mReferencePoint(tileIdToReferencePoint(aTileId)),
+    mTrafficSignMap(std::make_shared<TrafficSignMap>()),
+    mRoadMap(std::make_shared<RoadMap>()),
+    mLaneMap(std::make_shared<LaneMap>()),
+    mLineMap(std::make_shared<LineMap>()),
+    mJunctionMap(std::make_shared<JunctionMap>())
+{
+}
+
 Model::Tile::~Tile()
 {
 
@@ -209,3 +220,50 @@ Model::JunctionPtr Model::Tile::GetMutableJunction(const uint64_t& aId)
 
     return mJunctionMap->at(aId);
 }
+
+std::int32_t Model::Tile::getBit(std::int32_t aInteger, std::uint8_t aIndex)
+{
+    uint32_t integer = static_cast<uint32_t>(aInteger);
+    return static_cast<int32_t>((integer >> aIndex) & 1);
+}
+
+void Model::Tile::setBit(std::int32_t& aInteger, std::uint8_t aIndex)
+{
+    aInteger = aInteger | (uint32_t)1 << aIndex;
+}
+
+Model::Point3DPtr Model::Tile::tileIdToReferencePoint(const std::int64_t& aTileId)
+{
+    std::int32_t tileId = static_cast<std::int32_t>(aTileId);
+    std::int32_t x = 0;
+    std::int32_t y = 0;
+
+    for (int i = 13; i >= 0; --i)
+    {
+        x <<= 1;
+        x |= getBit(tileId, i * 2);
+        y <<= 1;
+        y |= getBit(tileId, i * 2 + 1);
+    }
+
+    double l = (90. / (1 << 13)) * (x);
+    double b = (90. / (1 << 13)) * (y);
+
+    return std::make_shared<Model::Point3D>(l, b, 0.0);
+}
+
+std::int32_t Model::Tile::referencePointToTileId(double aLontitude, double aLatitude)
+{
+    std::int32_t x = (int32_t)(aLontitude / (90. / (1 << 30)));
+    std::int32_t y = (int32_t)(aLatitude / (90. / (1 << 30)));
+    std::int32_t tileId = getBit(x, 31);
+
+    for (std::uint8_t i = 30; i > 16; --i)
+    {
+        tileId <<= 2;
+        tileId |= getBit(y, i) << 1 | getBit(x, i);
+    }
+
+    return tileId;
+}
+

@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <string>
 #include <mutex>
+#include <time.h>
 
 #include "Common.h"
 
@@ -45,6 +46,49 @@ public:
     IdGeneratorMap():mIdGenerator(std::make_shared<IdGenerator>()){}
     ~IdGeneratorMap(){}
 
+    void SetIdAndText(const std::uint64_t& aId, const std::string& aText)
+    {
+        std::lock_guard<std::mutex> mutexGuard(mMutex);
+        mIdMap[aText] = aId;
+        mTextMap[aId] = aText;
+    }
+    const std::uint64_t& CreateNewIdFromText(const std::string& aId)
+    {
+        std::lock_guard<std::mutex> mutexGuard(mMutex);
+        std::uint32_t index = 0;
+        std::string text = "";
+
+        do
+        {
+            text = aId + "_" + std::to_string(index++);
+        }while (0 != mIdMap.count(text));
+
+        mIdMap[text] = mIdGenerator->GetNewId();
+        mTextMap[mIdMap[text]] = text;
+
+        return mIdMap[text];
+    }
+    const std::uint64_t& GetRandomId(std::int32_t aHigh)
+    {
+        std::lock_guard<std::mutex> mutexGuard(mMutex);
+        std::string text = "";
+        std::uint64_t id = 0;
+        srand((unsigned)time(NULL));
+
+        do
+        {
+            std::uint32_t newId = static_cast<std::uint32_t>(rand());
+            id = static_cast<std::uint64_t>(aHigh);
+            id <<= 32;
+            id |= newId;
+            text = std::to_string(id);
+        }while (0 != mTextMap.count(id) || 0 != mIdMap.count(text));
+
+        mTextMap[id] = text;
+        mIdMap[text] = id;
+
+        return id;
+    }
     const std::uint64_t& GetId(const std::string& aId)
     {
         std::lock_guard<std::mutex> mutexGuard(mMutex);

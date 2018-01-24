@@ -21,6 +21,7 @@ Model::MemoryModel::MemoryModel():
     mCurveIdMap(std::make_shared<IdGeneratorMap<Curve>>()),
     mLineIdMap(std::make_shared<IdGeneratorMap<Line>>()),
     mLaneIdMap(std::make_shared<IdGeneratorMap<Lane>>()),
+    mRoadIdMap(std::make_shared<IdGeneratorMap<Road>>()),
     mTrafficSignIdMap(std::make_shared<IdGeneratorMap<TrafficSign>>())
 {
 
@@ -55,8 +56,7 @@ Model::TilePtr Model::MemoryModel::GetMutableTile(const std::int64_t& aId)
 {
     if (0 == mTileMap->count(aId))
     {
-        TilePtr tile = std::make_shared<Tile>();
-        tile->SetTileId(aId);
+        TilePtr tile = std::make_shared<Tile>(aId);
         (*mTileMap)[aId] = tile;
     }
 
@@ -91,6 +91,16 @@ const uint64_t& Model::MemoryModel::GetLaneIntId(const std::string& aId)
 const std::string& Model::MemoryModel::GetLaneTextId(const std::uint64_t& aId) const
 {
     return mLaneIdMap->GetTextId(aId);
+}
+
+const uint64_t& Model::MemoryModel::GetRoadIntId(const std::string& aId)
+{
+    return mRoadIdMap->GetId(aId);
+}
+
+const std::string& Model::MemoryModel::GetRoadTextId(const std::uint64_t& aId) const
+{
+    return mRoadIdMap->GetTextId(aId);
 }
 
 const uint64_t& Model::MemoryModel::GetTrafficSignIntId(const std::string& aId)
@@ -180,4 +190,21 @@ std::shared_ptr<Model::TrafficSign> Model::MemoryModel::GetTrafficSignById(const
         }
     }
     return nullptr;
+}
+
+void Model::MemoryModel::SaveRoadId(const std::uint64_t& aId)
+{
+    mRoadIdMap->SetIdAndText(aId, std::to_string(aId));
+}
+
+std::uint64_t Model::MemoryModel::GenerateNewLaneId(const int64_t &aRoadId)
+{
+    return mLaneIdMap->CreateNewIdFromText(std::to_string(aRoadId));
+}
+
+std::uint64_t Model::MemoryModel::GenerateNewRoadId(const std::int64_t& aTileId)
+{
+    GetMutableTile(aTileId);
+
+    return mRoadIdMap->GetRandomId(static_cast<std::int32_t>(aTileId));
 }

@@ -20,7 +20,8 @@ SOURCES += \
     ../src/model/NurbsCurve.cpp \
     ../src/model/Poly.cpp \
     ../src/model/external/geo_alg.cpp \
-    ../src/model/FitNurbs.cpp
+    ../src/model/FitNurbs.cpp \
+    UtTile.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src
