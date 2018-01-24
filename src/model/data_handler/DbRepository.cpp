@@ -750,8 +750,8 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                           + strings::FormatFloat<double>(trafficSign->GetOrientation(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
-                          + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ","
-                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + ")";
+                          + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ",'"
+                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + "')";
                 mDatabase->exec(sqlText);
             }
 
