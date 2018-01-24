@@ -107,6 +107,26 @@ void Model::TrafficSign::SetGeodeticPosition(const Point3DPtr& aGeodeticPosition
     mGeodeticPosition->SetZ(aGeodeticPosition->GetZ());
 }
 
+void Model::TrafficSign::SetGeodeticFromRelative(const Point3DPtr& aRelative, const Point3DPtr& aReference)
+{
+    // Convert geodetic coordinates into ECEF coordinates
+    std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
+    std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
+                    factory->CreateRelativeTransform(CRS::CoordinateType::Relative,
+                                                     CRS::CoordinateType::Wgs84,
+                                                     aReference->GetX(),
+                                                     aReference->GetY(),
+                                                     aReference->GetZ());
+
+    double x = aRelative->GetX();
+    double y = aRelative->GetY();
+    double z = aRelative->GetZ();
+    relativeToWgs84->Transform(x, y, z);
+    mGeodeticPosition->SetX(x);
+    mGeodeticPosition->SetY(y);
+    mGeodeticPosition->SetZ(z);
+}
+
 const Model::Point3DPtr& Model::TrafficSign::GetViewPosition() const
 {
     return mViewPosition;

@@ -42,6 +42,7 @@ public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
+    void PopupInfoMessage(const QString& aMessage);
     osg::Polytope GetPolytope();
     void UpdateView();
     void ShowRoadInfo();
@@ -50,11 +51,14 @@ public:
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
+    void EnableSaveAction(bool aEnable);
+
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
 
 private:
+    QString getSelectedDirectory();
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();

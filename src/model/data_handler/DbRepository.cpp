@@ -366,7 +366,7 @@ void Model::DbRepository::queryTrafficSigns(std::shared_ptr<MemoryModel>& aMemor
                 trafficSign->SetConfidence(query.getColumn(6).getDouble());
                 trafficSign->SetShapeHeight(query.getColumn(5).getDouble());
                 trafficSign->SetShapeWidth(query.getColumn(4).getDouble());
-                trafficSign->SetGeodeticPosition(parsePoint(query.getColumn(7).getString()));
+                trafficSign->SetGeodeticFromRelative(parsePoint(query.getColumn(7).getString()), tile->GetReferencePoint());
             }
         }
         catch(std::exception)
@@ -752,8 +752,8 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                           + strings::FormatFloat<double>(trafficSign->GetOrientation(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
-                          + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ","
-                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + ")";
+                          + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ",'"
+                          + formatReferencePoint(trafficSign->GetGeodeticPosition()) + "')";
                 mDatabase->exec(sqlText);
             }
 

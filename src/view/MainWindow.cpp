@@ -33,6 +33,7 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
     this->setCentralWidget(new View::OsgWidget(this));
     restoreSettings();
     setupConnections();
+    EnableSaveAction(false);
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
     mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
@@ -43,6 +44,11 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
 void View::MainWindow::PopupWarningMessage(const QString &aWarning)
 {
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
+}
+
+void View::MainWindow::PopupInfoMessage(const QString& aMessage)
+{
+    QMessageBox::information(this, windowTitle(), aMessage, "Close");
 }
 
 osg::Polytope View::MainWindow::GetPolytope()
@@ -102,6 +108,22 @@ void View::MainWindow::setupConnections()
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN, &folderPath);
+        }
+    });
+
+    connect(ui->actionSave, &QAction::triggered, [=]() {
+        QString folderPath = getSelectedDirectory();
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
+        }
+    });
+
+    connect(ui->actionKML, &QAction::triggered, [=]() {
+        QString folderPath = getSelectedDirectory();
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
         }
     });
 
@@ -257,4 +279,25 @@ void View::MainWindow::writeSettings()
     settings.beginGroup("ui");
     settings.setValue("mainwindow/geometry", saveGeometry());
     settings.endGroup();
+}
+
+QString View::MainWindow::getSelectedDirectory()
+{
+    QString folderPath;
+    QFileDialog fileDialog(this, "Select Output Folder", "/");
+    fileDialog.setFileMode(QFileDialog::Directory);
+    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
+    fileDialog.setLabelText(QFileDialog::Accept, "Save");
+    if (fileDialog.exec())
+    {
+        QDir dir = fileDialog.directory();
+        folderPath = dir.absolutePath();
+    }
+    return folderPath;
+}
+
+void View::MainWindow::EnableSaveAction(bool aEnable)
+{
+    ui->actionSave->setEnabled(aEnable);
+    ui->menuExport->setEnabled(aEnable);
 }
