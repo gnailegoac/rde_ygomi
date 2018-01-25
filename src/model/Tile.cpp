@@ -252,7 +252,7 @@ Model::Point3DPtr Model::Tile::tileIdToReferencePoint(const std::int64_t& aTileI
     return std::make_shared<Model::Point3D>(l, b, 0.0);
 }
 
-std::int32_t Model::Tile::referencePointToTileId(double aLontitude, double aLatitude)
+std::int32_t Model::Tile::referencePointToTileId(const double& aLontitude, const double& aLatitude)
 {
     std::int32_t x = (int32_t)(aLontitude / (90. / (1 << 30)));
     std::int32_t y = (int32_t)(aLatitude / (90. / (1 << 30)));

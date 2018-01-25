@@ -21,7 +21,14 @@ SOURCES += \
     ../src/model/Poly.cpp \
     ../src/model/external/geo_alg.cpp \
     ../src/model/FitNurbs.cpp \
-    UtTile.cpp
+    ../src/model/Tile.cpp \
+    ../src/model/TrafficSign.cpp \
+    ../src/model/Road.cpp \
+    ../src/model/Lane.cpp \
+    ../src/model/Junction.cpp \
+    ../src/model/LookUpTable.cpp \
+    ../src/model/IdGenerator.cpp \
+    UtTileId.cpp
 
 INCLUDEPATH += $$PWD/../src
 DEPENDPATH += $$PWD/../src

@@ -60,6 +60,9 @@ public:
     std::shared_ptr<Model::TrafficSign> GetTrafficSignById(const std::uint64_t& aTrafficSignId);
 
     void SaveRoadId(const std::uint64_t& aId);
+    std::uint64_t GenerateNewTrafficSignId(const std::int64_t& aTileId);
+    std::uint64_t GenerateNewCurveId(const std::int64_t& aLineId);
+    std::uint64_t GenerateNewLineId(const std::int64_t& aRoadId);
     std::uint64_t GenerateNewLaneId(const std::int64_t& aRoadId);
     std::uint64_t GenerateNewRoadId(const std::int64_t& aTileId);
 

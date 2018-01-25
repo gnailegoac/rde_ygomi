@@ -65,7 +65,7 @@ private:
     std::int32_t getBit(std::int32_t aInteger, std::uint8_t aIndex);
     void setBit(std::int32_t& aInteger, std::uint8_t aIndex);
     Point3DPtr tileIdToReferencePoint(const std::int64_t& aTileId);
-    inline std::int32_t referencePointToTileId(double aLontitude, double aLatitude);
+    std::int32_t referencePointToTileId(const double& aLontitude, const double& aLatitude);
 
 private:
     std::int64_t mTileId;
