@@ -15,12 +15,26 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
+
+class RoadSection;
+class Lane;
+class LaneBoundary;
+class Geometry;
 
 namespace Model
 {
-
+class Lane;
+class Line;
+class Road;
+class Tile;
 class MemoryModel;
+typedef std::unordered_map<std::int64_t, std::shared_ptr<Tile>> TileMap;
+typedef std::shared_ptr<TileMap> TileMapPtr;
 typedef std::shared_ptr<MemoryModel> MemoryModelPtr;
+typedef std::shared_ptr<Lane> LanePtr;
+typedef std::shared_ptr<Road> RoadPtr;
+typedef std::shared_ptr<Line> LinePtr;
 
 class ProtoBufferInterpreter
 {
@@ -29,6 +43,16 @@ public:
     ~ProtoBufferInterpreter();
 
     bool SaveRoadSections(const MemoryModelPtr& aMemoryModel);
+
+private:
+    LanePtr getLeftMostLane(const RoadPtr& aRoad);
+    LanePtr getRightLane(const LanePtr& aLane);
+    std::uint32_t getLaneIndex(const LanePtr& aLane);
+    LanePtr getPredecessorLane(const LanePtr& aLane, const TileMapPtr& aTileMap);
+    void saveRoad(RoadSection* aRoadSection, const RoadPtr& aRoad, const TileMapPtr& aTileMap);
+    void saveLane(::Lane* aLanePb, const LanePtr& aLane, const TileMapPtr& aTileMap);
+    void saveLaneBoundary(LaneBoundary* aBoundary, const LinePtr& aLine);
+    void saveGeometry(Geometry* aGeometry, const LinePtr& aLine);
 
 private:
     std::string mFileName;
