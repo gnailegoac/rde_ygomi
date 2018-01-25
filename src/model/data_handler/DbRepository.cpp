@@ -757,7 +757,7 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                 double b = geodetic->GetY();
                 double z = geodetic->GetZ();
                 wgs84ToRelative->Transform(l, b, z);
-                Point3D relative(l, b, z);
+                Point3DPtr relative(new Point3D(l, b, z));
 
                 sqlText = "INSERT INTO " + trafficSignTable
                           + "(ID,SegmentID,Type,Orientation,ShapeWidth,ShapeHeight,Confidence,GPS) VALUES ("
@@ -768,7 +768,7 @@ void Model::DbRepository::storeTrafficSigns(const std::shared_ptr<MemoryModel>& 
                           + strings::FormatFloat<double>(trafficSign->GetShapeWidth(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetShapeHeight(), 8) + ","
                           + strings::FormatFloat<double>(trafficSign->GetConfidence(), 8) + ",'"
-                          + relative.FormatPoint(13, 13, 13) + "')";
+                          + relative->FormatPoint(13, 13, 13) + "')";
                 mDatabase->exec(sqlText);
             }
 
