@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../external.pri)
 
-LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl -lprotobuf
+LIBS += -losg -losgDB -losgGA -losgUtil -losgViewer -losgText -lOpenThreads -lPureMVC -ldl
 
 SOURCES +=\
     RoadDBExplorer.cpp \
