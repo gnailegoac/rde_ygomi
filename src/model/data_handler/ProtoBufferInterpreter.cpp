@@ -14,11 +14,19 @@
 #include "ProtoBufferInterpreter.h"
 
 #include <QDebug>
-#include <iostream>
+#include <fstream>
 
-#include "RoadSection.pb.h"
+#include "CoordinateTransform/Factory.h"
 #include "../MemoryModel.h"
 #include "../Tile.h"
+
+static const std::map<Model::CurveType, LaneBoundaryType> scBoundaryTypeMap =
+{
+    {Model::CurveType::UnKnown, LANEBOUNDARYTYPE_UNKNOWN},
+    {Model::CurveType::UnDefined, LANEBOUNDARYTYPE_MARKING_NONE},
+    {Model::CurveType::Dashed, LANEBOUNDARYTYPE_MARKING_DASHED},
+    {Model::CurveType::Solid, LANEBOUNDARYTYPE_MARKING_SOLID},
+};
 
 Model::ProtoBufferInterpreter::ProtoBufferInterpreter(const std::string& aFileName,
                                                       const double& aInterval):
@@ -35,15 +43,28 @@ Model::ProtoBufferInterpreter::~ProtoBufferInterpreter()
 
 bool Model::ProtoBufferInterpreter::SaveRoadSections(const Model::MemoryModelPtr& aMemoryModel)
 {
-    RoadSections roadSections;
-    const TileMapPtr& tileMap = aMemoryModel->GetTileMap();
-    for (const auto& tile : *tileMap)
+    std::ofstream outStream;
+
+    try
     {
-        const RoadMapPtr& roadMap = tile.second->GetRoadMap();
-        for (const auto& road : *roadMap)
+        outStream.open(mFileName, std::ofstream::out | std::ofstream::binary);
+        RoadSections roadSections;
+        const TileMapPtr& tileMap = aMemoryModel->GetTileMap();
+
+        for (const auto& tile : *tileMap)
         {
-            saveRoad(roadSections.add_roadsections(), road.second, tileMap);
+            const RoadMapPtr& roadMap = tile.second->GetRoadMap();
+            for (const auto& road : *roadMap)
+            {
+                saveRoad(roadSections.add_roadsections(), road.second, tileMap);
+            }
         }
+        roadSections.SerializeToOstream(&outStream);
+    }
+    catch(...)
+    {
+        outStream.close();
+        return false;
     }
 
     return true;
@@ -91,6 +112,7 @@ void Model::ProtoBufferInterpreter::saveLane(::Lane* aLanePb,
     // Set predecessor lane id, actually it is lane index in predecessor road
     // as predecessor lane may not in the same tile as current lane, search through tileMap.
     LanePtr predecessorLane = getPredecessorLane(aLane, aTileMap);
+
     if (predecessorLane != nullptr)
     {
         aLanePb->add_predecessorlaneids(getLaneIndex(predecessorLane));
@@ -102,12 +124,39 @@ void Model::ProtoBufferInterpreter::saveLane(::Lane* aLanePb,
 
 void Model::ProtoBufferInterpreter::saveLaneBoundary(LaneBoundary* aBoundary, const Model::LinePtr& aLine)
 {
+    Model::CurveType lineType = getLineType(aLine);
+    Geometry* geometry = aBoundary->mutable_geometry();
 
+    aBoundary->set_type(convertLineType(lineType));
+    saveGeometry(geometry, aLine);
 }
 
 void Model::ProtoBufferInterpreter::saveGeometry(Geometry* aGeometry, const Model::LinePtr& aLine)
 {
+    const Point3DPtr& referencePoint = aLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint();
+    std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
+    std::unique_ptr<CRS::ICoordinateTransform> relativeToWgs84 =
+                    factory->CreateRelativeTransform(CRS::CoordinateType::Relative,
+                                                     CRS::CoordinateType::Wgs84,
+                                                     referencePoint->GetX(),
+                                                     referencePoint->GetY(),
+                                                     referencePoint->GetZ());
 
+    for (const auto& curve : *(aLine->GetCurveList()))
+    {
+        Point3DListPtr points = curve->CalculatePointCloud(mInterval);
+        for (const auto& point : *points)
+        {
+            double x = point->GetX();
+            double y = point->GetY();
+            double z = point->GetZ();
+            relativeToWgs84->Transform(x, y, z);
+            GeometryPoint* geometryPoint = aGeometry->add_points();
+            geometryPoint->set_lon(x);
+            geometryPoint->set_lat(y);
+            geometryPoint->set_height(z);
+        }
+    }
 }
 
 Model::LanePtr Model::ProtoBufferInterpreter::getLeftMostLane(const Model::RoadPtr& aRoad)
@@ -128,6 +177,7 @@ Model::LanePtr Model::ProtoBufferInterpreter::getLeftMostLane(const Model::RoadP
 Model::LanePtr Model::ProtoBufferInterpreter::getRightLane(const Model::LanePtr& aLane)
 {
     std::uint64_t rightLaneId = aLane->GetRightLaneId();
+
     if (0 != rightLaneId)
     {
         return aLane->GetRoad()->GetTile()->GetLane(rightLaneId);
@@ -141,6 +191,7 @@ uint32_t Model::ProtoBufferInterpreter::getLaneIndex(const Model::LanePtr& aLane
     std::uint32_t index = 0;
     RoadPtr road = aLane->GetRoad();
     LanePtr lane = getLeftMostLane(road);
+
     while (nullptr != lane)
     {
         if (lane == aLane)
@@ -152,6 +203,44 @@ uint32_t Model::ProtoBufferInterpreter::getLaneIndex(const Model::LanePtr& aLane
     }
 
     return index;
+}
+
+Model::CurveType Model::ProtoBufferInterpreter::getLineType(const Model::LinePtr& aLine)
+{
+    // Currently, protobuf only cares about solid and dashed
+    // For a line has curves of different type, will consider it as dashed if there is one dashed curve.
+    // For this case, if the curves in the line are not continuous, the line type should also be dashed.
+    // Actually, the road should be sliced to prevent a line composed of different type curves
+
+    for (const auto& curve : *(aLine->GetCurveList()))
+    {
+        if (curve->GetCurveType() == CurveType::Dashed)
+        {
+            return CurveType::Dashed;
+        }
+
+        if (curve->GetCurveType() == CurveType::UnKnown)
+        {
+            return CurveType::UnKnown;
+        }
+
+        if (curve->GetCurveType() == CurveType::UnDefined)
+        {
+            return CurveType::UnDefined;
+        }
+    }
+
+    return CurveType::Solid;
+}
+
+LaneBoundaryType Model::ProtoBufferInterpreter::convertLineType(const Model::CurveType& aCurveType)
+{
+    if (scBoundaryTypeMap.count(aCurveType) > 0)
+    {
+        return scBoundaryTypeMap.at(aCurveType);
+    }
+
+    return LANEBOUNDARYTYPE_UNKNOWN;
 }
 
 Model::LanePtr Model::ProtoBufferInterpreter::getPredecessorLane(const Model::LanePtr& aLane,

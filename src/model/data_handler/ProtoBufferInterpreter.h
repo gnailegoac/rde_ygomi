@@ -17,10 +17,9 @@
 #include <memory>
 #include <unordered_map>
 
-class RoadSection;
-class Lane;
-class LaneBoundary;
-class Geometry;
+#include "RoadSection.pb.h"
+
+#include "../Curve.h"
 
 namespace Model
 {
@@ -48,6 +47,8 @@ private:
     LanePtr getLeftMostLane(const RoadPtr& aRoad);
     LanePtr getRightLane(const LanePtr& aLane);
     std::uint32_t getLaneIndex(const LanePtr& aLane);
+    CurveType getLineType(const LinePtr& aLine);
+    LaneBoundaryType convertLineType(const CurveType& aCurveType);
     LanePtr getPredecessorLane(const LanePtr& aLane, const TileMapPtr& aTileMap);
     void saveRoad(RoadSection* aRoadSection, const RoadPtr& aRoad, const TileMapPtr& aTileMap);
     void saveLane(::Lane* aLanePb, const LanePtr& aLane, const TileMapPtr& aTileMap);
