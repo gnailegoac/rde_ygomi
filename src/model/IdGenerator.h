@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <string>
 #include <mutex>
+#include <time.h>
 
 #include "Common.h"
 
@@ -42,42 +43,15 @@ template <class T>
 class IdGeneratorMap
 {
 public:
-    IdGeneratorMap():mIdGenerator(std::make_shared<IdGenerator>()){}
-    ~IdGeneratorMap(){}
+    IdGeneratorMap();
+    ~IdGeneratorMap();
 
-    const std::uint64_t& GetId(const std::string& aId)
-    {
-        std::lock_guard<std::mutex> mutexGuard(mMutex);
-
-        if (0 == mIdMap.count(aId))
-        {
-            mIdMap[aId] = mIdGenerator->GetNewId();
-            mTextMap[mIdMap[aId]] = aId;
-        }
-
-        return mIdMap[aId];
-    }
-    const std::string& GetTextId(const std::uint64_t& aId)
-    {
-        const static std::string INVALID = TEXT_NAN;
-        std::lock_guard<std::mutex> mutexGuard(mMutex);
-
-        if (0 != mTextMap.count(aId))
-        {
-           return mTextMap[aId];
-        }
-
-        return INVALID;
-    }
-    void Reset()
-    {
-        std::lock_guard<std::mutex> mutexGuard(mMutex);
-
-        mIdGenerator.reset();
-        mIdGenerator = std::make_shared<IdGenerator>();
-        mIdMap.clear();
-        mTextMap.clear();
-    }
+    void SetIdAndText(const std::uint64_t& aId, const std::string& aText);
+    const std::uint64_t& GenerateNewId(const std::string& aText);
+    const std::uint64_t& GetRandomId(std::int32_t aHigh);
+    const std::uint64_t& GetId(const std::string& aId);
+    const std::string& GetTextId(const std::uint64_t& aId);
+    void Reset();
 
 private:
     T mType;
