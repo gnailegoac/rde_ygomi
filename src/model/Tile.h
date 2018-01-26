@@ -27,6 +27,7 @@ class Tile
 {
 public:
     Tile();
+    Tile(const std::int64_t& aTileId);
     ~Tile();
 
     const std::int64_t& GetTileId() const;
@@ -59,6 +60,12 @@ public:
     JunctionMapPtr GetMutableJunctionMap();
     JunctionPtr GetJunction(const std::uint64_t& aId);
     JunctionPtr GetMutableJunction(const std::uint64_t& aId);
+
+private:
+    std::int32_t getBit(std::int32_t aInteger, std::uint8_t aIndex);
+    void setBit(std::int32_t& aInteger, std::uint8_t aIndex);
+    Point3DPtr tileIdToReferencePoint(const std::int64_t& aTileId);
+    std::int32_t referencePointToTileId(const double& aLontitude, const double& aLatitude);
 
 private:
     std::int64_t mTileId;

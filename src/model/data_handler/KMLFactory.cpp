@@ -22,6 +22,7 @@ Model::KMLFactory::KMLFactory(std::string aKMLFolder):
     mOutputInterval(0.1),
     mKMLFolder(aKMLFolder)
 {
+    SetKMLFolder(aKMLFolder);
 }
 
 Model::KMLFactory::~KMLFactory()
