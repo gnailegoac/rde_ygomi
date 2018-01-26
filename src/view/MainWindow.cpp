@@ -290,21 +290,6 @@ void View::MainWindow::writeSettings()
     settings.endGroup();
 }
 
-QString View::MainWindow::getSelectedDirectory()
-{
-    QString folderPath;
-    QFileDialog fileDialog(this, "Select Output Folder", "/");
-    fileDialog.setFileMode(QFileDialog::Directory);
-    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
-    fileDialog.setLabelText(QFileDialog::Accept, "Save");
-    if (fileDialog.exec())
-    {
-        QDir dir = fileDialog.directory();
-        folderPath = dir.absolutePath();
-    }
-    return folderPath;
-}
-
 void View::MainWindow::EnableSaveAction(bool aEnable)
 {
     ui->actionSave->setEnabled(aEnable);
