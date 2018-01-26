@@ -17,8 +17,6 @@
 #include <fstream>
 
 #include "CoordinateTransform/Factory.h"
-#include "../MemoryModel.h"
-#include "../Tile.h"
 
 static const std::map<Model::CurveType, LaneBoundaryType> scBoundaryTypeMap =
 {

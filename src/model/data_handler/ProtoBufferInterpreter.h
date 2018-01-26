@@ -20,20 +20,12 @@
 #include "RoadSection.pb.h"
 
 #include "../Curve.h"
+#include "../MemoryModel.h"
 
 namespace Model
 {
-class Lane;
-class Line;
-class Road;
-class Tile;
-class MemoryModel;
-typedef std::unordered_map<std::int64_t, std::shared_ptr<Tile>> TileMap;
-typedef std::shared_ptr<TileMap> TileMapPtr;
+
 typedef std::shared_ptr<MemoryModel> MemoryModelPtr;
-typedef std::shared_ptr<Lane> LanePtr;
-typedef std::shared_ptr<Road> RoadPtr;
-typedef std::shared_ptr<Line> LinePtr;
 
 class ProtoBufferInterpreter
 {
