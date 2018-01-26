@@ -112,7 +112,7 @@ void View::MainWindow::setupConnections()
     });
 
     connect(ui->actionSave, &QAction::triggered, [=]() {
-        QString folderPath = getSelectedDirectory();
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
@@ -120,10 +120,19 @@ void View::MainWindow::setupConnections()
     });
 
     connect(ui->actionKML, &QAction::triggered, [=]() {
-        QString folderPath = getSelectedDirectory();
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
+        }
+    });
+
+    connect(ui->actionProtoBuffer, &QAction::triggered, [=]() {
+        QString path = QFileDialog::getSaveFileName(this,
+                                                    tr("Export to ProtoBuffer"), "/");
+        if (path.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_PROTOBUF, &path);
         }
     });
 

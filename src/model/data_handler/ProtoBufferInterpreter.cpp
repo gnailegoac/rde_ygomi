@@ -210,7 +210,7 @@ Model::CurveType Model::ProtoBufferInterpreter::getLineType(const Model::LinePtr
     // Currently, protobuf only cares about solid and dashed
     // For a line has curves of different type, will consider it as dashed if there is one dashed curve.
     // For this case, if the curves in the line are not continuous, the line type should also be dashed.
-    // Actually, the road should be sliced to prevent a line composed of different type curves
+    // Actually, the road should be sliced to avoid a line composed of different type curves
 
     for (const auto& curve : *(aLine->GetCurveList()))
     {

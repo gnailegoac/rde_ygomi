@@ -12,6 +12,7 @@
  */
 
 #include "ProtoBufferSerializer.h"
+#include "ProtoBufferInterpreter.h"
 
 Model::ProtoBufferSerializer::ProtoBufferSerializer() :
     mFileName("out.bin"),
@@ -35,5 +36,6 @@ Model::ProtoBufferSerializer::~ProtoBufferSerializer()
 
 bool Model::ProtoBufferSerializer::Serialize(const Model::MemoryModelPtr& aMemoryModel)
 {
-    return true;
+    ProtoBufferInterpreterPtr protoBufferInterpreter = std::make_shared<ProtoBufferInterpreter>(mFileName, mInterval);
+    return protoBufferInterpreter->SaveRoadSections(aMemoryModel);
 }

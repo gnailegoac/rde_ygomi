@@ -66,6 +66,19 @@ void Controller::FileSerializeCommand::execute(const PureMVC::Interfaces::INotif
                 saveResult = "Failed to export to KML.";
             }
         }
+        else if (aNotification.getName() == ApplicationFacade::EXPORT_TO_PROTOBUF)
+        {
+            Model::IFactoryPtr factory = Model::Factory::CreateProtoBufferFactory(folderPath.toStdString());
+            Model::ISerializerPtr serializer = factory->CreateSerializer();
+            if (serializer->Serialize(memoryModel))
+            {
+                saveResult = "Export to ProtoBuffer successfully.";
+            }
+            else
+            {
+                saveResult = "Failed to export to ProtoBuffer.";
+            }
+        }
     }
 
     ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &saveResult);

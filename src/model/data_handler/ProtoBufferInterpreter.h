@@ -60,4 +60,6 @@ private:
     double mInterval;
 };
 
+typedef std::shared_ptr<ProtoBufferInterpreter> ProtoBufferInterpreterPtr;
+
 }

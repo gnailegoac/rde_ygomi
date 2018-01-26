@@ -48,6 +48,7 @@ const std::string ApplicationFacade::SELECT_NODE_IN_3DVIEW = "SelectNodeIn3DView
 const std::string ApplicationFacade::JUMP_TO_CENTER = "JumpToCenter";
 const std::string ApplicationFacade::SAVE_LOGICDB = "SaveLogicDB";
 const std::string ApplicationFacade::EXPORT_TO_KML = "ExportToKML";
+const std::string ApplicationFacade::EXPORT_TO_PROTOBUF = "ExportToProtoBuffer";
 const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
@@ -119,6 +120,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[FILE_OPEN_SUCCESS] = Controller::FileParseCommand::GetCommandName();
     mMessageList[SAVE_LOGICDB] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[EXPORT_TO_KML] = Controller::FileSerializeCommand::GetCommandName();
+    mMessageList[EXPORT_TO_PROTOBUF] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
     mMessageList[SELECT_NODE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[CHANGE_SELECT_TYPE] = Controller::NodeHighlightCommand::GetCommandName();
