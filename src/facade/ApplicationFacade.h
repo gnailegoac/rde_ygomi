@@ -50,6 +50,7 @@ public:
     static const std::string EXPORT_TO_KML;
     static const std::string EXPORT_TO_PROTOBUF;
     static const std::string NOTIFY_RESULT;
+    static const std::string REQUEST_ROADS_IN_TILE;
 
     static ApplicationFacade* GetInstance();
 

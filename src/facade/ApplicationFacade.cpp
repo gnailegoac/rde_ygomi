@@ -50,6 +50,7 @@ const std::string ApplicationFacade::SAVE_LOGICDB = "SaveLogicDB";
 const std::string ApplicationFacade::EXPORT_TO_KML = "ExportToKML";
 const std::string ApplicationFacade::EXPORT_TO_PROTOBUF = "ExportToProtoBuffer";
 const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
+const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {

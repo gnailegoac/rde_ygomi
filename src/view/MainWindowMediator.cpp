@@ -23,6 +23,7 @@
 #include "model/Lane.h"
 #include "model/Line.h"
 #include "model/MemoryModel.h"
+#include "model/GeoJsonConverter.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -48,6 +49,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
     result->get().push_back(ApplicationFacade::NOTIFY_RESULT);
+    result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     return NotificationNames(result);
 }
 
@@ -193,6 +195,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
+        // send tiles to web viewer.
+        QJsonArray tileArray;
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if (memoryModel != nullptr)
+        {
+            tileArray = Model::GeoJsonConverter().GetTileExtent(memoryModel);
+            getMainWindow()->PushEntireRoadTilesExtent(tileArray);
+        }
         mainWindow->SetTreeModel(getMainProxy()->GetTreeModel());
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
@@ -256,6 +266,23 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         QString message = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
         getMainWindow()->PopupInfoMessage(message);
+    }
+    else if (noteName == ApplicationFacade::REQUEST_ROADS_IN_TILE)
+    {
+        std::pair<std::uint64_t, std::uint64_t> tileInfo =
+                *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
+        QJsonArray roadsArray;
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if (memoryModel != nullptr)
+        {
+            Model::TileConstPtr tilePtr = memoryModel->GetTile(tileInfo.second);
+            if (tilePtr != nullptr)
+            {
+//                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
+                roadsArray = Model::GeoJsonConverter().Convert(1, tilePtr);
+            }
+            getMainWindow()->SendRoadsInTile(tileInfo.first, roadsArray);
+        }
     }
 }
 
