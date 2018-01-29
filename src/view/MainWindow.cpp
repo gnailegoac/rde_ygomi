@@ -112,7 +112,7 @@ void View::MainWindow::setupConnections()
     });
 
     connect(ui->actionSave, &QAction::triggered, [=]() {
-        QString folderPath = getSelectedDirectory();
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
@@ -120,10 +120,19 @@ void View::MainWindow::setupConnections()
     });
 
     connect(ui->actionKML, &QAction::triggered, [=]() {
-        QString folderPath = getSelectedDirectory();
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
+        }
+    });
+
+    connect(ui->actionProtoBuffer, &QAction::triggered, [=]() {
+        QString path = QFileDialog::getSaveFileName(this,
+                                                    tr("Export to ProtoBuffer"), "/");
+        if (path.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_PROTOBUF, &path);
         }
     });
 
@@ -279,21 +288,6 @@ void View::MainWindow::writeSettings()
     settings.beginGroup("ui");
     settings.setValue("mainwindow/geometry", saveGeometry());
     settings.endGroup();
-}
-
-QString View::MainWindow::getSelectedDirectory()
-{
-    QString folderPath;
-    QFileDialog fileDialog(this, "Select Output Folder", "/");
-    fileDialog.setFileMode(QFileDialog::Directory);
-    fileDialog.setOption(QFileDialog::ShowDirsOnly, true);
-    fileDialog.setLabelText(QFileDialog::Accept, "Save");
-    if (fileDialog.exec())
-    {
-        QDir dir = fileDialog.directory();
-        folderPath = dir.absolutePath();
-    }
-    return folderPath;
 }
 
 void View::MainWindow::EnableSaveAction(bool aEnable)

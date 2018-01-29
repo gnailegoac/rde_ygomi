@@ -48,6 +48,7 @@ public:
     static const std::string JUMP_TO_CENTER;
     static const std::string SAVE_LOGICDB;
     static const std::string EXPORT_TO_KML;
+    static const std::string EXPORT_TO_PROTOBUF;
     static const std::string NOTIFY_RESULT;
 
     static ApplicationFacade* GetInstance();

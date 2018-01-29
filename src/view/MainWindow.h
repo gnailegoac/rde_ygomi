@@ -58,7 +58,6 @@ protected:
     void closeEvent(QCloseEvent* aEvent) override;
 
 private:
-    QString getSelectedDirectory();
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
     void restoreSettings();
     void writeSettings();

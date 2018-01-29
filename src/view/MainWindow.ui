@@ -55,6 +55,7 @@
       <string>Export To</string>
      </property>
      <addaction name="actionKML"/>
+     <addaction name="actionProtoBuffer"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionOpenFolder"/>
@@ -168,6 +169,11 @@
   <action name="actionKML">
    <property name="text">
     <string>KML</string>
+   </property>
+  </action>
+  <action name="actionProtoBuffer">
+   <property name="text">
+    <string>ProtoBuffer</string>
    </property>
   </action>
  </widget>
