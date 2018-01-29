@@ -16,8 +16,18 @@
 #include <QtGlobal>
 #include <QVector>
 
+#include <map>
+
 #include "CoordinateTransform/Factory.h"
 #include "model/MemoryModel.h"
+
+static const std::map<Model::CurveType, QString> scLineTypeMap =
+{
+    {Model::CurveType::UnKnown, "unknown"},
+    {Model::CurveType::UnDefined, "undefined"},
+    {Model::CurveType::Dashed, "dash"},
+    {Model::CurveType::Solid, "solid"},
+};
 
 Model::GeoJsonConverter::GeoJsonConverter()
 {
@@ -41,21 +51,24 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
         QJsonObject road;
         QJsonArray lines;
         RoadPtr roadPtr = itor.second;
-        road["type"] = "road";
         QJsonObject roadData;
+        QJsonArray lanes;
+
+        road["type"] = "road";
         roadData["id"] = static_cast<double>(roadPtr->GetRoadId());
         roadData["ndsId"] = static_cast<double>(aTile->GetTileId());
-        QJsonArray lanes;
 
         for (const auto& it : *(roadPtr->GetLaneList()))
         {
             QJsonObject lane;
-            lane["id"] = static_cast<double>(it->GetLaneId());
+            lane["id"] = static_cast<double>(it->GetLaneId());            
             LinePtr leftLine = it->GetLeftLine();
+
             if (leftLine != nullptr)
             {
                 quint64 leftLineId = leftLine->GetLineId();
                 lane["left"] = static_cast<double>(leftLineId);
+
                 if (lineIds.count(leftLineId) == 0)
                 {
                     QJsonObject line = convert(aLevel, leftLine);
@@ -65,10 +78,12 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
             }
 
             LinePtr rightLine = it->GetRightLine();
+
             if (rightLine != nullptr)
             {
                 quint64 rightLineId = rightLine->GetLineId();
                 lane["right"] = static_cast<double>(rightLineId);
+
                 if (lineIds.count(rightLineId) == 0)
                 {
                     QJsonObject line = convert(aLevel, rightLine);
@@ -78,10 +93,12 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
             }
 
             LinePtr centerLine = it->GetCenterLine();
+
             if (centerLine != nullptr)
             {
                 quint64 centerLineId = centerLine->GetLineId();
                 lane["center"] = static_cast<double>(centerLineId);
+
                 if (lineIds.count(centerLineId) == 0)
                 {
                     QJsonObject line = convert(aLevel, centerLine);
@@ -91,18 +108,22 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
             }
 
             QJsonArray connectionMap;
+
             for (const auto& con : *(it->GetConnectionMap()))
             {
                 connectionMap.push_back(QJsonArray({con.first, static_cast<double>(con.second)}));
             }
+
             lane["connectionMap"] = connectionMap;
             lanes.push_back(lane);
         }
+
         roadData["lanes"] = lanes;
         road["data"] = roadData;
         road["lines"] = lines;
         roadArray.push_back(road);
     }
+
     return roadArray;
 }
 
@@ -115,6 +136,7 @@ QJsonObject Model::GeoJsonConverter::getTileBound(const Model::TilePtr& aTile)
     QJsonArray leftBottom({refPt->GetX(), refPt->GetY()});
     QJsonArray rightTop({refPt->GetX() + ut, refPt->GetY() + ut});
     tileObj["extent"] = QJsonArray({leftBottom, rightTop});
+
     return tileObj;
 }
 
@@ -122,10 +144,12 @@ QJsonArray Model::GeoJsonConverter::GetTileExtent(const std::shared_ptr<Model::M
 {
     QJsonArray tileExtent;
     const TileMapPtr& tileMap = aMemoryModel->GetTileMap();
+
     for (const auto& tile : (*tileMap))
     {
         tileExtent.append(getTileBound(tile.second));
     }
+
     return tileExtent;
 }
 
@@ -135,21 +159,7 @@ QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& a
     if (aLine != nullptr)
     {
         lineObj["id"] = qint64(aLine->GetLineId());
-        switch (aLine->GetCurve(0)->GetCurveType())
-        {
-        case CurveType::Solid:
-//            lineObj["type"] = "solid";
-//            break;
-        case CurveType::Dashed:
-            lineObj["type"] = "dash";
-            break;
-        case CurveType::Imputed:
-        case CurveType::SlamTrace:
-        case CurveType::UnDefined:
-        case CurveType::UnKnown:
-        default:
-            break;
-        }
+        lineObj["type"] = scLineTypeMap.at(aLine->GetLineType());
         lineObj["length"] = aLine->GetLength();
         lineObj["points"] = convert(aLine->GetPaintListByLevel(aLevel));
     }
@@ -160,6 +170,7 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
 {
     // Convert point form ECEF to WGS84
     QJsonArray pointListArray;
+
     if (aPaintList != nullptr)
     {
         std::shared_ptr<CRS::Factory> factory = std::make_shared<CRS::Factory>();
@@ -169,6 +180,7 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
         for (const auto& pointVec : *aPaintList)
         {
             QJsonArray pointList;
+
             for (const auto& point : *pointVec)
             {
                 double x = point->GetX();
@@ -177,13 +189,17 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
                 ecefToWgs84->Transform(x, y, z);
                 pointList.push_back(QJsonArray({x, y, z}));
             }
-//            if (aPaintList->size() == 1)
-//            {
-//                // for solid line, the JSON content should be an array of points.
-//                return pointList;
-//            }
+
+            if (aPaintList->size() == 1)
+            {
+                // for solid line, the JSON content should be an array of points.
+                return pointList;
+            }
+
+            // for dash line, the JSON content is an array of points-array
             pointListArray.push_back(pointList);
         }
     }
+
     return pointListArray;
 }

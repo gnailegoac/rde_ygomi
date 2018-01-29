@@ -219,3 +219,29 @@ void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform
         mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.1));
     }
 }
+
+Model::CurveType Model::Line::GetLineType() const
+{
+    // For a line has curves of different type, will consider it as dashed if there is one dashed curve.
+    // If the curves in the line are not continuous, the line type should also be dashed.
+    // Actually, the road should be sliced to avoid a line composed of different type curves
+    for (const auto& curve : *mCurveList)
+    {
+        if (curve->GetCurveType() == CurveType::Dashed)
+        {
+            return CurveType::Dashed;
+        }
+
+        if (curve->GetCurveType() == CurveType::UnKnown)
+        {
+            return CurveType::UnKnown;
+        }
+
+        if (curve->GetCurveType() == CurveType::UnDefined)
+        {
+            return CurveType::UnDefined;
+        }
+    }
+
+    return CurveType::Solid;
+}

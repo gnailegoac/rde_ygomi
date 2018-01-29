@@ -17,9 +17,10 @@
 #include <QJsonObject>
 #include <osg/Matrixd>
 
-#include "model/Tile.h"
+#include "model/Curve.h"
 #include "model/Line.h"
 #include "model/MemoryModel.h"
+#include "model/Tile.h"
 
 namespace Model
 {
