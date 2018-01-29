@@ -21,6 +21,7 @@
 
 #include "../Curve.h"
 #include "../MemoryModel.h"
+#include "../IdGenerator.h"
 
 namespace Model
 {
@@ -41,6 +42,7 @@ private:
     std::uint32_t getLaneIndex(const LanePtr& aLane);
     CurveType getLineType(const LinePtr& aLine);
     LaneBoundaryType convertLineType(const CurveType& aCurveType);
+    std::uint32_t convertRoadId(const std::uint64_t& aRoadId);
     LanePtr getPredecessorLane(const LanePtr& aLane, const TileMapPtr& aTileMap);
     void saveRoad(RoadSection* aRoadSection, const RoadPtr& aRoad, const TileMapPtr& aTileMap);
     void saveLane(::Lane* aLanePb, const LanePtr& aLane, const TileMapPtr& aTileMap);
@@ -50,6 +52,9 @@ private:
 private:
     std::string mFileName;
     double mInterval;
+    std::mutex mMutex;
+    std::shared_ptr<IdGenerator> mIdGenerator;
+    std::unordered_map<uint64_t, uint32_t> mRoadIdMap;
 };
 
 typedef std::shared_ptr<ProtoBufferInterpreter> ProtoBufferInterpreterPtr;

@@ -29,7 +29,8 @@ static const std::map<Model::CurveType, LaneBoundaryType> scBoundaryTypeMap =
 Model::ProtoBufferInterpreter::ProtoBufferInterpreter(const std::string& aFileName,
                                                       const double& aInterval):
     mFileName(aFileName),
-    mInterval(aInterval)
+    mInterval(aInterval),
+    mIdGenerator(std::make_shared<IdGenerator>())
 {
 
 }
@@ -72,7 +73,7 @@ void Model::ProtoBufferInterpreter::saveRoad(RoadSection* aRoadSection,
                                              const Model::RoadPtr& aRoad,
                                              const Model::TileMapPtr& aTileMap)
 {
-    aRoadSection->set_sectionid(aRoad->GetRoadId());
+    aRoadSection->set_sectionid(convertRoadId(aRoad->GetRoadId()));
 
     LaneModel *laneModel = aRoadSection->mutable_lanemodel();
     LanePtr lane = getLeftMostLane(aRoad);
@@ -115,7 +116,7 @@ void Model::ProtoBufferInterpreter::saveLane(::Lane* aLanePb,
     {
         aLanePb->add_predecessorlaneids(getLaneIndex(predecessorLane));
         // Set predecessor road section id, first get predecessor lane, then use its road id.
-        aLanePb->set_predecessorsectionid(predecessorLane->GetRoad()->GetRoadId());
+        aLanePb->set_predecessorsectionid(convertRoadId(predecessorLane->GetRoad()->GetRoadId()));
     }
 
 }
@@ -239,6 +240,18 @@ LaneBoundaryType Model::ProtoBufferInterpreter::convertLineType(const Model::Cur
     }
 
     return LANEBOUNDARYTYPE_UNKNOWN;
+}
+
+uint32_t Model::ProtoBufferInterpreter::convertRoadId(const uint64_t& aRoadId)
+{
+    std::lock_guard<std::mutex> mutexGuard(mMutex);
+
+    if (mRoadIdMap.count(aRoadId) == 0)
+    {
+        mRoadIdMap[aRoadId] = static_cast<uint32_t>(mIdGenerator->GetNewId());
+    }
+
+    return mRoadIdMap[aRoadId];
 }
 
 Model::LanePtr Model::ProtoBufferInterpreter::getPredecessorLane(const Model::LanePtr& aLane,
