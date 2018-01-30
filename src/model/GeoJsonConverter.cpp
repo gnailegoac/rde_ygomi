@@ -132,7 +132,7 @@ QJsonObject Model::GeoJsonConverter::getTileBound(const Model::TilePtr& aTile)
     QJsonObject tileObj;
     tileObj["id"] = static_cast<double>(aTile->GetTileId());
     const Point3DPtr& refPt = aTile->GetReferencePoint();
-    double ut = 180.0 / std::pow(2, 13);
+    double ut = 180.0 / (1 << 13);
     QJsonArray leftBottom({refPt->GetX(), refPt->GetY()});
     QJsonArray rightTop({refPt->GetX() + ut, refPt->GetY() + ut});
     tileObj["extent"] = QJsonArray({leftBottom, rightTop});
