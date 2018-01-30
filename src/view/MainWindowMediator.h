@@ -48,6 +48,8 @@ private:
                           const std::shared_ptr<Model::Lane>& aLane = nullptr,
                           const std::shared_ptr<Model::Line>& aLine = nullptr);
     void selectNodeOnTree(const std::shared_ptr<Model::TrafficSign>& aTrafficSign);
+    void openRoadRendering();
+    void closeRoadRendering();
 private:
     View::MainWindow* getMainWindow();
     MainProxy* getMainProxy();

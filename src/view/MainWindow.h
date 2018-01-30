@@ -56,9 +56,10 @@ protected:
 
 private:
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
+    void onRenderRoad(bool aIsChecked);
     void restoreSettings();
     void writeSettings();
-    void setupConnections();
+    void setupConnections();  
     Ui::MainWindow* ui;
     QTreeView* mRoadInfoView;
 };

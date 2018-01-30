@@ -146,6 +146,10 @@ void View::MainWindow::setupConnections()
         }
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE_IN_3DVIEW, &selectItemPair);
     });
+
+    connect(ui->actionRenderRoad, &QAction::triggered, [=]() {
+        onRenderRoad(ui->actionRenderRoad->isChecked());
+    });
 }
 
 void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)
@@ -216,6 +220,18 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     viewer->SetSelectType(aSelectType);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_SELECT_TYPE, &selectType);
+}
+
+void View::MainWindow::onRenderRoad(bool aIsChecked)
+{
+    if (aIsChecked)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::OPEN_ROAD_RENDERING);
+    }
+    else
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::CLOSE_ROAD_RENDERING);
+    }
 }
 
 View::MainWindow::~MainWindow()

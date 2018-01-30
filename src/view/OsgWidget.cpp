@@ -22,6 +22,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QWheelEvent>
+#include <QGLFormat>
 
 #include <osg/Camera>
 #include <osg/DisplaySettings>

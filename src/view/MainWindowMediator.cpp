@@ -11,6 +11,7 @@
  */
 
 #include <QDir>
+#include <QDebug>
 #include <QJsonArray>
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
@@ -23,6 +24,7 @@
 #include "model/Lane.h"
 #include "model/Line.h"
 #include "model/MemoryModel.h"
+#include "model/SceneModel.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -47,6 +49,8 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::SELECT_SIGN_ON_TREE);
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
+    result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
+    result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
     return NotificationNames(result);
 }
 
@@ -249,6 +253,47 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         osg::Vec3d center = *CommonFunction::ConvertToNonConstType<osg::Vec3d>(aNotification.getBody());
         getMainWindow()->JumpToCenter(center);
     }
+    else if(noteName == ApplicationFacade::OPEN_ROAD_RENDERING)
+    {
+        openRoadRendering();
+        qDebug()<<"OPEN_ROAD_RENDERING";
+    }
+    else if(noteName == ApplicationFacade::CLOSE_ROAD_RENDERING)
+    {
+        closeRoadRendering();
+        qDebug()<<"CLOSE_ROAD_RENDERING";
+    }
+}
+
+void View::MainWindowMediator::openRoadRendering()
+{
+    MainProxy* mainProxy = getMainProxy();
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy->GetMemoryModel();
+    if (!sceneModel || !memoryModel)
+    {
+        return;
+    }
+    const Model::TileMapPtr& tileMap = memoryModel->GetTileMap();
+    for (const auto& tile : *tileMap)
+    {
+        const Model::RoadMapPtr& roadMap = tile.second->GetRoadMap();
+        for (const auto& road : *roadMap)
+        {
+            sceneModel->AddRoadModelToScene(road.second);
+        }
+    }
+}
+
+void View::MainWindowMediator::closeRoadRendering()
+{
+    MainProxy* mainProxy = getMainProxy();
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+    if (!sceneModel)
+    {
+        return;
+    }
+    sceneModel->RemoveRoadModelFromScene();
 }
 
 void View::MainWindowMediator::onRemove()

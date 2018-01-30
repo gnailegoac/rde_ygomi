@@ -65,8 +65,15 @@
     <addaction name="actionSelectLine"/>
     <addaction name="actionSelectSign"/>
    </widget>
+   <widget class="QMenu" name="menu3DModel">
+    <property name="title">
+     <string>3DModel</string>
+    </property>
+    <addaction name="actionRenderRoad"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menu3DModel"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="enabled">
@@ -156,6 +163,14 @@
    </property>
    <property name="text">
     <string>Select Sign</string>
+   </property>
+  </action>
+  <action name="actionRenderRoad">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Render Road</string>
    </property>
   </action>
  </widget>

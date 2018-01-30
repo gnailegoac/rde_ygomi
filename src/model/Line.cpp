@@ -195,6 +195,7 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
 
 void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer)
 {
+    mPaintListMap->insert(std::make_pair(0, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
     mPaintListMap->insert(std::make_pair(3, std::make_shared<PaintList>()));
@@ -214,6 +215,7 @@ void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform
         }
 
         // Down-sample points with Douglas-Peucker algorithm
+        mPaintListMap->at(0)->push_back(points);
         mPaintListMap->at(1)->push_back(Model::DouglasPeucker::Simplify(points, 1));
         mPaintListMap->at(2)->push_back(Model::DouglasPeucker::Simplify(points, 0.5));
         mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.1));

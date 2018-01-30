@@ -46,6 +46,8 @@ public:
     static const std::string UNSELECT_NODE_ON_TREE;
     static const std::string SELECT_NODE_IN_3DVIEW;
     static const std::string JUMP_TO_CENTER;
+    static const std::string OPEN_ROAD_RENDERING;
+    static const std::string CLOSE_ROAD_RENDERING;
 
     static ApplicationFacade* GetInstance();
 
