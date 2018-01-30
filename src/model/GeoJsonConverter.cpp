@@ -158,7 +158,7 @@ QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& a
     QJsonObject lineObj;
     if (aLine != nullptr)
     {
-        lineObj["id"] = quint64(aLine->GetLineId());
+        lineObj["id"] = static_cast<double>(aLine->GetLineId());
         lineObj["type"] = scLineTypeMap.at(aLine->GetLineType());
         lineObj["length"] = aLine->GetLength();
         lineObj["points"] = convert(aLine->GetPaintListByLevel(aLevel));
