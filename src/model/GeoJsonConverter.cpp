@@ -158,11 +158,12 @@ QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& a
     QJsonObject lineObj;
     if (aLine != nullptr)
     {
-        lineObj["id"] = qint64(aLine->GetLineId());
+        lineObj["id"] = quint64(aLine->GetLineId());
         lineObj["type"] = scLineTypeMap.at(aLine->GetLineType());
         lineObj["length"] = aLine->GetLength();
         lineObj["points"] = convert(aLine->GetPaintListByLevel(aLevel));
     }
+
     return lineObj;
 }
 
@@ -177,6 +178,7 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
         std::unique_ptr<CRS::ICoordinateTransform> ecefToWgs84 =
                         factory->CreateEcefProjection(CRS::CoordinateType::Ecef,
                                                       CRS::CoordinateType::Wgs84);
+
         for (const auto& pointVec : *aPaintList)
         {
             QJsonArray pointList;
@@ -190,13 +192,6 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
                 pointList.push_back(QJsonArray({x, y, z}));
             }
 
-            if (aPaintList->size() == 1)
-            {
-                // for solid line, the JSON content should be an array of points.
-                return pointList;
-            }
-
-            // for dash line, the JSON content is an array of points-array
             pointListArray.push_back(pointList);
         }
     }
