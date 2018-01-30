@@ -278,8 +278,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             Model::TileConstPtr tilePtr = memoryModel->GetTile(tileInfo.second);
             if (tilePtr != nullptr)
             {
-//                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
-                roadsArray = Model::GeoJsonConverter().Convert(1, tilePtr);
+                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
             }
             getMainWindow()->SendRoadsInTile(tileInfo.first, roadsArray);
         }
