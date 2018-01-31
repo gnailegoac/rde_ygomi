@@ -56,6 +56,7 @@
      </property>
      <addaction name="actionKML"/>
      <addaction name="actionProtoBuffer"/>
+     <addaction name="actionDLM"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionOpenFolder"/>
@@ -174,6 +175,11 @@
   <action name="actionProtoBuffer">
    <property name="text">
     <string>ProtoBuffer</string>
+   </property>
+  </action>
+  <action name="actionDLM">
+   <property name="text">
+    <string>DLM</string>
    </property>
   </action>
  </widget>

@@ -81,7 +81,10 @@ SOURCES +=\
     model/data_handler/RoadSection.pb.cpp \
     model/data_handler/ProtoBufferFactory.cpp \
     model/data_handler/ProtoBufferSerializer.cpp \
-    model/data_handler/ProtoBufferInterpreter.cpp
+    model/data_handler/ProtoBufferInterpreter.cpp \
+    model/data_handler/DLMFactory.cpp \
+    model/data_handler/DLMSerializer.cpp \
+    model/data_handler/DLMInterpreter.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -142,7 +145,10 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/RoadSection.pb.h \
     model/data_handler/ProtoBufferFactory.h \
     model/data_handler/ProtoBufferSerializer.h \
-    model/data_handler/ProtoBufferInterpreter.h
+    model/data_handler/ProtoBufferInterpreter.h \
+    model/data_handler/DLMFactory.h \
+    model/data_handler/DLMSerializer.h \
+    model/data_handler/DLMInterpreter.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

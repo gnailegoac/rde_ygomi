@@ -146,6 +146,15 @@ void View::MainWindow::setupConnections()
         }
     });
 
+    connect(ui->actionDLM, &QAction::triggered, [=]() {
+        QString path = QFileDialog::getSaveFileName(this,
+                                                    tr("Export to DLM"), "/");
+        if (path.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_DLM, &path);
+        }
+    });
+
     connect(ui->actionPreference, &QAction::triggered, [=]() {
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
