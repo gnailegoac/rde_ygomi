@@ -21,6 +21,7 @@
 #include <osg/Node>
 #include "model/Road.h"
 #include "model/TrafficSign.h"
+#include <QJsonArray>
 
 namespace Model
 {
@@ -37,6 +38,7 @@ namespace Model
         const osg::ref_ptr<osg::Node>& GetTrafficSignNodeById(const std::uint64_t& aLineId) const;
         void AddRoadModelToScene(const std::shared_ptr<Model::Road>& aRoad);
         void RemoveRoadModelFromScene();
+        void RedrawRoadMarks(const double &aDistance);
 
     private:
         osg::ref_ptr<osg::Node>  buildLineNode(const Model::LinePtr& aLine);
@@ -45,20 +47,20 @@ namespace Model
         osg::ref_ptr<osg::Geode> createBox(const osg::Vec3d& aCenter, const std::string& aTexturePath);
         osg::ref_ptr<osg::Group> buildRoadModelNode(const std::shared_ptr<Model::Road>& aRoad);
         osg::ref_ptr<osg::Group> buildRoadMarksModelNode(const std::shared_ptr<Model::Road>& aRoad);
-        double distance(osg::Vec3 p1,osg::Vec3 p2);
-        bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array> &vertexArray,
-                                  int rightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt> &tris);
-        bool createRoadTriangles_(const osg::ref_ptr<osg::Vec3Array> &vertexArray,
-                                  int rightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt> &tris);
-        void createRoadTexture(const std::string roadTextureFile, osg::ref_ptr<osg::Geometry> &roadGeometry);
+        double distance(osg::Vec3 aP1,osg::Vec3 aP2);
+        bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
+                                  int aRightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt>& aTris);
+        bool createRoadTriangles_(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
+                                  int aRightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt>& aTris);
+        void createRoadTexture(const std::string aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
         osg::ref_ptr<osg::Node> createRoadMarksNode(const Model::LinePtr& aLine);
-        void createMarksTriangles(const osg::Vec3& center, const osg::Vec3& normal,
-                                  osg::ref_ptr<osg::Vec3Array> &vertexArray,
-                                  osg::ref_ptr<osg::DrawElementsUInt> &tris);
-        osg::Vec3 cross(osg::Vec3 v1, osg::Vec3 v2);
-        bool any(osg::Vec3 vec3);
-        bool normalize(osg::Vec3 &vec3);
-        osgText::Text* createContent(osg::Vec3 position, int num);
+        void createMarksTriangles(const osg::Vec3& aCenter, const osg::Vec3& aNormal,
+                                  osg::ref_ptr<osg::Vec3Array>& aVertexArray,
+                                  osg::ref_ptr<osg::DrawElementsUInt>& aTris);
+        osg::Vec3 cross(osg::Vec3 aV1, osg::Vec3 aV2);
+        bool any(osg::Vec3 aVec3);
+        bool normalize(osg::Vec3& aVec3);
+        osgText::Text* createContent(osg::Vec3 aPosition, int aNum);
 
     private:
         osg::ref_ptr<osg::Group> mSceneModelRoot;

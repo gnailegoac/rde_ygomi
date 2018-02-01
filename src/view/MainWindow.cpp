@@ -33,6 +33,7 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
     this->setCentralWidget(new View::OsgWidget(this));
     restoreSettings();
     setupConnections();
+    EnableSaveAction(false);
     auto networkSettings = Service::NetworkPreferenceProvider::Instance();
     ui->webRoadEditor->load(QUrl(networkSettings->GetWebServer()));
     mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
@@ -43,6 +44,11 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
 void View::MainWindow::PopupWarningMessage(const QString &aWarning)
 {
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
+}
+
+void View::MainWindow::PopupInfoMessage(const QString& aMessage)
+{
+    QMessageBox::information(this, windowTitle(), aMessage, "Close");
 }
 
 osg::Polytope View::MainWindow::GetPolytope()
@@ -80,6 +86,16 @@ void View::MainWindow::ChangeCameraMatrix(const QJsonArray& aMatrix)
     ui->webRoadEditor->ChangeCameraMatrix(aMatrix);
 }
 
+void View::MainWindow::SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray)
+{
+    ui->webRoadEditor->SendRoadsInTile(aLevel, aRoadArray);
+}
+
+void View::MainWindow::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
+{
+    ui->webRoadEditor->PushEntireRoadTilesExtent(aTileArray);
+}
+
 QTreeView* View::MainWindow::GetTreeView() const
 {
     return mRoadInfoView;
@@ -102,6 +118,31 @@ void View::MainWindow::setupConnections()
         if (folderPath.length() > 0)
         {
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN, &folderPath);
+        }
+    });
+
+    connect(ui->actionSave, &QAction::triggered, [=]() {
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::SAVE_LOGICDB, &folderPath);
+        }
+    });
+
+    connect(ui->actionKML, &QAction::triggered, [=]() {
+        QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
+        if (folderPath.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_KML, &folderPath);
+        }
+    });
+
+    connect(ui->actionProtoBuffer, &QAction::triggered, [=]() {
+        QString path = QFileDialog::getSaveFileName(this,
+                                                    tr("Export to ProtoBuffer"), "/");
+        if (path.length() > 0)
+        {
+            ApplicationFacade::SendNotification(ApplicationFacade::EXPORT_TO_PROTOBUF, &path);
         }
     });
 
@@ -273,4 +314,16 @@ void View::MainWindow::writeSettings()
     settings.beginGroup("ui");
     settings.setValue("mainwindow/geometry", saveGeometry());
     settings.endGroup();
+}
+
+void View::MainWindow::EnableSaveAction(bool aEnable)
+{
+    ui->actionSave->setEnabled(aEnable);
+    ui->menuExport->setEnabled(aEnable);
+}
+
+void View::MainWindow::GetDistance(double &aDistance)
+{
+        View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+        viewer->GetDistance(aDistance);
 }

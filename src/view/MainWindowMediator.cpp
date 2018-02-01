@@ -24,6 +24,7 @@
 #include "model/Lane.h"
 #include "model/Line.h"
 #include "model/MemoryModel.h"
+#include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
@@ -49,6 +50,8 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::SELECT_SIGN_ON_TREE);
     result->get().push_back(ApplicationFacade::UNSELECT_NODE_ON_TREE);
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
+    result->get().push_back(ApplicationFacade::NOTIFY_RESULT);
+    result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
     return NotificationNames(result);
@@ -174,6 +177,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     std::string noteName = aNotification.getName();
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
+        getMainWindow()->EnableSaveAction(true);
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
         ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
     }
@@ -183,6 +187,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
+            getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
         }
         else
@@ -194,6 +199,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::INIT_SCENE)
     {
         View::MainWindow* mainWindow = getMainWindow();
+        // send tiles to web viewer.
+        QJsonArray tileArray;
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if (memoryModel != nullptr)
+        {
+            tileArray = Model::GeoJsonConverter().GetTileExtent(memoryModel);
+            getMainWindow()->PushEntireRoadTilesExtent(tileArray);
+        }
         mainWindow->SetTreeModel(getMainProxy()->GetTreeModel());
         osg::Polytope polytope = mainWindow->GetPolytope();
         ApplicationFacade::SendNotification(ApplicationFacade::REFRESH_SCENE, &polytope);
@@ -208,8 +221,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         View::MainWindow* mainWindow = getMainWindow();
         QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
         mainWindow->ChangeCameraMatrix(cameraMatrix);
+
+         MainProxy* mainProxy = getMainProxy();
+        const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+        double distance=0.0;
+        mainWindow->GetDistance(distance);
+        sceneModel->RedrawRoadMarks(distance);
     }
-    else if(noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::RoadPtr road = getMainProxy()->GetMemoryModel()->GetRoadById(id);
@@ -218,7 +237,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_LANE_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_LANE_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::LanePtr lane = getMainProxy()->GetMemoryModel()->GetLaneById(id);
@@ -228,7 +247,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road, lane);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_LINE_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_LINE_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         Model::LinePtr line = getMainProxy()->GetMemoryModel()->GetLineById(id);
@@ -239,29 +258,48 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             selectNodeOnTree(road->GetTile(), road, lane, line);
         }
     }
-    else if(noteName == ApplicationFacade::SELECT_SIGN_ON_TREE)
+    else if (noteName == ApplicationFacade::SELECT_SIGN_ON_TREE)
     {
         uint64_t id = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
         selectNodeOnTree(getMainProxy()->GetMemoryModel()->GetTrafficSignById(id));
     }
-    else if(noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
+    else if (noteName == ApplicationFacade::UNSELECT_NODE_ON_TREE)
     {
         getMainWindow()->GetTreeView()->clearSelection();
     }
-    else if(noteName == ApplicationFacade::JUMP_TO_CENTER)
+    else if (noteName == ApplicationFacade::JUMP_TO_CENTER)
     {
         osg::Vec3d center = *CommonFunction::ConvertToNonConstType<osg::Vec3d>(aNotification.getBody());
         getMainWindow()->JumpToCenter(center);
     }
+    else if (noteName == ApplicationFacade::NOTIFY_RESULT)
+    {
+        QString message = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
+        getMainWindow()->PopupInfoMessage(message);
+    }
+    else if (noteName == ApplicationFacade::REQUEST_ROADS_IN_TILE)
+    {
+        std::pair<std::uint64_t, std::uint64_t> tileInfo =
+                *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
+        QJsonArray roadsArray;
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if (memoryModel != nullptr)
+        {
+            Model::TileConstPtr tilePtr = memoryModel->GetTile(tileInfo.second);
+            if (tilePtr != nullptr)
+            {
+                roadsArray = Model::GeoJsonConverter().Convert(tileInfo.first, tilePtr);
+            }
+            getMainWindow()->SendRoadsInTile(tileInfo.first, roadsArray);
+        }
+    }
     else if(noteName == ApplicationFacade::OPEN_ROAD_RENDERING)
     {
         openRoadRendering();
-        qDebug()<<"OPEN_ROAD_RENDERING";
     }
     else if(noteName == ApplicationFacade::CLOSE_ROAD_RENDERING)
     {
         closeRoadRendering();
-        qDebug()<<"CLOSE_ROAD_RENDERING";
     }
 }
 
@@ -283,6 +321,7 @@ void View::MainWindowMediator::openRoadRendering()
             sceneModel->AddRoadModelToScene(road.second);
         }
     }
+    getMainWindow()->centralWidget()->repaint();
 }
 
 void View::MainWindowMediator::closeRoadRendering()
@@ -294,6 +333,7 @@ void View::MainWindowMediator::closeRoadRendering()
         return;
     }
     sceneModel->RemoveRoadModelFromScene();
+    getMainWindow()->centralWidget()->repaint();
 }
 
 void View::MainWindowMediator::onRemove()

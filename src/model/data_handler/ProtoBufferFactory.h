@@ -6,34 +6,36 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    GeoJsonConverter.h
+ * @file    ProtoBufferFactory.h
  * @brief
  *******************************************************************************
  */
-
 #pragma once
 
-#include <QJsonArray>
-#include <QJsonObject>
-#include <osg/Matrixd>
+#include "IFactory.h"
 
-#include "model/MemoryModel.h"
+#include <string>
 
 namespace Model
 {
 
-class GeoJsonConverter
+class ProtoBufferFactory : public IFactory
 {
 public:
-    GeoJsonConverter();
+    ProtoBufferFactory();
+    ~ProtoBufferFactory();
 
-    QJsonArray Convert(const osg::Matrixd &aMatrix);
-    QJsonArray Convert(int aLevel, TileConstPtr& aTile);
-    QJsonArray GetTileExtent(const std::shared_ptr<MemoryModel>& aMemoryModel);
+    void SetOutputFileName(const std::string& aFileName);
+    const std::string& GetOutputFileName() const;
+    void SetOutputInterval(const double& aOutputInterval);
+    const double& GetOutputInterval() const;
+
+    IParserPtr CreateParser() override;
+    ISerializerPtr CreateSerializer() override;
 
 private:
-    QJsonObject convert(int aLevel, const LinePtr& aLine);
-    QJsonArray convert(const PaintListPtr& aPaintList);
-    QJsonObject getTileBound(const TilePtr& aTile);
+    std::string mFileName;
+    double mInterval;
 };
+
 }

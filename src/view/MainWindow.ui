@@ -50,9 +50,17 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export To</string>
+     </property>
+     <addaction name="actionKML"/>
+     <addaction name="actionProtoBuffer"/>
+    </widget>
     <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
     <addaction name="actionOpenFolder"/>
+    <addaction name="actionSave"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -163,6 +171,16 @@
    </property>
    <property name="text">
     <string>Select Sign</string>
+   </property>
+  </action>
+  <action name="actionKML">
+   <property name="text">
+    <string>KML</string>
+   </property>
+  </action>
+  <action name="actionProtoBuffer">
+   <property name="text">
+    <string>ProtoBuffer</string>
    </property>
   </action>
   <action name="actionRenderRoad">

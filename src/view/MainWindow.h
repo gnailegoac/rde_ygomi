@@ -42,14 +42,20 @@ public:
     explicit MainWindow(QWidget* aParent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
     void PopupWarningMessage(const QString& aWarning);
+    void PopupInfoMessage(const QString& aMessage);
     osg::Polytope GetPolytope();
     void UpdateView();
     void ShowRoadInfo();
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
+    void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
+    void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
+    void EnableSaveAction(bool aEnable);
+    void GetDistance(double& aDistance);
+
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;

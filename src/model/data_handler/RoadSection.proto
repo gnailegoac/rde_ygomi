@@ -1,0 +1,90 @@
+syntax = "proto2";
+
+/* Start definition of a HAF road section */
+
+message GeometryPoint {
+  optional double lat = 1;     //WGS84 latitude
+  optional double lon = 2;     //WGS84 longitude
+  optional double height = 3;  //WGS84 height
+}
+
+message Geometry {
+  repeated GeometryPoint points = 1;
+}
+
+enum ShapeType {
+  SHAPETYPE_UNKNOWN = 0;
+  SHAPETYPE_CIRCLE = 1;
+  SHAPETYPE_RECTANGLE = 2;
+  SHAPETYPE_DIAMOND = 3;
+  SHAPETYPE_TRIANGLE = 4;
+}
+
+enum LandmarkType {
+  LANDMARKTYPE_UNKNOWN = 0;
+  LANDMARKTYPE_TRAFFICSIGN = 1;
+  LANDMARKTYPE_GUARDRAIL = 2;
+  LANDMARKTYPE_CURB = 3;
+}
+
+message Landmark {
+  optional Geometry geometry = 1; // depending on the type only a point, a line or a polygon
+  optional int32 lateralOffset = 2; // distance to road centerline
+  optional LandmarkType type = 3;
+  optional ShapeType shapeType = 4;
+  optional int32 colorRgb = 5; // 0xRRGGBB, optional
+  optional float widthCm = 6;  // object width in cm, optional
+  optional float heightCm = 7; // object height in cm, optional
+  optional int32 countryCode = 8;
+}
+
+enum LaneType {
+  LANETYPE_UNKNOWN = 0;
+  LANETYPE_NORMAL = 1;
+  LANETYPE_SHOULDER = 2;
+  LANETYPE_ENTRY = 3;
+  LANETYPE_EXIT = 4;
+  LANETYPE_RAMP = 5;
+}
+
+message Lane {
+  optional Geometry centerLine = 1; // center/reference line
+  optional LaneType type = 2;
+  optional uint32 laneId = 3; // unique only within the road model
+  repeated uint32 predecessorLaneIds = 4;
+  optional uint32 predecessorSectionId = 5;
+}
+
+enum LaneBoundaryType {
+  LANEBOUNDARYTYPE_UNKNOWN = 0;
+  LANEBOUNDARYTYPE_MARKING_DASHED = 1;
+  LANEBOUNDARYTYPE_MARKING_SOLID = 2;
+  LANEBOUNDARYTYPE_MARKING_DOUBLE = 3;
+  LANEBOUNDARYTYPE_MARKING_BOTTS_DOTS = 4;
+  LANEBOUNDARYTYPE_MARKING_BLOCK = 5;	// bold dashed lines at the highway entry/exit
+  LANEBOUNDARYTYPE_MARKING_NONE = 6; // used for an unmarked lane boundary
+}
+
+message LaneBoundary {
+  optional Geometry geometry = 1;
+  optional LaneBoundaryType type = 2;
+}
+
+message LaneModel {
+  repeated Lane lanes = 1;
+  repeated LaneBoundary boundaries = 2;
+}
+
+/* A road section is a section along the road that contains lanes, boundaries and landmarks */
+message RoadSection {
+  optional uint32 sectionId = 1;    // unique section identifier (unique for the current horizon)
+  optional LaneModel laneModel = 2; // collection of lanes and its boundaries
+  repeated Landmark landmarks = 3;  // collection of landmarks
+  optional Geometry roadSectionCenterLine = 4; // center/reference line
+}
+
+message RoadSections {
+  repeated RoadSection roadSections = 1;
+}
+
+/* End definition of a HAF road section */

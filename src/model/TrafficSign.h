@@ -54,6 +54,7 @@ public:
 
     const Point3DPtr& GetGeodeticPosition() const;
     void SetGeodeticPosition(const Point3DPtr& aGeodeticPosition);
+    void SetGeodeticFromRelative(const Point3DPtr& aRelative, const Point3DPtr& aReference);
 
     const Point3DPtr& GetViewPosition() const;
     void SetViewPosition(const Point3DPtr& aViewPosition);

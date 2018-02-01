@@ -142,6 +142,8 @@ void View::OsgWidget::Refresh()
     mView->home();
     repaint();
     notifyCameraChange();
+    osgGA::TrackballManipulator* trackballManipulator=dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
+    mDistance=trackballManipulator->getDistance();
 }
 
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
@@ -158,6 +160,13 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
 void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
 {
     mPickHandler->SetSelectType(aSelectType);
+}
+
+void View::OsgWidget::GetDistance(double& aDistance)
+{
+    osgGA::TrackballManipulator* trackballManipulator=dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
+    aDistance=mDistance-trackballManipulator->getDistance();
+
 }
 
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
