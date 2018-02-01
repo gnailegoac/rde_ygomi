@@ -304,7 +304,7 @@ void Model::TreeModel::createLineNode(const QString& aName, const std::shared_pt
 void Model::TreeModel::createLineTypeNode(const std::shared_ptr<Model::Line>& aLine, Model::TreeItem* aParent)
 {
     QVector<QVariant> columnData;
-    columnData << ItemName::scType << scLineTypeMap.at(aLine->GetCurve(0)->GetCurveType());
+    columnData << ItemName::scType << scLineTypeMap.at(aLine->GetLineType());
     aParent->AppendChild(new Model::TreeItem(columnData, aParent));
 }
 

@@ -26,10 +26,12 @@ public:
     ~WebGlobeChannelObject();
 
 public slots:
-    void setCameraMatrix(QJsonArray aMatrix);
+    void setCameraMatrix(const QJsonArray& aMatrix);
+    void fetchRoadListByTile(const QJsonValue& aLevel, const QJsonValue& aTileId);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);
+    void requestRoadsInTile(const int& aLevel, const std::uint64_t& aTileId);
 };
 
 class WebRoadEditor : public QWebEngineView
@@ -40,6 +42,8 @@ public:
     ~WebRoadEditor();
 
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
+    void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
+    void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);

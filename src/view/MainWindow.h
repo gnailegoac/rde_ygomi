@@ -48,6 +48,8 @@ public:
     void ShowRoadInfo();
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
+    void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
+    void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);

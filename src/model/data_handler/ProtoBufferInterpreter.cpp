@@ -123,7 +123,7 @@ void Model::ProtoBufferInterpreter::saveLane(::Lane* aLanePb,
 
 void Model::ProtoBufferInterpreter::saveLaneBoundary(LaneBoundary* aBoundary, const Model::LinePtr& aLine)
 {
-    Model::CurveType lineType = getLineType(aLine);
+    Model::CurveType lineType = aLine->GetLineType();
     Geometry* geometry = aBoundary->mutable_geometry();
 
     aBoundary->set_type(convertLineType(lineType));
@@ -202,34 +202,6 @@ uint32_t Model::ProtoBufferInterpreter::getLaneIndex(const Model::LanePtr& aLane
     }
 
     return index;
-}
-
-Model::CurveType Model::ProtoBufferInterpreter::getLineType(const Model::LinePtr& aLine)
-{
-    // Currently, protobuf only cares about solid and dashed
-    // For a line has curves of different type, will consider it as dashed if there is one dashed curve.
-    // For this case, if the curves in the line are not continuous, the line type should also be dashed.
-    // Actually, the road should be sliced to avoid a line composed of different type curves
-
-    for (const auto& curve : *(aLine->GetCurveList()))
-    {
-        if (curve->GetCurveType() == CurveType::Dashed)
-        {
-            return CurveType::Dashed;
-        }
-
-        if (curve->GetCurveType() == CurveType::UnKnown)
-        {
-            return CurveType::UnKnown;
-        }
-
-        if (curve->GetCurveType() == CurveType::UnDefined)
-        {
-            return CurveType::UnDefined;
-        }
-    }
-
-    return CurveType::Solid;
 }
 
 LaneBoundaryType Model::ProtoBufferInterpreter::convertLineType(const Model::CurveType& aCurveType)
