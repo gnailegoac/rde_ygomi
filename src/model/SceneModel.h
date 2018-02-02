@@ -15,13 +15,11 @@
 
 #include <osg/Geometry>
 #include <osg/Geode>
-#include <osgText/Text>
 #include <map>
 #include <memory>
 #include <osg/Node>
 #include "model/Road.h"
 #include "model/TrafficSign.h"
-#include <QJsonArray>
 
 namespace Model
 {
@@ -50,17 +48,7 @@ namespace Model
         double distance(osg::Vec3 aP1,osg::Vec3 aP2);
         bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
                                   int aRightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt>& aTris);
-        bool createRoadTriangles_(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
-                                  int aRightLinePointsNum,osg::ref_ptr<osg::DrawElementsUInt>& aTris);
-        void createRoadTexture(const std::string aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
-        osg::ref_ptr<osg::Node> createRoadMarksNode(const Model::LinePtr& aLine);
-        void createMarksTriangles(const osg::Vec3& aCenter, const osg::Vec3& aNormal,
-                                  osg::ref_ptr<osg::Vec3Array>& aVertexArray,
-                                  osg::ref_ptr<osg::DrawElementsUInt>& aTris);
-        osg::Vec3 cross(osg::Vec3 aV1, osg::Vec3 aV2);
-        bool any(osg::Vec3 aVec3);
-        bool normalize(osg::Vec3& aVec3);
-        osgText::Text* createContent(osg::Vec3 aPosition, int aNum);
+                void createRoadTexture(const std::string aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
 
     private:
         osg::ref_ptr<osg::Group> mSceneModelRoot;
