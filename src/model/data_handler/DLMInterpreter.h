@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 
 #include <QDomDocument>
@@ -21,6 +22,7 @@
 
 #include "DLMSetting.h"
 #include "../MemoryModel.h"
+#include "../IdGenerator.h"
 
 namespace Model
 {
@@ -62,10 +64,17 @@ private:
     void writeGeometry(QDomDocument& aDom, QDomElement& aParent, const LinePtr& aLine);
     void writeTextNode(QDomDocument& aDom, QDomElement& aParent, const QString& aName, const QString& aValue);
     void writeNumberNode(QDomDocument& aDom, QDomElement& aParent, const QString& aName, const std::uint32_t& aValue);
+    std::uint32_t getUnifiedRoadId(const RoadPtr& aRoad);
+    std::uint32_t getUnifiedLaneId(const LanePtr& aLane);
+    std::uint32_t getUnifiedLineId(const LinePtr& aLine);
+    std::uint32_t getUnifiedTrafficSignId(const TrafficSignPtr& aTrafficSign);
 
 private:
     std::string mFileName;
     double mInterval;
+    std::mutex mMutex;
+    IdGenerator mIdGenerator;
+    std::unordered_map<std::string, std::uint32_t> mUnifiedIdMap;
 };
 
 typedef std::shared_ptr<DLMInterpreter> DLMInterpreterPtr;

@@ -165,6 +165,7 @@ uint32_t Model::DLMInterpreter::getLaneIndex(const Model::LanePtr& aLane)
 
 DLM::ConnectionType Model::DLMInterpreter::getLaneConnectionType(const Model::LanePtr& aLane)
 {
+    Q_UNUSED(aLane);
     // Currently a lane has at most one successor/predecessor.
     // TODO: Check if a lane is merge/split when have enough information.
     return DLM::ConnectionType::Continuation;
@@ -225,7 +226,7 @@ void Model::DLMInterpreter::writeLaneGroups(QDomDocument& aDom, QDomElement& aPa
 void Model::DLMInterpreter::writeLaneGroup(QDomDocument& aDom, QDomElement& aParent, const Model::RoadPtr& aRoad)
 {
     QDomElement laneGroup = aDom.createElement("laneGroup");
-    writeNumberNode(aDom, laneGroup, "dlmId", aRoad->GetRoadId());
+    writeNumberNode(aDom, laneGroup, "dlmId", getUnifiedRoadId(aRoad));
     // TODO: dont have version for road.
     writeNumberNode(aDom, laneGroup, "version", 1);
     for (const auto& lane : *(aRoad->GetLaneList()))
@@ -245,7 +246,7 @@ void Model::DLMInterpreter::writeLane(QDomDocument& aDom, QDomElement& aParent, 
     {
         laneElement.setAttribute("connectionType", DLM::scConnectionTypeMap.at(connectionType));
     }
-    writeNumberNode(aDom, laneElement, "dlmId", aLane->GetLaneId());
+    writeNumberNode(aDom, laneElement, "dlmId", getUnifiedLaneId(aLane));
     writeNumberNode(aDom, laneElement, "laneIndex", getLaneIndex(aLane));
     writeLaneSuccessors(aDom, laneElement, aLane);
     // The minimum width of the lane in centimeters.
@@ -303,7 +304,7 @@ void Model::DLMInterpreter::writeLaneSeparatorIndex(QDomDocument& aDom, QDomElem
 {
     QDomElement element = aDom.createElement(aName);
     // Includes the dlmId of the lane separator that is referenced
-    writeNumberNode(aDom, element, "dlmId", aLine->GetLineId());
+    writeNumberNode(aDom, element, "dlmId", getUnifiedLineId(aLine));
     // Indicates whether the geometry of the lane is in in the same direction as
     // the geometry of the lane separator group (true) or in reverse direction (false).
     writeTextNode(aDom, element, "sameDirection", "true");
@@ -330,7 +331,7 @@ void Model::DLMInterpreter::writeLaneSeparatorGroups(QDomDocument& aDom, QDomEle
 void Model::DLMInterpreter::writeLaneSeparatorGroup(QDomDocument& aDom, QDomElement& aParent, const Model::LinePtr& aLine)
 {
     QDomElement laneSeparatorGroup = aDom.createElement("laneSeparatorGroup");
-    writeNumberNode(aDom, laneSeparatorGroup, "dlmId", aLine->GetLineId());
+    writeNumberNode(aDom, laneSeparatorGroup, "dlmId", getUnifiedLineId(aLine));
     // TODO: Every element should have version, only a default version currently.
     writeNumberNode(aDom, laneSeparatorGroup, "version", 1);
     writeLaneSeparator(aDom, laneSeparatorGroup, aLine);
@@ -376,7 +377,7 @@ void Model::DLMInterpreter::writeSpeedLimitSign(QDomDocument& aDom, QDomElement&
                                                 const Model::TrafficSignPtr& aTrafficSign)
 {
     QDomElement globalObject = aDom.createElement("globalLaneGroupObject");
-    writeNumberNode(aDom, globalObject, "dlmId", aTrafficSign->GetTrafficSignId());
+    writeNumberNode(aDom, globalObject, "dlmId", getUnifiedTrafficSignId(aTrafficSign));
     QDomElement speedLimitSign = aDom.createElement("speedLimitSign");
     writePosition3D(aDom, speedLimitSign, aTrafficSign->GetGeodeticPosition());
     // SpeedLimitSign Type: MINIMUM, MAXIMUM, ADVISORY.
@@ -447,4 +448,48 @@ void Model::DLMInterpreter::writeNumberNode(QDomDocument& aDom, QDomElement& aPa
     QDomText textNode = aDom.createTextNode(QString::number(aValue));
     newElement.appendChild(textNode);
     aParent.appendChild(newElement);
+}
+
+uint32_t Model::DLMInterpreter::getUnifiedRoadId(const Model::RoadPtr& aRoad)
+{
+    std::lock_guard<std::mutex> mutexGuard(mMutex);
+    std::string roadIdStr = "road" + std::to_string(aRoad->GetRoadId());
+    if (mUnifiedIdMap.count(roadIdStr) == 0)
+    {
+        mUnifiedIdMap[roadIdStr] = mIdGenerator.GetNewId();
+    }
+    return mUnifiedIdMap[roadIdStr];
+}
+
+uint32_t Model::DLMInterpreter::getUnifiedLaneId(const Model::LanePtr& aLane)
+{
+    std::lock_guard<std::mutex> mutexGuard(mMutex);
+    std::string laneIdStr = "lane" + std::to_string(aLane->GetLaneId());
+    if (mUnifiedIdMap.count(laneIdStr) == 0)
+    {
+        mUnifiedIdMap[laneIdStr] = mIdGenerator.GetNewId();
+    }
+    return mUnifiedIdMap[laneIdStr];
+}
+
+uint32_t Model::DLMInterpreter::getUnifiedLineId(const Model::LinePtr& aLine)
+{
+    std::lock_guard<std::mutex> mutexGuard(mMutex);
+    std::string lineIdStr = "line" + std::to_string(aLine->GetLineId());
+    if (mUnifiedIdMap.count(lineIdStr) == 0)
+    {
+        mUnifiedIdMap[lineIdStr] = mIdGenerator.GetNewId();
+    }
+    return mUnifiedIdMap[lineIdStr];
+}
+
+uint32_t Model::DLMInterpreter::getUnifiedTrafficSignId(const Model::TrafficSignPtr& aTrafficSign)
+{
+    std::lock_guard<std::mutex> mutexGuard(mMutex);
+    std::string signIdStr = "sign" + std::to_string(aTrafficSign->GetTrafficSignId());
+    if (mUnifiedIdMap.count(signIdStr) == 0)
+    {
+        mUnifiedIdMap[signIdStr] = mIdGenerator.GetNewId();
+    }
+    return mUnifiedIdMap[signIdStr];
 }

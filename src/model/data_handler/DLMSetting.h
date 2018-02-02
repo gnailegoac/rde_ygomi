@@ -14,6 +14,7 @@
 
 #include <map>
 #include <memory>
+#include <unordered_map>
 
 #include <QString>
 
@@ -141,7 +142,7 @@ static const std::map<Material, QString> scMaterialTypeMap =
 };
 
 // Map to get real speed limit from speed limit enum.
-static const std::map<std::uint32_t, std::uint16_t> scSpeedLimitTypeValueMap =
+static const std::unordered_map<std::uint32_t, std::uint16_t> scSpeedLimitTypeValueMap =
 {
     {274505, 5}, {274506, 5}, {278505, 5}, {278506, 5},
     {274510, 10}, {274511, 10}, {278510, 10}, {278511, 10},
