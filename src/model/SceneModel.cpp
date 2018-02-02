@@ -683,10 +683,10 @@ osgText::Text* Model::SceneModel::createContent(osg::Vec3 aPosition, int aNum)
 void Model::SceneModel::RedrawRoadMarks(const double &aDistance)
 {
     double width=0.0;
-    double s=20100;
-    double t=21000;
+    double s=20500;
+    double t=21200;
     double widthMin=1.0;
-    double widthMax=10.0;
+    double widthMax=15.0;
     if(aDistance<=s)
     {
         width=widthMin;
@@ -708,6 +708,6 @@ void Model::SceneModel::RedrawRoadMarks(const double &aDistance)
         osg::Geode* geode=dynamic_cast<osg::Geode*>((iter->second).get());
         geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
     }
-    //qDebug("distance=%.12f",aDistance);
-    //qDebug("width=%.12f",width);
+    qDebug("distance=%.12f",aDistance);
+    qDebug("width=%.12f",width);
 }
