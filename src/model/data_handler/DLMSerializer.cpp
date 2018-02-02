@@ -36,5 +36,5 @@ Model::DLMSerializer::~DLMSerializer()
 bool Model::DLMSerializer::Serialize(const Model::MemoryModelPtr& aMemoryModel)
 {
     DLMInterpreterPtr dlmInterpreter = std::make_shared<Model::DLMInterpreter>(mFileName, mInterval);
-    return dlmInterpreter->SaveLaneGroups(aMemoryModel);
+    return dlmInterpreter->SaveDetailJournal(aMemoryModel);
 }
