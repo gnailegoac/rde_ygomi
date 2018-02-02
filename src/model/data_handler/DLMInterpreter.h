@@ -74,6 +74,8 @@ private:
     double mInterval;
     std::mutex mMutex;
     IdGenerator mIdGenerator;
+    // dlmId describes a unique id for an object in the HAD map.
+    // The id for road, lane, line and traffic sign should be unique.
     std::unordered_map<std::string, std::uint32_t> mUnifiedIdMap;
 };
 
