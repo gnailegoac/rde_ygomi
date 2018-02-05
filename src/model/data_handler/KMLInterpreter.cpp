@@ -277,7 +277,7 @@ void Model::KMLInterpreter::writePaint(QDomElement& aElement,
         QDomText paintId = aDom.createTextNode(("Paint " + std::to_string(aCurve->GetCurveId())).c_str());
         name.appendChild(paintId);
         QDomElement description = aDom.createElement("description");
-        QDomText paintType = aDom.createTextNode(("type=\"" + aCurve->GetCurveTypeDescriptor() = "\"").c_str());
+        QDomText paintType = aDom.createTextNode(("type=\"" + aCurve->GetCurveTypeDescriptor() + "\"").c_str());
         description.appendChild(paintType);
         QDomElement styleUrl = aDom.createElement("styleUrl");
         QDomText styleUrlValue = aDom.createTextNode("Paint");

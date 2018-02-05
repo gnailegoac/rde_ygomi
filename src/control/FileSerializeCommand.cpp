@@ -79,6 +79,19 @@ void Controller::FileSerializeCommand::execute(const PureMVC::Interfaces::INotif
                 saveResult = "Failed to export to ProtoBuffer.";
             }
         }
+        else if (aNotification.getName() == ApplicationFacade::EXPORT_TO_DLM)
+        {
+            Model::IFactoryPtr factory = Model::Factory::CreateDLMFactory(folderPath.toStdString());
+            Model::ISerializerPtr serializer = factory->CreateSerializer();
+            if (serializer->Serialize(memoryModel))
+            {
+                saveResult = "Export to DLM successfully.";
+            }
+            else
+            {
+                saveResult = "Failed to export to DLM.";
+            }
+        }
     }
 
     ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &saveResult);

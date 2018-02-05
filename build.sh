@@ -7,11 +7,12 @@ script_dir=$(dirname `readlink -f $0`)
 proj_name=$(grep -Po '(?<="name": ")[^"]*' config.json)
 make_tool=$(grep -Po '(?<="make_tool": ")[^"]*' config.json)
 
-#pre build
+# pre build
+# Fail to execute git command in docker.
 #if [[ -f $script_dir/prebuild.sh ]]; then
-#    echo "===== start prebuild ====="
-#    bash $script_dir/prebuild.sh
-#    echo "===== end prebuild ====="
+#   echo "===== start prebuild ====="
+#   bash $script_dir/prebuild.sh
+#   echo "===== end prebuild ====="
 #fi
 
 rm -rf $script_dir/build $script_dir/build_ut
