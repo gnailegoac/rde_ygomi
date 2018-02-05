@@ -64,10 +64,7 @@ private:
     void writeGeometry(QDomDocument& aDom, QDomElement& aParent, const LinePtr& aLine);
     void writeTextNode(QDomDocument& aDom, QDomElement& aParent, const QString& aName, const QString& aValue);
     void writeNumberNode(QDomDocument& aDom, QDomElement& aParent, const QString& aName, const std::uint32_t& aValue);
-    std::uint32_t getUnifiedRoadId(const RoadPtr& aRoad);
-    std::uint32_t getUnifiedLaneId(const LanePtr& aLane);
-    std::uint32_t getUnifiedLineId(const LinePtr& aLine);
-    std::uint32_t getUnifiedTrafficSignId(const TrafficSignPtr& aTrafficSign);
+    std::uint32_t getUnifiedId(const std::string& aType, const std::uint64_t& aId);
 
 private:
     std::string mFileName;
