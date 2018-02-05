@@ -20,6 +20,7 @@
 #include "LogicDbFactory.h"
 #include "KMLFactory.h"
 #include "ProtoBufferFactory.h"
+#include "DLMFactory.h"
 
 Model::IFactoryPtr Model::Factory::CreateLogicDbFactory(const std::vector<std::string>& aDbPathList)
 {
@@ -61,4 +62,13 @@ Model::IFactoryPtr Model::Factory::CreateProtoBufferFactory(const std::string& a
     protoBufferFactory->SetOutputFileName(aFileName);
     protoBufferFactory->SetOutputInterval(aInterval);
     return std::move(protoBufferFactory);
+}
+
+Model::IFactoryPtr Model::Factory::CreateDLMFactory(const std::string& aFileName,
+                                                    const double& aInterval)
+{
+    std::unique_ptr<DLMFactory> dlmFactory(new DLMFactory());
+    dlmFactory->SetOutputFileName(aFileName);
+    dlmFactory->SetOutputInterval(aInterval);
+    return std::move(dlmFactory);
 }

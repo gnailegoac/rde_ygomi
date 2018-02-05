@@ -35,5 +35,7 @@ private:
     QJsonObject convert(int aLevel, const LinePtr& aLine);
     QJsonArray convert(const PaintListPtr& aPaintList);
     QJsonObject getTileBound(const TilePtr& aTile);
+    void addLine(QJsonObject& aLane, QVector<quint64>& aLineIdVec, QJsonArray& aLines,
+                 const QString& aPos, const LinePtr& aLine, int aLevel);
 };
 }

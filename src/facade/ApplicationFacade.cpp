@@ -49,6 +49,7 @@ const std::string ApplicationFacade::JUMP_TO_CENTER = "JumpToCenter";
 const std::string ApplicationFacade::SAVE_LOGICDB = "SaveLogicDB";
 const std::string ApplicationFacade::EXPORT_TO_KML = "ExportToKML";
 const std::string ApplicationFacade::EXPORT_TO_PROTOBUF = "ExportToProtoBuffer";
+const std::string ApplicationFacade::EXPORT_TO_DLM = "ExportToDLM";
 const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
 const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
@@ -124,6 +125,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[SAVE_LOGICDB] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[EXPORT_TO_KML] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[EXPORT_TO_PROTOBUF] = Controller::FileSerializeCommand::GetCommandName();
+    mMessageList[EXPORT_TO_DLM] = Controller::FileSerializeCommand::GetCommandName();
     mMessageList[REFRESH_SCENE] = Controller::SceneManageCommand::GetCommandName();
     mMessageList[SELECT_NODE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[CHANGE_SELECT_TYPE] = Controller::NodeHighlightCommand::GetCommandName();

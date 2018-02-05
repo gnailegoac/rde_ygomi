@@ -28,6 +28,8 @@ public:
     static IFactoryPtr CreateKMLFactory(const std::string& aKMLFolder, const double& aInterval = 1.0);
 
     static IFactoryPtr CreateProtoBufferFactory(const std::string& aFileName, const double& aInterval = 1.0);
+
+    static IFactoryPtr CreateDLMFactory(const std::string& aFileName, const double& aInterval = 1.0);
 };
 
 }

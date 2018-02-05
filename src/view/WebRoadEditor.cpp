@@ -34,7 +34,7 @@ WebGlobeChannelObject::~WebGlobeChannelObject()
 
 }
 
-void WebGlobeChannelObject::setCameraMatrix(QJsonArray aMatrix)
+void WebGlobeChannelObject::setCameraMatrix(const QJsonArray& aMatrix)
 {
     osg::Matrixd matrix(aMatrix[0].toDouble(), aMatrix[1].toDouble(), aMatrix[2].toDouble(), aMatrix[3].toDouble(),
             aMatrix[4].toDouble(), aMatrix[5].toDouble(), aMatrix[6].toDouble(), aMatrix[7].toDouble(),
@@ -43,7 +43,7 @@ void WebGlobeChannelObject::setCameraMatrix(QJsonArray aMatrix)
     emit cameraMatrixChanged(matrix);
 }
 
-void WebGlobeChannelObject::fetchRoadListByTile(QJsonValue aLevel, QJsonValue aTileId)
+void WebGlobeChannelObject::fetchRoadListByTile(const QJsonValue& aLevel, const QJsonValue& aTileId)
 {
     int level = aLevel.toInt();
     std::uint64_t tileId = static_cast<std::uint64_t>(aTileId.toDouble());

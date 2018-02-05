@@ -60,54 +60,13 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
 
         for (const auto& it : *(roadPtr->GetLaneList()))
         {
-            QJsonObject lane;
-            lane["id"] = static_cast<double>(it->GetLaneId());            
-            LinePtr leftLine = it->GetLeftLine();
-
-            if (leftLine != nullptr)
-            {
-                quint64 leftLineId = leftLine->GetLineId();
-                lane["left"] = static_cast<double>(leftLineId);
-
-                if (lineIds.count(leftLineId) == 0)
-                {
-                    QJsonObject line = convert(aLevel, leftLine);
-                    lineIds.push_back(leftLineId);
-                    lines.push_back(line);
-                }
-            }
-
-            LinePtr rightLine = it->GetRightLine();
-
-            if (rightLine != nullptr)
-            {
-                quint64 rightLineId = rightLine->GetLineId();
-                lane["right"] = static_cast<double>(rightLineId);
-
-                if (lineIds.count(rightLineId) == 0)
-                {
-                    QJsonObject line = convert(aLevel, rightLine);
-                    lineIds.push_back(rightLineId);
-                    lines.push_back(line);
-                }
-            }
-
-            LinePtr centerLine = it->GetCenterLine();
-
-            if (centerLine != nullptr)
-            {
-                quint64 centerLineId = centerLine->GetLineId();
-                lane["center"] = static_cast<double>(centerLineId);
-
-                if (lineIds.count(centerLineId) == 0)
-                {
-                    QJsonObject line = convert(aLevel, centerLine);
-                    lineIds.append(centerLineId);
-                    lines.push_back(line);
-                }
-            }
-
             QJsonArray connectionMap;
+            QJsonObject lane;
+
+            lane["id"] = static_cast<double>(it->GetLaneId());
+            addLine(lane, lineIds, lines, "left", it->GetLeftLine(), aLevel);
+            addLine(lane, lineIds, lines, "right", it->GetRightLine(), aLevel);
+            addLine(lane, lineIds, lines, "center", it->GetCenterLine(), aLevel);
 
             for (const auto& con : *(it->GetConnectionMap()))
             {
@@ -125,6 +84,22 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
     }
 
     return roadArray;
+}
+
+void Model::GeoJsonConverter::addLine(QJsonObject& aLane, QVector<quint64>& aLineIdVec, QJsonArray& aLines,
+                                      const QString& aPos, const Model::LinePtr& aLine, int aLevel)
+{
+    if (aLine)
+    {
+        quint64 lineId = aLine->GetLineId();
+        aLane[aPos] = static_cast<double>(lineId);
+        if (aLineIdVec.count(lineId) == 0)
+        {
+            QJsonObject line = convert(aLevel, aLine);
+            aLineIdVec.append(lineId);
+            aLines.push_back(line);
+        }
+    }
 }
 
 QJsonObject Model::GeoJsonConverter::getTileBound(const Model::TilePtr& aTile)

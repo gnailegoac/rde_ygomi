@@ -26,8 +26,8 @@ public:
     ~WebGlobeChannelObject();
 
 public slots:
-    void setCameraMatrix(QJsonArray aMatrix);
-    void fetchRoadListByTile(QJsonValue aLevel, QJsonValue aTileId);
+    void setCameraMatrix(const QJsonArray& aMatrix);
+    void fetchRoadListByTile(const QJsonValue& aLevel, const QJsonValue& aTileId);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);
