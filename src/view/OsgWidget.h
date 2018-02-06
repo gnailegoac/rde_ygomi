@@ -24,7 +24,7 @@
 
 namespace Controller
 {
-    class PickHandler;
+class PickHandler;
 }
 
 namespace View

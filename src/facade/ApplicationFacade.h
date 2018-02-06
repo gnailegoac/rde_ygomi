@@ -58,9 +58,9 @@ public:
     static ApplicationFacade* GetInstance();
 
     static void SendNotification(
-            const std::string& aNoteName,
-            const void* aBody = NULL,
-            const std::string& aType = "");
+                    const std::string& aNoteName,
+                    const void* aBody = NULL,
+                    const std::string& aType = "");
 
     static void RegisterProxy(PureMVC::Patterns::IProxy* aProxy);
     static PureMVC::Patterns::IProxy& RetriveProxy(const std::string& aProxyName);

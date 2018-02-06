@@ -38,7 +38,7 @@ View::MainWindowMediator::MainWindowMediator(const void* aViewComponent)
 PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNotificationInterests() const
 {
     PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>* result =
-            new PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>;
+                            new PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>;
     result->get().push_back(ApplicationFacade::FILE_OPEN);
     result->get().push_back(ApplicationFacade::FOLDER_OPEN);
     result->get().push_back(ApplicationFacade::INIT_SCENE);
@@ -69,16 +69,16 @@ std::vector<std::string> View::MainWindowMediator::searchDatabaseFileList(const 
     QDir folder(aFolderpath);
     if(!folder.exists())
     {
-       return databaseFileList;
+        return databaseFileList;
     }
 
     folder.setFilter(QDir::Files | QDir::NoSymLinks);
-    QFileInfoList fileList =folder.entryInfoList();
+    QFileInfoList fileList = folder.entryInfoList();
 
     for(auto& file : fileList)
     {
         QString suffix = file.suffix();
-        if(QString::compare(suffix, QString("db"),Qt::CaseInsensitive) == 0)
+        if(QString::compare(suffix, QString("db"), Qt::CaseInsensitive) == 0)
         {
             QString absoluteFilePath = file.absoluteFilePath();
             databaseFileList.push_back(absoluteFilePath.toStdString());
@@ -129,8 +129,8 @@ void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::Til
                                                 const std::shared_ptr<Model::Line>& aLine)
 {
     if(!getMainWindow()->GetTreeView()->isVisible()
-       || aSegment == nullptr
-       || aRoad == nullptr)
+            || aSegment == nullptr
+            || aRoad == nullptr)
     {
         return;
     }
@@ -222,9 +222,9 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
         mainWindow->ChangeCameraMatrix(cameraMatrix);
 
-         MainProxy* mainProxy = getMainProxy();
+        MainProxy* mainProxy = getMainProxy();
         const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
-        double distance=0.0;
+        double distance = 0.0;
         mainWindow->GetDistance(distance);
         sceneModel->RedrawRoadMarks(distance);
     }
@@ -280,7 +280,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::REQUEST_ROADS_IN_TILE)
     {
         std::pair<std::uint64_t, std::uint64_t> tileInfo =
-                *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
+                        *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
         QJsonArray roadsArray;
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         if (memoryModel != nullptr)

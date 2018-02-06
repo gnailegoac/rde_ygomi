@@ -65,7 +65,7 @@ private:
     void onRenderRoad(bool aIsChecked);
     void restoreSettings();
     void writeSettings();
-    void setupConnections();  
+    void setupConnections();
     Ui::MainWindow* ui;
     QTreeView* mRoadInfoView;
 };
