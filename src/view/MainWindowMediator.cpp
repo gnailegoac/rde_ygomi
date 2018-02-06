@@ -11,6 +11,7 @@
  */
 
 #include <QDir>
+#include <QDebug>
 #include <QJsonArray>
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
@@ -24,6 +25,7 @@
 #include "model/Line.h"
 #include "model/MemoryModel.h"
 #include "model/GeoJsonConverter.h"
+#include "model/SceneModel.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -36,7 +38,7 @@ View::MainWindowMediator::MainWindowMediator(const void* aViewComponent)
 PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNotificationInterests() const
 {
     PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>* result =
-            new PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>;
+                            new PureMVC::Patterns::StdContainerAggregate<std::list<NotificationNames::element_type::type>>;
     result->get().push_back(ApplicationFacade::FILE_OPEN);
     result->get().push_back(ApplicationFacade::FOLDER_OPEN);
     result->get().push_back(ApplicationFacade::INIT_SCENE);
@@ -50,6 +52,8 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::JUMP_TO_CENTER);
     result->get().push_back(ApplicationFacade::NOTIFY_RESULT);
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
+    result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
+    result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
     return NotificationNames(result);
 }
 
@@ -65,16 +69,16 @@ std::vector<std::string> View::MainWindowMediator::searchDatabaseFileList(const 
     QDir folder(aFolderpath);
     if(!folder.exists())
     {
-       return databaseFileList;
+        return databaseFileList;
     }
 
     folder.setFilter(QDir::Files | QDir::NoSymLinks);
-    QFileInfoList fileList =folder.entryInfoList();
+    QFileInfoList fileList = folder.entryInfoList();
 
     for(auto& file : fileList)
     {
         QString suffix = file.suffix();
-        if(QString::compare(suffix, QString("db"),Qt::CaseInsensitive) == 0)
+        if(QString::compare(suffix, QString("db"), Qt::CaseInsensitive) == 0)
         {
             QString absoluteFilePath = file.absoluteFilePath();
             databaseFileList.push_back(absoluteFilePath.toStdString());
@@ -125,8 +129,8 @@ void View::MainWindowMediator::selectNodeOnTree(const std::shared_ptr<Model::Til
                                                 const std::shared_ptr<Model::Line>& aLine)
 {
     if(!getMainWindow()->GetTreeView()->isVisible()
-       || aSegment == nullptr
-       || aRoad == nullptr)
+            || aSegment == nullptr
+            || aRoad == nullptr)
     {
         return;
     }
@@ -217,6 +221,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         View::MainWindow* mainWindow = getMainWindow();
         QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
         mainWindow->ChangeCameraMatrix(cameraMatrix);
+
+        MainProxy* mainProxy = getMainProxy();
+        const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+        sceneModel->RedrawRoadMarks(mainWindow->GetDistance());
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {
@@ -270,7 +278,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::REQUEST_ROADS_IN_TILE)
     {
         std::pair<std::uint64_t, std::uint64_t> tileInfo =
-                *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
+                        *CommonFunction::ConvertToNonConstType<std::pair<std::uint64_t, std::uint64_t>>(aNotification.getBody());
         QJsonArray roadsArray;
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         if (memoryModel != nullptr)
@@ -283,6 +291,47 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
             getMainWindow()->SendRoadsInTile(tileInfo.first, roadsArray);
         }
     }
+    else if(noteName == ApplicationFacade::OPEN_ROAD_RENDERING)
+    {
+        openRoadRendering();
+    }
+    else if(noteName == ApplicationFacade::CLOSE_ROAD_RENDERING)
+    {
+        closeRoadRendering();
+    }
+}
+
+void View::MainWindowMediator::openRoadRendering()
+{
+    MainProxy* mainProxy = getMainProxy();
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy->GetMemoryModel();
+    if (!sceneModel || !memoryModel)
+    {
+        return;
+    }
+    const Model::TileMapPtr& tileMap = memoryModel->GetTileMap();
+    for (const auto& tile : *tileMap)
+    {
+        const Model::RoadMapPtr& roadMap = tile.second->GetRoadMap();
+        for (const auto& road : *roadMap)
+        {
+            sceneModel->AddRoadModelToScene(road.second);
+        }
+    }
+    getMainWindow()->centralWidget()->repaint();
+}
+
+void View::MainWindowMediator::closeRoadRendering()
+{
+    MainProxy* mainProxy = getMainProxy();
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+    if (!sceneModel)
+    {
+        return;
+    }
+    sceneModel->RemoveRoadModelFromScene();
+    getMainWindow()->centralWidget()->repaint();
 }
 
 void View::MainWindowMediator::onRemove()

@@ -24,7 +24,7 @@
 
 namespace Controller
 {
-    class PickHandler;
+class PickHandler;
 }
 
 namespace View
@@ -56,6 +56,7 @@ public:
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
     void JumpToCenter(const osg::Vec3d& aCenter);
     void SetSelectType(const Model::SelectType& aSelectType);
+    double GetDistance();
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;

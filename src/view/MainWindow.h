@@ -54,6 +54,7 @@ public:
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
     void EnableSaveAction(bool aEnable);
+    double GetDistance();
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
@@ -61,6 +62,7 @@ protected:
 
 private:
     void onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked);
+    void onRenderRoad(bool aIsChecked);
     void restoreSettings();
     void writeSettings();
     void setupConnections();

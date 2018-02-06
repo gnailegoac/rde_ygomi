@@ -22,6 +22,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QWheelEvent>
+#include <QGLFormat>
 
 #include <osg/Camera>
 #include <osg/DisplaySettings>
@@ -91,7 +92,7 @@ View::OsgWidget::OsgWidget(QWidget* aParent, Qt::WindowFlags aFlag) :
     mView->setCamera(aCamera);
     mView->addEventHandler(new osgViewer::StatsHandler);
     mView->addEventHandler(mPickHandler.get());
-    osgGA::TrackballManipulator * aManipulator = new osgGA::TrackballManipulator;
+    osgGA::TrackballManipulator* aManipulator = new osgGA::TrackballManipulator;
     aManipulator->setAllowThrow(false);
 
     mView->setCameraManipulator(aManipulator);
@@ -143,7 +144,7 @@ void View::OsgWidget::Refresh()
     notifyCameraChange();
 }
 
-void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
+void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
     osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
     osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
@@ -157,6 +158,12 @@ void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd &aMatrix)
 void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
 {
     mPickHandler->SetSelectType(aSelectType);
+}
+
+double View::OsgWidget::GetDistance()
+{
+    osgGA::TrackballManipulator* trackballManipulator = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
+    return trackballManipulator->getDistance();
 }
 
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
@@ -252,17 +259,17 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
     unsigned int aButton = 0;
     switch(aEvent->button())
     {
-    case Qt::LeftButton:
-        aButton = 1;
-        break;
-    case Qt::MiddleButton:
-        aButton = 2;
-        break;
-    case Qt::RightButton:
-        aButton = 3;
-        break;
-    default:
-        break;
+        case Qt::LeftButton:
+            aButton = 1;
+            break;
+        case Qt::MiddleButton:
+            aButton = 2;
+            break;
+        case Qt::RightButton:
+            aButton = 3;
+            break;
+        default:
+            break;
     }
     mSyncMap = true;
     auto aPixelRatio = this->devicePixelRatio();
@@ -279,17 +286,17 @@ void View::OsgWidget::mouseReleaseEvent(QMouseEvent* aEvent)
     unsigned int aButton = 0;
     switch(aEvent->button())
     {
-    case Qt::LeftButton:
-        aButton = 1;
-        break;
-    case Qt::MiddleButton:
-        aButton = 2;
-        break;
-    case Qt::RightButton:
-        aButton = 3;
-        break;
-    default:
-        break;
+        case Qt::LeftButton:
+            aButton = 1;
+            break;
+        case Qt::MiddleButton:
+            aButton = 2;
+            break;
+        case Qt::RightButton:
+            aButton = 3;
+            break;
+        default:
+            break;
     }
     mSyncMap = false;
     auto aPixelRatio = this->devicePixelRatio();
@@ -304,7 +311,7 @@ void View::OsgWidget::wheelEvent(QWheelEvent* aEvent)
     aEvent->accept();
     int aDelta = aEvent->delta();
     osgGA::GUIEventAdapter::ScrollingMotion aMotion = aDelta > 0 ? osgGA::GUIEventAdapter::SCROLL_UP
-                                                                 : osgGA::GUIEventAdapter::SCROLL_DOWN;
+                                                      : osgGA::GUIEventAdapter::SCROLL_DOWN;
     this->getEventQueue()->mouseScroll(aMotion);
     notifyCameraChange();
 }
@@ -317,17 +324,17 @@ bool View::OsgWidget::event(QEvent* aEvent)
     // that we don't forget about some event and prevents duplicate code.
     switch(aEvent->type())
     {
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
-    case QEvent::Wheel:
-        this->update();
-        break;
-    default:
-        break;
+        case QEvent::KeyPress:
+        case QEvent::KeyRelease:
+        case QEvent::MouseButtonDblClick:
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::MouseMove:
+        case QEvent::Wheel:
+            this->update();
+            break;
+        default:
+            break;
     }
     return aHandled;
 }

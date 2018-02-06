@@ -25,9 +25,9 @@
 
 #include "proxy/MainProxy.h"
 
-View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
-                                                                        ui(new Ui::MainWindow),
-                                                                        mRoadInfoView(new QTreeView(this))
+View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
+    ui(new Ui::MainWindow),
+    mRoadInfoView(new QTreeView(this))
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
@@ -41,7 +41,7 @@ View::MainWindow::MainWindow(QWidget *aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->setVisible(false);
 }
 
-void View::MainWindow::PopupWarningMessage(const QString &aWarning)
+void View::MainWindow::PopupWarningMessage(const QString& aWarning)
 {
     QMessageBox::warning(this, windowTitle(), aWarning, "Close");
 }
@@ -103,7 +103,8 @@ QTreeView* View::MainWindow::GetTreeView() const
 
 void View::MainWindow::setupConnections()
 {
-    connect(ui->actionOpen, &QAction::triggered, [=]() {
+    connect(ui->actionOpen, &QAction::triggered, [ = ]()
+    {
         QString path = QFileDialog::getOpenFileName(this,
                                                     tr("Open File"), "/",
                                                     tr("Files(*.db *.xodr *.kml *.xml *.pb)"));
@@ -113,7 +114,8 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionOpenFolder, &QAction::triggered, [=]() {
+    connect(ui->actionOpenFolder, &QAction::triggered, [ = ]()
+    {
         QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
@@ -121,7 +123,8 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionSave, &QAction::triggered, [=]() {
+    connect(ui->actionSave, &QAction::triggered, [ = ]()
+    {
         QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
@@ -129,7 +132,8 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionKML, &QAction::triggered, [=]() {
+    connect(ui->actionKML, &QAction::triggered, [ = ]()
+    {
         QString folderPath = QFileDialog::getExistingDirectory(0, ("Select Folder"), "/");
         if (folderPath.length() > 0)
         {
@@ -137,7 +141,8 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionProtoBuffer, &QAction::triggered, [=]() {
+    connect(ui->actionProtoBuffer, &QAction::triggered, [ = ]()
+    {
         QString path = QFileDialog::getSaveFileName(this,
                                                     tr("Export to ProtoBuffer"), "/");
         if (path.length() > 0)
@@ -146,7 +151,8 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionDLM, &QAction::triggered, [=]() {
+    connect(ui->actionDLM, &QAction::triggered, [ = ]()
+    {
         QString path = QFileDialog::getSaveFileName(this,
                                                     tr("Export to DLM"), "/");
         if (path.length() > 0)
@@ -155,46 +161,58 @@ void View::MainWindow::setupConnections()
         }
     });
 
-    connect(ui->actionPreference, &QAction::triggered, [=]() {
+    connect(ui->actionPreference, &QAction::triggered, [ = ]()
+    {
         View::NetworkPreferenceDialog networkPreferenceDialog;
         networkPreferenceDialog.exec();
     });
 
-    connect(ui->actionRoadInfo, &QAction::triggered, [=]() {
+    connect(ui->actionRoadInfo, &QAction::triggered, [ = ]()
+    {
         ShowRoadInfo();
     });
 
-    connect(ui->actionSelectRoad, &QAction::triggered, [=]() {
+    connect(ui->actionSelectRoad, &QAction::triggered, [ = ]()
+    {
         onSelectTypeChange(Model::SelectType::Road, ui->actionSelectRoad->isChecked());
     });
 
-    connect(ui->actionSelectLane, &QAction::triggered, [=]() {
+    connect(ui->actionSelectLane, &QAction::triggered, [ = ]()
+    {
         onSelectTypeChange(Model::SelectType::Lane, ui->actionSelectLane->isChecked());
     });
 
-    connect(ui->actionSelectLine, &QAction::triggered, [=]() {
+    connect(ui->actionSelectLine, &QAction::triggered, [ = ]()
+    {
         onSelectTypeChange(Model::SelectType::Line, ui->actionSelectLine->isChecked());
     });
 
-    connect(ui->actionSelectSign, &QAction::triggered, [=]() {
+    connect(ui->actionSelectSign, &QAction::triggered, [ = ]()
+    {
         onSelectTypeChange(Model::SelectType::TrafficSign, ui->actionSelectSign->isChecked());
     });
 
     connect(ui->webRoadEditor, &WebRoadEditor::cameraMatrixChanged,
-            [=](const osg::Matrixd& aMatrix)
+            [ = ](const osg::Matrixd & aMatrix)
     {
         View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
         viewer->CameraMatrixChanged(aMatrix);
     });
 
-    connect(mRoadInfoView, &QTreeView::pressed, [=](const QModelIndex& aModelIndex) {
+    connect(mRoadInfoView, &QTreeView::pressed, [ = ](const QModelIndex & aModelIndex)
+    {
         std::pair<QString, QString> selectItemPair = std::make_pair(aModelIndex.data().toString(),
-                                aModelIndex.sibling(aModelIndex.row(), 1).data().toString());
+                                                                    aModelIndex.sibling(aModelIndex.row(), 1).data().toString());
         if(selectItemPair.first == "LeftLine" || selectItemPair.first == "RightLine")
         {
             selectItemPair.second = aModelIndex.child(0, 1).data().toString();
         }
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_NODE_IN_3DVIEW, &selectItemPair);
+    });
+
+    connect(ui->actionRenderRoad, &QAction::triggered, [ = ]()
+    {
+        onRenderRoad(ui->actionRenderRoad->isChecked());
     });
 }
 
@@ -268,6 +286,18 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_SELECT_TYPE, &selectType);
 }
 
+void View::MainWindow::onRenderRoad(bool aIsChecked)
+{
+    if (aIsChecked)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::OPEN_ROAD_RENDERING);
+    }
+    else
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::CLOSE_ROAD_RENDERING);
+    }
+}
+
 View::MainWindow::~MainWindow()
 {
     delete ui;
@@ -313,4 +343,10 @@ void View::MainWindow::EnableSaveAction(bool aEnable)
 {
     ui->actionSave->setEnabled(aEnable);
     ui->menuExport->setEnabled(aEnable);
+}
+
+double View::MainWindow::GetDistance()
+{
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    return viewer->GetDistance();
 }

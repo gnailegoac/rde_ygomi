@@ -16,9 +16,9 @@
 
 namespace Model
 {
-    class SceneModel;
-    class MemoryModel;
-    class TreeModel;
+class SceneModel;
+class MemoryModel;
+class TreeModel;
 }
 
 class MainProxy : public PureMVC::Patterns::Proxy

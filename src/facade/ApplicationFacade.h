@@ -52,13 +52,15 @@ public:
     static const std::string EXPORT_TO_DLM;
     static const std::string NOTIFY_RESULT;
     static const std::string REQUEST_ROADS_IN_TILE;
+    static const std::string OPEN_ROAD_RENDERING;
+    static const std::string CLOSE_ROAD_RENDERING;
 
     static ApplicationFacade* GetInstance();
 
     static void SendNotification(
-            const std::string& aNoteName,
-            const void* aBody = NULL,
-            const std::string& aType = "");
+                    const std::string& aNoteName,
+                    const void* aBody = NULL,
+                    const std::string& aType = "");
 
     static void RegisterProxy(PureMVC::Patterns::IProxy* aProxy);
     static PureMVC::Patterns::IProxy& RetriveProxy(const std::string& aProxyName);

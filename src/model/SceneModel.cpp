@@ -17,15 +17,23 @@
 
 #include <osg/Material>
 #include <osg/LineWidth>
+#include <osg/Point>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 #include <osg/ShapeDrawable>
 #include <osg/MatrixTransform>
+#include <osgUtil/Tessellator>
+#include <osgUtil/DelaunayTriangulator>
+#include <osg/PolygonMode>
+#include <osg/BlendFunc>
+#include <stdlib.h>
+#include <QDebug>
+#include <QCoreApplication>
 
 namespace  Model
 {
-    const static float VIEW_SIGN_WIDTH = 2.0;
-    const static float VIEW_SIGN_LENGTH = 2.0;
+const static float VIEW_SIGN_WIDTH = 2.0;
+const static float VIEW_SIGN_LENGTH = 2.0;
 }
 
 Model::SceneModel::SceneModel() :
@@ -84,11 +92,12 @@ osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& a
     osg::Geode* geode = new osg::Geode;
     osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth;
     width->setWidth(1.0f);
+
     geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
 
     osg::ref_ptr<osg::Material> material = new osg::Material;
-    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
     material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
     geode->getOrCreateStateSet()->setAttributeAndModes(material,
                                                        osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
@@ -153,7 +162,7 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<
 
         if(laneNode != nullptr)
         {
-            laneNode->setName("Lane:" + std::to_string(lane->GetLaneId()));
+            laneNode->setName("LaneModel:" + std::to_string(lane->GetLaneId()));
             roadNode->addChild(laneNode);
         }
     }
@@ -212,4 +221,210 @@ const osg::ref_ptr<osg::Node>& Model::SceneModel::GetTrafficSignNodeById(const s
     }
 
     return nullptr;
+}
+
+void Model::SceneModel::AddRoadModelToScene(const std::shared_ptr<Model::Road>& aRoad)
+{
+    osg::ref_ptr<osg::Group> roadGroup = buildRoadModelNode(aRoad);
+    mSceneModelRoot->addChild(roadGroup);
+    mRoadModelNodeMap[aRoad->GetRoadId()] = roadGroup;
+}
+
+void Model::SceneModel::RemoveRoadModelFromScene()
+{
+    for(auto& roadNode : mRoadModelNodeMap)
+    {
+        mSceneModelRoot->removeChild((roadNode.second).release());
+    }
+    mRoadNodeMap.clear();
+}
+
+osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadModelNode(const std::shared_ptr<Model::Road>& aRoad)
+{
+    osg::ref_ptr<osg::Group> roadNode(new osg::Group);
+    roadNode->setName("RoadModel:" + std::to_string(aRoad->GetRoadId()));
+    Model::LaneListPtr laneListptr = aRoad->GetLaneList();
+    for(const auto& lane : *laneListptr.get())
+    {
+        Model::LinePtr rightLine = lane->GetRightLine();
+        Model::LinePtr leftLine = lane->GetLeftLine();
+        Model::PaintListPtr rightLinePointListPtr = rightLine->GetPaintListByLevel(2);
+        Model::PaintListPtr leftLinePointListPtr = leftLine->GetPaintListByLevel(2);
+        if(rightLinePointListPtr->size() == 0 || leftLinePointListPtr->size() == 0)
+        {
+            continue;
+        }
+
+        osg::ref_ptr<osg::Vec3Array> vertexArray = new osg::Vec3Array;
+        osg::ref_ptr<osg::Vec3Array> normalArray = new osg::Vec3Array;
+        osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+        osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+        osg::ref_ptr<osg::Vec2Array> textureCoords = new osg::Vec2Array;
+        for (Point3DListPtr& points : *rightLinePointListPtr)
+        {
+            if (0 == points->size())
+            {
+                continue;
+            }
+            for (auto& point : *points)
+            {
+                osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+                if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
+                {
+                    continue;
+                }
+                vertexArray->push_back(vec);
+                textureCoords->push_back(osg::Vec2(1, 1));
+            }
+        }
+        int rightLinePointsNum = vertexArray->size();
+        for (Point3DListPtr& points : *leftLinePointListPtr)
+        {
+            if (0 == points->size())
+            {
+                continue;
+            }
+            for (auto& point : *points)
+            {
+                osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+                if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
+                {
+                    continue;
+                }
+                vertexArray->push_back(vec);
+                textureCoords->push_back(osg::Vec2(0, 0));
+            }
+        }
+
+        osg::ref_ptr<osg::DrawElementsUInt> tris = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+        if(!createRoadTriangles(vertexArray, rightLinePointsNum, tris))
+        {
+            continue;
+        }
+
+        normalArray->push_back(osg::Vec3d(0.0, 0.0, 1.0));
+        colorArray->push_back(osg::Vec4d(0.9, 0.9, 0.9, 0.5));
+        geometry->setVertexArray(vertexArray);
+        geometry->setNormalArray(normalArray);
+        geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+        geometry->setColorArray(colorArray);
+        geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+        geometry->addPrimitiveSet(tris);
+        geometry->setTexCoordArray(0, textureCoords.get());
+        std::string path = "../src/resource/RoadSurface.png";
+        createRoadTexture(path, geometry);
+        geode->addDrawable(geometry.get());
+        roadNode->addChild(geode.get());
+    }
+    return roadNode;
+}
+
+double Model::SceneModel::distance(const osg::Vec3& aP1, const osg::Vec3& aP2)
+{
+    double x = aP1.x() - aP2.x();
+    double y = aP1.y() - aP2.y();
+    double z = aP1.z() - aP2.z();
+    return sqrt(x * x + y * y + z * z);
+}
+
+bool Model::SceneModel::createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
+                                            int aRightLinePointsNum, osg::ref_ptr<osg::DrawElementsUInt>& aTris)
+{
+    int num = aVertexArray->size();
+    if(num < 3)
+    {
+        return false;
+    }
+
+    int s = aRightLinePointsNum + 1;
+    double preD = 0.0;
+    double currD = 0.0;
+    for(int i = 0; i < aRightLinePointsNum; ++i)
+    {
+        preD = distance((*aVertexArray)[i], (*aVertexArray)[s - 1]);
+        for(s; s < num; ++s)
+        {
+            currD = distance((*aVertexArray)[i], (*aVertexArray)[s]);
+            if(preD > currD)
+            {
+                aTris->push_back(s - 1);
+                aTris->push_back(i);
+                aTris->push_back(s);
+                preD = currD;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if(i + 1 < aRightLinePointsNum)
+        {
+            aTris->push_back(i);
+            aTris->push_back(i + 1);
+            aTris->push_back(s - 1);
+        }
+    }
+    return true;
+}
+
+void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry)
+{
+    osg::ref_ptr<osg::Material> roadMaterial = new osg::Material();
+    roadMaterial->setEmission(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
+    roadMaterial->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+    roadMaterial->setTransparency(osg::Material::FRONT_AND_BACK, 0.1);
+    osg::Image* roadImage = osgDB::readImageFile(aRoadTextureFile);
+    if (!roadImage)
+    {
+        roadImage = osgDB::readImageFile("../Resources/NoTexture.jpg");
+        osg::notify(osg::WARN) << "Couldn't load texture."  << std::endl;
+        if (!roadImage)
+        {
+            return;
+        }
+    }
+
+    osg::ref_ptr<osg::Texture2D> roadTexture = new osg::Texture2D;
+    roadTexture->setDataVariance(osg::Object::DYNAMIC);
+    roadTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+    roadTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+    roadTexture->setImage(roadImage);
+
+    osg::StateSet* roadStateSet = aRoadGeometry->getOrCreateStateSet();
+    roadStateSet->setAttribute(roadMaterial);
+    roadStateSet->setTextureAttributeAndModes(0, roadTexture, osg::StateAttribute::ON);
+    roadStateSet->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+    osg::ref_ptr<osg::BlendFunc> blendFunc = new osg::BlendFunc;
+    blendFunc->setFunction(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+    roadStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    roadStateSet->setAttributeAndModes(blendFunc);
+}
+
+void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
+{
+    double width = 0.0;
+    double s = 1000;
+    double t = 100;
+    const double widthMin = 1.0;
+    const double widthMax = 15.0;
+    if(aDistance > s)
+    {
+        width = widthMin;
+    }
+    else if(aDistance < t)
+    {
+        width = widthMax;
+    }
+    else
+    {
+        width = (s - aDistance) / (s - t) * widthMax;
+    }
+    osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
+    lineWidth->setWidth(width);
+    for(const auto& node : mLineNodeMap)
+    {
+        osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
+        geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
+    }
 }

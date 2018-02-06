@@ -52,6 +52,8 @@ const std::string ApplicationFacade::EXPORT_TO_PROTOBUF = "ExportToProtoBuffer";
 const std::string ApplicationFacade::EXPORT_TO_DLM = "ExportToDLM";
 const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
+const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
+const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -104,15 +106,15 @@ ApplicationFacade::~ApplicationFacade()
 void ApplicationFacade::initializeCommands()
 {
     mCommandList[Controller::StartUpCommand::GetCommandName()] =
-        std::shared_ptr<Controller::StartUpCommand>(new Controller::StartUpCommand);
+                    std::shared_ptr<Controller::StartUpCommand>(new Controller::StartUpCommand);
     mCommandList[Controller::FileParseCommand::GetCommandName()] =
-        std::shared_ptr<Controller::FileParseCommand>(new Controller::FileParseCommand);
+                    std::shared_ptr<Controller::FileParseCommand>(new Controller::FileParseCommand);
     mCommandList[Controller::FileSerializeCommand::GetCommandName()] =
-        std::shared_ptr<Controller::FileSerializeCommand>(new Controller::FileSerializeCommand);
+                    std::shared_ptr<Controller::FileSerializeCommand>(new Controller::FileSerializeCommand);
     mCommandList[Controller::SceneManageCommand::GetCommandName()] =
-        std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
+                    std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
     mCommandList[Controller::NodeHighlightCommand::GetCommandName()] =
-        std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
+                    std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()

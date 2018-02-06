@@ -287,8 +287,8 @@ void Controller::NodeHighlightCommand::dehighlightNode()
         else
         {
             osg::ref_ptr<osg::Material> material = new osg::Material;
-            material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0, 0.0, 1.0));
-            material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0, 0.0, 1.0));
+            material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 1.0, 1.0, 1.0));
+            material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 1.0, 1.0, 1.0));
             material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
             node->getOrCreateStateSet()->setAttributeAndModes(material,
                                                               osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
