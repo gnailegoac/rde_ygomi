@@ -16,15 +16,15 @@
 
 namespace Model
 {
-    class SceneModel;
-    class MemoryModel;
-    class TreeModel;
+class SceneModel;
+class MemoryModel;
+class TreeModel;
 }
 
 class MainProxy : public PureMVC::Patterns::Proxy
 {
 public:
-    static const std::string  NAME;
+    static const std::string NAME;
     MainProxy();
     MainProxy(const std::string& aName);
 
