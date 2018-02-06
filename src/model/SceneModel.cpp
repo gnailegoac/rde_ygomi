@@ -395,10 +395,9 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     roadStateSet->setAttribute(roadMaterial);
     roadStateSet->setTextureAttributeAndModes(0, roadTexture, osg::StateAttribute::ON);
     roadStateSet->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-
-    roadStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
     osg::ref_ptr<osg::BlendFunc> blendFunc = new osg::BlendFunc;
-    blendFunc->setFunction(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA );
+    blendFunc->setFunction(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+    roadStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     roadStateSet->setAttributeAndModes(blendFunc);
 }
 

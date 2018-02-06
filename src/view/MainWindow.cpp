@@ -345,8 +345,8 @@ void View::MainWindow::EnableSaveAction(bool aEnable)
     ui->menuExport->setEnabled(aEnable);
 }
 
-void View::MainWindow::GetDistance(double& aDistance)
+double View::MainWindow::GetDistance()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
-    viewer->GetDistance(aDistance);
+    return viewer->GetDistance();
 }

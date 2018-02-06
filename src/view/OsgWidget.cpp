@@ -160,10 +160,10 @@ void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
     mPickHandler->SetSelectType(aSelectType);
 }
 
-void View::OsgWidget::GetDistance(double& aDistance)
+double View::OsgWidget::GetDistance()
 {
     osgGA::TrackballManipulator* trackballManipulator = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
-    aDistance = trackballManipulator->getDistance();
+    return trackballManipulator->getDistance();
 }
 
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)

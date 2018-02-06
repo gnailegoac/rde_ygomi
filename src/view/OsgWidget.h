@@ -56,7 +56,7 @@ public:
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
     void JumpToCenter(const osg::Vec3d& aCenter);
     void SetSelectType(const Model::SelectType& aSelectType);
-    void GetDistance(double& aDistance);
+    double GetDistance();
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;
