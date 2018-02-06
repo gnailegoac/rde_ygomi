@@ -45,10 +45,10 @@ private:
     osg::ref_ptr<osg::Geode> createBox(const osg::Vec3d& aCenter, const std::string& aTexturePath);
     osg::ref_ptr<osg::Group> buildRoadModelNode(const std::shared_ptr<Model::Road>& aRoad);
     osg::ref_ptr<osg::Group> buildRoadMarksModelNode(const std::shared_ptr<Model::Road>& aRoad);
-    double distance(osg::Vec3 aP1, osg::Vec3 aP2);
+    double distance(const osg::Vec3& aP1, const osg::Vec3& aP2);
     bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
                              int aRightLinePointsNum, osg::ref_ptr<osg::DrawElementsUInt>& aTris);
-    void createRoadTexture(const std::string aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
+    void createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
 
 private:
     osg::ref_ptr<osg::Group> mSceneModelRoot;

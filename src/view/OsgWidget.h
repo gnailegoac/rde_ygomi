@@ -90,6 +90,5 @@ private:
     osg::Vec3d mCenter;
     osg::Vec3d mUp;
     bool mSyncMap;
-    double mDistance;
 };
 }

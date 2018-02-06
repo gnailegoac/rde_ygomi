@@ -232,10 +232,9 @@ void Model::SceneModel::AddRoadModelToScene(const std::shared_ptr<Model::Road>& 
 
 void Model::SceneModel::RemoveRoadModelFromScene()
 {
-    std::map<std::uint64_t, osg::ref_ptr<osg::Node>>::iterator iter;
-    for(iter = mRoadModelNodeMap.begin(); iter != mRoadModelNodeMap.end(); iter++)
+    for(auto& roadNode : mRoadModelNodeMap)
     {
-        mSceneModelRoot->removeChild((iter->second).release());
+        mSceneModelRoot->removeChild((roadNode.second).release());
     }
     mRoadNodeMap.clear();
 }
@@ -321,11 +320,11 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadModelNode(const std::shared
     return roadNode;
 }
 
-double Model::SceneModel::distance(osg::Vec3 aP1, osg::Vec3 aP2)
+double Model::SceneModel::distance(const osg::Vec3& aP1, const osg::Vec3& aP2)
 {
-    double x = aP1[0] - aP2[0];
-    double y = aP1[1] - aP2[1];
-    double z = aP1[2] - aP2[2];
+    double x = aP1.x() - aP2.x();
+    double y = aP1.y() - aP2.y();
+    double z = aP1.z() - aP2.z();
     return sqrt(x * x + y * y + z * z);
 }
 
@@ -337,11 +336,11 @@ bool Model::SceneModel::createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& 
     {
         return false;
     }
-    int i = 0;
+
     int s = aRightLinePointsNum + 1;
     double preD = 0.0;
     double currD = 0.0;
-    for(i; i < aRightLinePointsNum; ++i)
+    for(int i = 0; i < aRightLinePointsNum; ++i)
     {
         preD = distance((*aVertexArray)[i], (*aVertexArray)[s - 1]);
         for(s; s < num; ++s)
@@ -369,7 +368,7 @@ bool Model::SceneModel::createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& 
     return true;
 }
 
-void Model::SceneModel::createRoadTexture(const std::string aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry)
+void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry)
 {
     osg::ref_ptr<osg::Material> roadMaterial = new osg::Material();
     roadMaterial->setEmission(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
@@ -406,28 +405,27 @@ void Model::SceneModel::createRoadTexture(const std::string aRoadTextureFile, os
 void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
 {
     double width = 0.0;
-    double s = 20500;
-    double t = 21200;
-    double widthMin = 1.0;
-    double widthMax = 15.0;
-    if(aDistance <= s)
+    double s = 1000;
+    double t = 100;
+    const double widthMin = 1.0;
+    const double widthMax = 15.0;
+    if(aDistance > s)
     {
         width = widthMin;
     }
-    else if(aDistance > t)
+    else if(aDistance < t)
     {
         width = widthMax;
     }
     else
     {
-        width = (aDistance - s) / (t - s) * widthMax;
+        width = (s - aDistance) / (s - t) * widthMax;
     }
     osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
     lineWidth->setWidth(width);
-    std::map<std::uint64_t, osg::ref_ptr<osg::Node>>::iterator iter;
-    for(iter = mLineNodeMap.begin(); iter != mLineNodeMap.end(); iter++)
+    for(const auto& node : mLineNodeMap)
     {
-        osg::Geode* geode = dynamic_cast<osg::Geode*>((iter->second).get());
+        osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
         geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
     }
 }
