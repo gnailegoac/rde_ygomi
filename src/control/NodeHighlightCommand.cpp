@@ -21,6 +21,7 @@
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
 #include "proxy/MainProxy.h"
+#include "service/RoadEditParameters.h"
 
 Controller::NodeHighlightCommand::NodeHighlightCommand() :
     mSelectType(Model::SelectType::Line),
@@ -170,12 +171,29 @@ void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotificatio
     if (aNotification.getName() == ApplicationFacade::SELECT_NODE)
     {
         std::vector<osg::Node*> nodeList = *CommonFunction::ConvertToNonConstType<std::vector<osg::Node*>>(aNotification.getBody());
-        clearSelectNodes();
-        mSelectNodes = findNode(nodeList);
+        if (Service::RoadEditParameters::Instance()->IsInMultiSelectMode())
+        {
+            std::vector<osg::Node*> selectNodes = findNode(nodeList);
+            if (selectNodes.size() > 0)
+            {
+                mSelectNodes.insert(mSelectNodes.end(), selectNodes.begin(), selectNodes.end());
+                Service::RoadEditParameters::Instance()->AddSelectedElementId(getIdByNodeName(mSelectNodeName));
+            }
+        }
+        else
+        {
+            clearSelectNodes();
+            mSelectNodes = findNode(nodeList);
+            Service::RoadEditParameters::Instance()->SetSelectedElementId(getIdByNodeName(mSelectNodeName));
+        }
         if(mSelectNodes.size() > 0)
         {
             highlightNode();
             highlightNodeOnTreeView();
+        }
+        else
+        {
+            Service::RoadEditParameters::Instance()->ClearSelectedElement();
         }
     }
     else if(aNotification.getName() == ApplicationFacade::CHANGE_SELECT_TYPE)

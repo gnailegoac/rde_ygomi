@@ -221,6 +221,15 @@ Model::JunctionPtr Model::Tile::GetMutableJunction(const uint64_t& aId)
     return mJunctionMap->at(aId);
 }
 
+void Model::Tile::RemoveRoad(const uint64_t& aId)
+{
+    RoadPtr road = GetRoad(aId);
+    for (const auto& lane : *(road->GetLaneList()))
+    {
+
+    }
+}
+
 std::int32_t Model::Tile::getBit(std::int32_t aInteger, std::uint8_t aIndex)
 {
     uint32_t integer = static_cast<uint32_t>(aInteger);

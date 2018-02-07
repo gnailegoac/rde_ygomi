@@ -72,6 +72,9 @@ protected:
 
     bool event(QEvent* aEvent) override;
 
+private slots:
+    void showContextMenu(const QPoint& aPoint);
+
 private:
     bool isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const;
 
@@ -80,6 +83,7 @@ private:
 
     osgGA::EventQueue* getEventQueue() const;
     void notifyCameraChange();
+
 
 private:
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
