@@ -27,6 +27,7 @@ public:
 
 private:
     void mergeRoad(const uint64_t& aRoad1Id, const uint64_t& aRoad2Id);
+    bool isLaneInRoad(const Model::RoadPtr& aRoad, const uint64_t& aLaneId);
     bool isRoadConnected(const Model::RoadPtr& aFromRoad, const Model::RoadPtr& aToRoad);
     bool canRoadsBeMerged(Model::RoadPtr& aFromRoad, Model::RoadPtr& aToRoad);
 };

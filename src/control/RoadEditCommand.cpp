@@ -49,30 +49,49 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aRoad1Id, const uint
     {
         size_t laneCount = road1->GetLaneListSize();
         const Model::TilePtr& tile = road1->GetTile();
-    // TODO: check if the lanes of the two roads are connected.
-    // Remove road from scene model
+        // Merge roads, update road1, remove road2
+        // 1. Merge line
+        // 2. Update lane predecessor/successor connection
+        // Update lanes in road1 successor
+        // Update predecessor of lanes in road2's successor
+
+        // Remove road2 from memory model
+
+        // Update scene model
+        // Remove road from scene model
 //        sceneModel->RemoveRoadFromScene(aRoad1Id);
 //        sceneModel->RemoveRoadFromScene(aRoad2Id);
-    // Merge roads, update road1, remove road2
-    // Update lanes in road1 predecessor and successor
-    // Remove road from memory model
-    // Merge road in memory model
-    // Update scene model
-    // Update tree model
+        // Update tree model
     }
+}
+
+bool Controller::RoadEditCommand::isLaneInRoad(const Model::RoadPtr& aRoad, const uint64_t& aLaneId)
+{
+    for (const auto& lane : *(aRoad->GetLaneList()))
+    {
+        if (lane->GetLaneId() == aLaneId)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool Controller::RoadEditCommand::isRoadConnected(const Model::RoadPtr& aFromRoad, const Model::RoadPtr& aToRoad)
 {
     uint64_t fromLaneId = aFromRoad->GetLane(0)->GetLaneId();
+
     for (const auto& lane : *(aToRoad->GetLaneList()))
     {
-        if (lane->GetPredecessorLaneId() == fromLaneId)
+        uint64_t predecessorLaneId = lane->GetPredecessorLaneId();
+        if (predecessorLaneId == 0 || !isLaneInRoad(aFromRoad, predecessorLaneId))
         {
-            return true;
+            return false;
         }
     }
-    return false;
+
+    return true;
 }
 
 bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Model::RoadPtr& aToRoad)
@@ -92,11 +111,11 @@ bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Mo
     }
     else if (isRoadConnected(aToRoad, aFromRoad))
     {
-        qDebug() << "Original from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
+//        qDebug() << "Original from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
         Model::RoadPtr tempRoad = aFromRoad;
         aFromRoad = aToRoad;
         aToRoad = tempRoad;
-        qDebug() << "Reordered from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
+//        qDebug() << "Reordered from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
         return true;
     }
     else
