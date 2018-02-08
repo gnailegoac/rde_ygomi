@@ -405,9 +405,9 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
 {
     double width = 0.0;
     double s = 1000;
-    double t = 100;
-    const double widthMin = 1.0;
-    const double widthMax = 15.0;
+    double t = 5;
+    const double widthMin = 0.5;
+    const double widthMax = 8.0;
     if(aDistance > s)
     {
         width = widthMin;

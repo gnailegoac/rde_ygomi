@@ -44,6 +44,7 @@ public:
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
     void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
     void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
+    void SendRoadToEdit(const QJsonObject& aRoad);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);
