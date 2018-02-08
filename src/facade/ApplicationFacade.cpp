@@ -56,6 +56,7 @@ const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile
 const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
 const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering";
 const std::string ApplicationFacade::MERGE_ROAD = "MergeRoad";
+const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -118,7 +119,7 @@ void ApplicationFacade::initializeCommands()
     mCommandList[Controller::NodeHighlightCommand::GetCommandName()] =
                     std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
     mCommandList[Controller::RoadEditCommand::GetCommandName()] =
-                    std::shared_ptr<Controller::RoadEditCommand>(new Controller::RoadEditCommand);
+                        std::shared_ptr<Controller::RoadEditCommand>(new Controller::RoadEditCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()

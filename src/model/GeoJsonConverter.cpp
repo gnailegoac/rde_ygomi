@@ -47,41 +47,9 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
     QJsonArray roadArray;
     for (const auto& itor : *(aTile->GetRoadMap()))
     {
-        QVector<quint64> lineIds;
-        QJsonObject road;
-        QJsonArray lines;
-        RoadPtr roadPtr = itor.second;
-        QJsonObject roadData;
-        QJsonArray lanes;
-
-        road["type"] = "road";
-        // How to store uint64 in QJson?
-        roadData["id"] = static_cast<double>(roadPtr->GetRoadId());
-        roadData["ndsId"] = static_cast<double>(aTile->GetTileId());
-
-        for (const auto& it : *(roadPtr->GetLaneList()))
-        {
-            QJsonArray connectionMap;
-            QJsonObject lane;
-
-            lane["id"] = static_cast<double>(it->GetLaneId());
-            addLine(lane, lineIds, lines, "left", it->GetLeftLine(), aLevel);
-            addLine(lane, lineIds, lines, "right", it->GetRightLine(), aLevel);
-            addLine(lane, lineIds, lines, "center", it->GetCenterLine(), aLevel);
-
-            for (const auto& con : *(it->GetConnectionMap()))
-            {
-                connectionMap.push_back(QJsonArray({con.first, static_cast<double>(con.second)}));
-            }
-
-            lane["connectionMap"] = connectionMap;
-            lanes.push_back(lane);
-        }
-
-        roadData["lanes"] = lanes;
-        road["data"] = roadData;
-        road["lines"] = lines;
-        roadArray.push_back(road);
+        QJsonObject roadObj;
+        roadObj = Convert(aLevel, itor.second);
+        roadArray.push_back(roadObj);
     }
 
     return roadArray;
@@ -129,6 +97,43 @@ QJsonArray Model::GeoJsonConverter::GetTileExtent(const std::shared_ptr<Model::M
     return tileExtent;
 }
 
+QJsonObject Model::GeoJsonConverter::Convert(int aLevel, const Model::RoadPtr& aRoad)
+{
+    QJsonObject roadObj;
+    QVector<quint64> lineIds;
+    QJsonArray lines;
+    QJsonObject roadData;
+    QJsonArray lanes;
+
+    roadObj["type"] = "road";
+    roadData["id"] = QString::number(aRoad->GetRoadId());
+    roadData["ndsId"] = static_cast<double>(aRoad->GetTile()->GetTileId());
+
+    for (const auto& it : *(aRoad->GetLaneList()))
+    {
+        QJsonArray connectionMap;
+        QJsonObject lane;
+
+        lane["id"] = static_cast<double>(it->GetLaneId());
+        addLine(lane, lineIds, lines, "left", it->GetLeftLine(), aLevel);
+        addLine(lane, lineIds, lines, "right", it->GetRightLine(), aLevel);
+        addLine(lane, lineIds, lines, "center", it->GetCenterLine(), aLevel);
+
+        for (const auto& con : *(it->GetConnectionMap()))
+        {
+            connectionMap.push_back(QJsonArray({con.first, static_cast<double>(con.second)}));
+        }
+
+        lane["connectionMap"] = connectionMap;
+        lanes.push_back(lane);
+    }
+
+    roadData["lanes"] = lanes;
+    roadObj["data"] = roadData;
+    roadObj["lines"] = lines;
+    return roadObj;
+}
+
 QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& aLine)
 {
     QJsonObject lineObj;
@@ -137,13 +142,20 @@ QJsonObject Model::GeoJsonConverter::convert(int aLevel, const Model::LinePtr& a
         lineObj["id"] = static_cast<double>(aLine->GetLineId());
         lineObj["type"] = scLineTypeMap.at(aLine->GetLineType());
         lineObj["length"] = aLine->GetLength();
-        lineObj["points"] = convert(aLine->GetPaintListByLevel(aLevel));
+        if (aLevel > 0)
+        {
+            lineObj["points"] = convert(aLine->GetPaintListByLevel(aLevel), true);
+        }
+        else
+        {
+            lineObj["points"] = convert(aLine->GetGeodeticPointsList(), false);
+        }
     }
 
     return lineObj;
 }
 
-QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintList)
+QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintList, bool aIsRelative)
 {
     // Convert point form ECEF to WGS84
     QJsonArray pointListArray;
@@ -164,7 +176,10 @@ QJsonArray Model::GeoJsonConverter::convert(const Model::PaintListPtr& aPaintLis
                 double x = point->GetX();
                 double y = point->GetY();
                 double z = point->GetZ();
-                ecefToWgs84->Transform(x, y, z);
+                if (aIsRelative)
+                {
+                    ecefToWgs84->Transform(x, y, z);
+                }
                 pointList.push_back(QJsonArray({x, y, z}));
             }
 

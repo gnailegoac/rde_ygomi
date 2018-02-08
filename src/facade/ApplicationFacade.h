@@ -55,6 +55,7 @@ public:
     static const std::string OPEN_ROAD_RENDERING;
     static const std::string CLOSE_ROAD_RENDERING;
     static const std::string MERGE_ROAD;
+    static const std::string EDIT_ROAD;
 
     static ApplicationFacade* GetInstance();
 

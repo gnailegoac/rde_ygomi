@@ -30,10 +30,13 @@ public:
     QJsonArray Convert(const osg::Matrixd &aMatrix);
     QJsonArray Convert(int aLevel, TileConstPtr& aTile);
     QJsonArray GetTileExtent(const std::shared_ptr<MemoryModel>& aMemoryModel);
+    // Use aLevel = -1 for edit, which will use line's geodetic PaintList.
+    // Other positive aLevel is used for displaying, which will use ViewPaintList.
+    QJsonObject Convert(int aLevel, const Model::RoadPtr& aRoad);
 
 private:
     QJsonObject convert(int aLevel, const LinePtr& aLine);
-    QJsonArray convert(const PaintListPtr& aPaintList);
+    QJsonArray convert(const PaintListPtr& aPaintList, bool aIsRelative);
     QJsonObject getTileBound(const TilePtr& aTile);
     void addLine(QJsonObject& aLane, QVector<quint64>& aLineIdVec, QJsonArray& aLines,
                  const QString& aPos, const LinePtr& aLine, int aLevel);
