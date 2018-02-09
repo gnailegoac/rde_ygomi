@@ -21,9 +21,6 @@
 #include "model/SceneModel.h"
 #include "model/TreeModel.h"
 
-#include <QDebug>
-#include <vector>
-
 void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
     if (aNotification.getName() == ApplicationFacade::FILE_OPEN_SUCCESS)
@@ -80,25 +77,4 @@ void Controller::FileParseCommand::setMemoryModel(const Model::MemoryModelPtr& a
 {
     MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
     mainProxy.SetMemoryModel(aMemoryModel);
-
-    // TODO: This is for debugging, should remove in product.
-    if (aMemoryModel)
-    {
-        std::vector<uint64_t> ptNumber;
-        ptNumber.assign(6, 0);
-        for (const auto& tile : *(aMemoryModel->GetTileMap()))
-        {
-            for (const auto& line : *(tile.second->GetLineMap()))
-            {
-                for (int i = 1; i < 6; ++i)
-                {
-                    ptNumber.at(i) += line.second->GetPointsCount(i);
-                }
-            }
-        }
-        for (int i = 1; i < 6; ++i)
-        {
-            qDebug() << "Level " << i << " has " << ptNumber.at(i) << " points";
-        }
-    }
 }

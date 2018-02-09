@@ -250,14 +250,3 @@ Model::CurveType Model::Line::GetLineType() const
 
     return CurveType::Solid;
 }
-
-uint64_t Model::Line::GetPointsCount(uint8_t aLevel) const
-{
-    PaintListPtr pList = mPaintListMap->at(aLevel);
-    uint64_t count = 0;
-    for (const auto& paint : *pList)
-    {
-        count += paint->size();
-    }
-    return count;
-}

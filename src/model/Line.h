@@ -70,8 +70,6 @@ public:
     void GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer);
 
     CurveType GetLineType() const;
-    // TODO: this is for debugging, should remove in product.
-    uint64_t GetPointsCount(uint8_t aLevel) const;
 
 private:
     std::uint64_t mLineId;

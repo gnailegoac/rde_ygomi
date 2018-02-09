@@ -17,6 +17,7 @@
 #include "CommonFunction.h"
 #include <QDebug>
 
+#include "model/Lane.h"
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
 #include "proxy/MainProxy.h"
@@ -38,29 +39,36 @@ std::string Controller::RoadEditCommand::GetCommandName()
     return "RoadEditCommand";
 }
 
-void Controller::RoadEditCommand::mergeRoad(const uint64_t& aRoad1Id, const uint64_t& aRoad2Id)
+void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const uint64_t& aToRoadId)
 {
     // The pointer should all be valid if come here.
     const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
     const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
-    std::shared_ptr<Model::Road> road1 = memoryModel->GetRoadById(aRoad1Id);
-    std::shared_ptr<Model::Road> road2 = memoryModel->GetRoadById(aRoad2Id);
-    if (canRoadsBeMerged(road1, road2))
+    std::shared_ptr<Model::Road> fromRoad = memoryModel->GetRoadById(aFromRoadId);
+    std::shared_ptr<Model::Road> toRoad = memoryModel->GetRoadById(aToRoadId);
+    if (canRoadsBeMerged(fromRoad, toRoad))
     {
-        size_t laneCount = road1->GetLaneListSize();
-        const Model::TilePtr& tile = road1->GetTile();
+        size_t laneCount = fromRoad->GetLaneListSize();
+        const Model::TilePtr& tile = fromRoad->GetTile();
         // Merge roads, update road1, remove road2
         // 1. Merge line
+        std::vector<uint64_t> lineIdVec;
+        for (const auto& lane : *(fromRoad->GetLaneList()))
+        {
+            uint64_t successorLaneId = lane->GetSuccessorLaneId();
+            Model::LanePtr successorLane = toRoad->GetLaneById(successorLaneId);
+        }
         // 2. Update lane predecessor/successor connection
-        // Update lanes in road1 successor
-        // Update predecessor of lanes in road2's successor
-
-        // Remove road2 from memory model
+        // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
+        updateRoadConnection(fromRoad, toRoad);
+        // Remove toRoad from memory model
 
         // Update scene model
         // Remove road from scene model
-//        sceneModel->RemoveRoadFromScene(aRoad1Id);
-//        sceneModel->RemoveRoadFromScene(aRoad2Id);
+        sceneModel->RemoveRoadFromScene(aFromRoadId);
+        sceneModel->RemoveRoadFromScene(aToRoadId);
+        // Add merged fromRoad to scene model again
+        sceneModel->AddRoadToScene(fromRoad);
         // Update tree model
     }
 }
@@ -80,8 +88,7 @@ bool Controller::RoadEditCommand::isLaneInRoad(const Model::RoadPtr& aRoad, cons
 
 bool Controller::RoadEditCommand::isRoadConnected(const Model::RoadPtr& aFromRoad, const Model::RoadPtr& aToRoad)
 {
-    uint64_t fromLaneId = aFromRoad->GetLane(0)->GetLaneId();
-
+    // Check if predecessor of lanes in aToRoad is in aFromRoad
     for (const auto& lane : *(aToRoad->GetLaneList()))
     {
         uint64_t predecessorLaneId = lane->GetPredecessorLaneId();
@@ -90,7 +97,7 @@ bool Controller::RoadEditCommand::isRoadConnected(const Model::RoadPtr& aFromRoa
             return false;
         }
     }
-
+    // Is it enough? Should we check if successor of lanes in aFromRoad is in aToRoad?
     return true;
 }
 
@@ -100,7 +107,7 @@ bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Mo
     // Check if the roads to merge have the same number of lanes
     if (aFromRoad->GetLaneListSize() != aToRoad->GetLaneListSize())
     {
-        message = "Only can merge two roads with the same number of lanes";
+        message = "Only two roads with the same number of lanes can be merged.";
         ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &message);
         return false;
     }
@@ -111,17 +118,44 @@ bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Mo
     }
     else if (isRoadConnected(aToRoad, aFromRoad))
     {
-//        qDebug() << "Original from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
         Model::RoadPtr tempRoad = aFromRoad;
         aFromRoad = aToRoad;
         aToRoad = tempRoad;
-//        qDebug() << "Reordered from " << aFromRoad->GetRoadId() << " to " << aToRoad->GetRoadId();
         return true;
     }
     else
     {
-        message = "The two roads are not connected.";
+        message = "Only two connected roads can be merged.";
         ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &message);
         return false;
+    }
+}
+
+void Controller::RoadEditCommand::updateRoadConnection(Model::RoadPtr& aFromRoad, Model::RoadPtr& aToRoad)
+{
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+    for (const auto& lane : *(aToRoad->GetLaneList()))
+    {
+        // predecessor MUST exist.
+        uint64_t predecessorLaneId = lane->GetPredecessorLaneId();
+        uint64_t successorLaneId = lane->GetSuccessorLaneId();
+        if (predecessorLaneId > 0)
+        {
+            Model::LanePtr predecessorLane = aFromRoad->GetLaneById(predecessorLaneId);
+            if (predecessorLane)
+            {
+                predecessorLane->SetSuccessorLaneId(successorLaneId);
+            }
+        }
+        // should check if successor exist.
+        if (successorLaneId > 0)
+        {
+            // The successorLane may in different tile, so use memoryModel here.
+            Model::LanePtr successorLane = memoryModel->GetLaneById(successorLaneId);
+            if (successorLane)
+            {
+                successorLane->SetPredecessorLaneId(predecessorLaneId);
+            }
+        }
     }
 }

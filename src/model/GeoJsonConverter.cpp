@@ -15,7 +15,6 @@
 
 #include <QtGlobal>
 #include <QVector>
-#include <QDebug>
 
 #include <map>
 
