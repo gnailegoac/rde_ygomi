@@ -86,7 +86,7 @@
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -94,6 +94,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionWarning"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
@@ -195,6 +197,11 @@
   <action name="actionDLM">
    <property name="text">
     <string>DLM</string>
+   </property>
+  </action>
+  <action name="actionWarning">
+   <property name="text">
+    <string>warning</string>
    </property>
   </action>
  </widget>

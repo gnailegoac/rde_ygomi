@@ -85,7 +85,9 @@ SOURCES +=\
     model/data_handler/DLMFactory.cpp \
     model/data_handler/DLMSerializer.cpp \
     model/data_handler/DLMInterpreter.cpp \
-    model/data_handler/DLMSetting.cpp
+    model/data_handler/DLMSetting.cpp \
+    control/DbValidationCommand.cpp \
+    view/DbValidationDialog.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -135,14 +137,14 @@ HEADERS  += view/MainWindow.h \
     view/StrokeIntersector.h \
     control/NodeHighlightCommand.h \
     model/TreeItem.h \
+    model/GeoJsonConverter.h \
+    control/FileSerializeCommand.h \
     model/TreeModel.h \
     model/GeoJsonConverter.h \
     model/data_handler/KMLFactory.h \
     model/data_handler/KMLSerializer.h \
     model/data_handler/KMLInterpreter.h \
     model/LookUpTable.h \
-    model/GeoJsonConverter.h \
-    control/FileSerializeCommand.h \
     model/data_handler/RoadSection.pb.h \
     model/data_handler/ProtoBufferFactory.h \
     model/data_handler/ProtoBufferSerializer.h \
@@ -150,10 +152,13 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/DLMFactory.h \
     model/data_handler/DLMSerializer.h \
     model/data_handler/DLMInterpreter.h \
-    model/data_handler/DLMSetting.h
+    model/data_handler/DLMSetting.h \
+    control/DbValidationCommand.h \
+    view/DbValidationDialog.h
 
 FORMS    += view/MainWindow.ui \
-    view/NetworkPreferenceDialog.ui
+    view/NetworkPreferenceDialog.ui \
+    view/DbValidationDialog.ui
 
 IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
                $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
