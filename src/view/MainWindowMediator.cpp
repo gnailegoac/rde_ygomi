@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QJsonArray>
+#include <QDateTime>
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
 #include "proxy/MainProxy.h"
@@ -348,7 +349,10 @@ void View::MainWindowMediator::closeRoadRendering()
 bool View::MainWindowMediator::dbValidation(const std::string& dbPath)
 {
     QString config = "../src/resource";
-    QString savePath = QDir::currentPath() + "/validation.json";
+    QString savePath = QDir::currentPath();
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
+    savePath += "/validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
     pCheck->Initialize(dbPath, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
