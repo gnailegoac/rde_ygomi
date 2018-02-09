@@ -29,7 +29,7 @@ class DbValidationDialog : public QDialog
 public:
     explicit DbValidationDialog(QWidget* parent = 0);
     ~DbValidationDialog();
-    void UpdateData(const QString& filePath);
+    void UpdateData(const QString& aFilePath);
     void ResetPos();
     bool IsInterrupt();
 

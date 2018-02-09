@@ -1,3 +1,15 @@
+/**
+ *******************************************************************************
+ *                       Continental Confidential
+ *                  Copyright (c) Continental AG. %YEAR%
+ *
+ *      This software is furnished under license and may be used or
+ *      copied only in accordance with the terms of such license.
+ *******************************************************************************
+ * @file    DbValidationDialog.cpp
+ *******************************************************************************
+ */
+
 #include "DbValidationDialog.h"
 #include "ui_DbValidationDialog.h"
 #include <QHeaderView>
@@ -68,9 +80,9 @@ void View::DbValidationDialog::initTableOverView()
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString("0")));
 }
 
-void View::DbValidationDialog::UpdateData(const QString& filePath)
+void View::DbValidationDialog::UpdateData(const QString& aFilePath)
 {
-    QFile file(filePath);
+    QFile file(aFilePath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString data = file.readAll();
     file.close();
