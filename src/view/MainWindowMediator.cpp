@@ -27,6 +27,7 @@
 #include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
 #include "view/DbValidationDialog.h"
+#include "BasicCheck.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -55,7 +56,6 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
-    result->get().push_back(ApplicationFacade::DB_VALIDATION_FINISH);
     return NotificationNames(result);
 }
 
@@ -179,12 +179,12 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     std::string noteName = aNotification.getName();
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
-
-        QString filePath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
-        ApplicationFacade::SendNotification(ApplicationFacade::DB_VALIDATION_START, &filePath, "file");
-        //getMainWindow()->EnableSaveAction(true);
-        //ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
-
+        std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
+        if(dbValidation(filePath))
+        {
+            getMainWindow()->EnableSaveAction(true);
+            ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
+        }
     }
     else if (noteName == ApplicationFacade::FOLDER_OPEN)
     {
@@ -192,9 +192,11 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
-            //getMainWindow()->EnableSaveAction(true);
-            //ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
-            ApplicationFacade::SendNotification(ApplicationFacade::DB_VALIDATION_START, &folderPath, "folder");
+            if(dbValidation(folderPath.toStdString()))
+            {
+                getMainWindow()->EnableSaveAction(true);
+                ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
+            }
         }
         else
         {
@@ -308,28 +310,6 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         closeRoadRendering();
     }
-    else if(noteName == ApplicationFacade::DB_VALIDATION_FINISH)
-    {
-        QString filePath = "../src/resource/Output-20180206_135434.json";
-        getMainWindow()->GetDbValidationDialog()->UpdateData(filePath);
-        if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
-        {
-            getMainWindow()->GetDbValidationDialog()->show();
-            //return;
-        }
-        std::string fileType = aNotification.getType();
-        if(fileType.find("file") != std::string::npos)
-        {
-            std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-            ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
-        }
-        if(fileType.find("folder") != std::string::npos)
-        {
-            QString folderPath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
-            std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
-            ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
-        }
-    }
 }
 
 void View::MainWindowMediator::openRoadRendering()
@@ -363,6 +343,22 @@ void View::MainWindowMediator::closeRoadRendering()
     }
     sceneModel->RemoveRoadModelFromScene();
     getMainWindow()->centralWidget()->repaint();
+}
+
+bool View::MainWindowMediator::dbValidation(const std::string& dbPath)
+{
+    QString config = "../src/resource";
+    QString savePath = QDir::currentPath() + "/validation.json";
+    std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
+    pCheck->Initialize(dbPath, config.toStdString(), savePath.toStdString());
+    pCheck->RunCheck();
+    getMainWindow()->GetDbValidationDialog()->UpdateData(savePath);
+    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    {
+        getMainWindow()->GetDbValidationDialog()->show();
+        return false;
+    }
+    return true;
 }
 
 void View::MainWindowMediator::onRemove()

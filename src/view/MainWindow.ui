@@ -203,6 +203,9 @@
    <property name="text">
     <string>warning</string>
    </property>
+   <property name="toolTip">
+    <string>Validation Information</string>
+   </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

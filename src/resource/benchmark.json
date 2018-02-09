@@ -1,0 +1,863 @@
+{
+    "tables": [
+        {
+            "name": "Road",
+            "field": {
+                "ID": "UNSIGNED BIG INT",
+                "SegID": "INSSTEGER",
+                "StartJunctionID": "UNSIGNED BIG INT",
+                "EndJunctionID": "UNSIGNED BIG INT",
+                "PassedSegList": "TEXT"
+            },
+            "measureID": [50101,50201,50301,50506,
+			              50401,50701,50803],
+			"existence": {
+				"50506": {
+					"SegID": {
+						"Segment": "ID"
+					}
+				}
+			},
+            "uniqueness": {
+				"50401": ["ID"]
+			},
+			"character": {
+                "50701": {
+                    "PassedSegList": [",","-",".","0-9"]
+                }
+            },
+            "nullvalue": {
+                "50803": {
+					"Null": ["ID","SegID","StartJunctionID","EndJunctionID","PassedSegList"],               
+					"EmptyText": ["PassedSegList"],
+					"Zero": ["ID","SegID","StartJunctionID","EndJunctionID"]
+				}
+			}
+        },
+        {
+            "name": "Segment",
+            "field": {
+                "ID": "INTEGER",
+                "ReferencePoint": "TEXT"
+            },
+            "measureID": [50102,50202,50302,50402,
+			              50702,50804],
+			"uniqueness": {
+				"50402": ["ID"]
+			},
+            "character": {
+                "50702": {
+                    "ReferencePoint": [",","-",".","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50804": {
+					"Null": ["ID","ReferencePoint"],               
+					"EmptyText": ["PassedSegList"],
+					"Zero": ["ID"]
+				}
+			}
+        },
+        {
+            "name": "Lane",
+            "field": {
+                "ID": "TEXT",
+                "RoadID": "UNSIGNED BIG INT",
+                "LLineID": "TEXT",
+                "RLineID": "TEXT",
+                "AvgSlamTrace": "TEXT",
+                "TrafficSignID": "TEXT",
+                "Attribute": "TEXT"
+            },
+            "measureID": [50103,50203,50303,50501,
+			              50502,50503,50504,50505,
+						  50403,50703,50704,50705,
+						  50706,50707,50708,50809],
+			"existence": {
+				"50501": {
+					"RoadID": {
+						"Road": "ID"
+					}
+				},
+				"50502": {
+					"LLineID": {
+						"Line": "ID"
+					}
+				},
+				"50503": {
+					"RLineID": {
+						"Line": "ID"
+					}
+				},
+				"50504": {
+					"AvgSlamTrace": {
+						"Line": "ID"
+					}
+				},
+				"50505": {
+					"TrafficSignID": {
+						"TrafficSign": "ID"
+					}
+				}
+			},			
+			"uniqueness": {
+				"50403": ["ID","RoadID","LLineID","RLineID"]
+			},
+            "character": {
+                "50703": {
+                    "ID": ["_","0-9"]
+                },
+                "50704": {
+                    "LLineID": ["_","0-9"]
+                },
+                "50705": {
+                    "RLineID": ["_","0-9"]
+                },
+                "50706": {
+                    "AvgSlamTrace": ["_","0-9"]
+                },
+                "50707": {
+                    "TrafficSignID": [",","-",".","0-9"]
+                },
+                "50708": {
+                    "Attribute": [",","-",".","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50809": {
+					"Null": ["ID","RoadID","LLineID","RLineID","AvgSlamTrace"],               
+					"EmptyText": ["ID","RoadID","LLineID","RLineID","AvgSlamTrace"],
+					"Zero": ["ID","RoadID","LLineID","RLineID","AvgSlamTrace"]
+				}
+			}
+        },
+        {
+            "name": "LaneConnection",
+            "field": {
+                "SrcID": "TEXT",
+                "DstID": "TEXT",
+                "Type": "INTEGER"
+            },
+            "measureID": [50104,50204,50304,50601,
+                          50507,50404,50709,50710,
+						  50808],
+			"existence": {
+				"50507": {
+					"SrcID": {
+						"Lane": "ID"
+					}
+				}
+			},
+		    "uniqueness": {
+				"50404": ["SrcID","DstID"]
+			},
+            "fieldRange": {
+                "50601": {
+                    "Type": "0,1,2,3"
+                }
+            },
+            "character": {
+                "50709": {
+                    "SrcID": ["_","0-9"]
+                },
+                "50710": {
+                    "DstID": ["_","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50808": {
+					"Null": ["SrcID","DstID","Type"],               
+					"EmptyText": ["SrcID","DstID"],
+					"Zero": []
+				}
+			}
+        },
+        {
+            "name": "Line",
+            "field": {
+                "ID": "TEXT",
+                "LaneID": "TEXT",
+                "Confidence": "float",
+                "Length": "float"
+            },
+            "measureID": [50105,50205,50305,50606,
+                          50508,50405,50711,50712,
+						  50801],
+			"existence": {
+				"50508": {
+					"LaneID": {
+						"Lane": "ID"
+					}
+				}
+			},
+			"uniqueness": {
+				"50405": ["ID"]
+			},
+            "fieldRange": {
+                "50606": {
+                    "Confidence": "0,1"
+                }
+            },
+            "character": {
+                "50711": {
+                    "ID": ["_","0-9"]
+                },
+                "50712": {
+                    "LaneID": ["_","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50801": {
+					"Null": ["ID","LaneID","Confidence","Length"],               
+					"EmptyText": ["ID","LaneID"],
+					"Zero": ["Length"]
+				}
+			}
+        },
+        {
+            "name": "Curve",
+            "field": {
+                "ID": "TEXT",
+                "LineID": "UNSIGNED BIG INT",
+                "IndexInLine": "BYTE",
+                "Type": "INT",
+                "Width": "INT",
+                "EquationDescription": "TEXT",
+                "Length": "FLOAT",
+                "Color": "BYTE"
+            },          
+            "measureID": [50106,50206,50306,50602,
+                          50509,50406,50713,50714,
+						  50715,50716,50802,50608],
+			"existence": {
+				"50509": {
+					"LineID": {
+						"Line": "ID"
+					}
+				}
+			},
+			"uniqueness": {
+				"50406": ["ID"]
+			},
+            "fieldRange": {
+                "50602": {
+                    "Type": "0,1,2,3"
+                },
+				"50608":{
+					"Color": ""
+				}
+            },
+            "character": {
+                "50713": {
+                    "ID": ["_","0-9"]
+                },
+                "50714": {
+                    "LineID": ["_","0-9"]
+                },
+                "50715": {
+                    "EquationDescription": [",",".",":","\"","\\[","\\]","\\{","\\}","A-Za-z","0-9"]
+                },
+                "50716": {
+                    "Color": [",","-",".","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50802": {
+					"Null": ["ID","LineID","IndexInLine","Type","Width","EquationDescription","Length","Color"],               
+					"EmptyText": ["ID","EquationDescription"],
+					"Zero": ["Length"]
+				}
+			}
+        },
+        {
+            "name": "TrafficSign",
+            "field": {
+                "ID": "TEXT",
+                "SegID": "INTEGER",
+                "Type": "INTEGER",
+                "Orientation": "float",
+                "ShapeWidth": "float",
+                "ShapeHeight": "float",
+                "Confidence": "float",
+                "GPS": "TEXT"
+            },
+            "measureID": [50107,50207,50307,50607,
+                          50510,50407,50717,50718,
+						  50806],
+			"existence": {
+				"50510": {
+					"SegID": {
+						"Segment": "ID"
+					}
+				}
+			},
+			"uniqueness": {
+				"50407": ["ID"]
+			},
+            "fieldRange": {
+                "50607": {
+                    "Confidence": "0,1"
+                }
+            },
+            "character": {
+                "50717": {
+                    "ID": ["-",".","0-9"]
+                },
+                "50718": {
+                    "GPS": [",",".","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50806": {
+					"Null": ["ID","SegID","Type","Orientation","ShapeWidth","ShapeHeight","Confidence","GPS"],               
+					"EmptyText": ["ID","GPS"],
+					"Zero": ["SegID","Type","Orientation","ShapeWidth","ShapeHeight"]
+				}
+			}
+        },
+        {
+            "name": "RoadEdssge",
+            "field": {
+                "ID": "UNSIGNED BIG INT",
+                "RoadID": "UNSIGNED BIG INT",
+                "LineID": "UNSIGNED BIG INT",
+                "EdgeType": "BYTE",
+                "Height": "float",
+                "SideType": "BYTE"
+            }, 
+            "measureID": [50108,50208,50308,50604,
+                          50511,50512,50408,50720,
+						  50810],
+			"existence": {
+				"50511": {
+					"RoadID": {
+						"Road": "ID"
+					}
+				},
+				"50512": {
+					"LineID": {
+						"Line": "ID"
+					}
+				}
+			},
+			"uniqueness": {
+				"50408": ["ID"]
+			},
+            "fieldRange": {
+                "50604": {
+                    "SideType": "0,1"
+                }
+            },
+			"character": {
+                "50720": {
+                    "LineID": ["0-9"]
+                }
+            },
+			"nullvalue": {
+                "50810": {
+					"Null": ["ID","RoadID","LineID","Height"],               
+					"EmptyText": ["ID","RoadID","LineID","Height"],
+					"Zero": ["ID","RoadID","LineID","Height"]
+				}
+			}
+        },
+        {
+            "name": "Junctsdion",
+            "field": {
+                "ID": "UNSIGNED BIG INT",
+                "SegID": "INTEGER",
+                "GPS": "TEXT"
+            },
+            "measureID": [50109,50209,50309,50513,
+			              50409,50719,50807],
+			"existence": {
+				"50513": {
+					"SegID": {
+						"Segment": "ID"
+					}
+				}
+			},
+			"uniqueness": {
+				"50409": ["ID"]
+			},
+            "character": {
+                "50719": {
+                    "GPS": [",",".","0-9"]
+                }
+            },
+			"nullvalue": {
+                "50807": {
+					"Null": ["ID","SegID","GPS"],               
+					"EmptyText": ["GPS"],
+					"Zero": ["ID","SegID"]
+				}
+			}
+        },
+        {
+            "name": "Version",
+            "field": {
+                "VERSION": "UNSIGNED INT"
+            },
+            "measureID": [50110,50210,50310,50805],
+			"nullvalue": {
+                "50805": {
+					"Null": ["VERSION"],               
+					"EmptyText": [],
+					"Zero": ["VERSION"]
+				}
+			}
+        }
+    ],
+	"measures": {
+		"50101": {
+			"Description": "Road table does not exist or excess.",
+			"ShortName": "RoadExist",
+			"Level": "Serious Error"
+		},
+		"50102": {
+			"Description": "Segment table does not exist or excess.",
+			"ShortName": "SegmentExist",
+			"Level": "Serious Error"
+		},
+		"50103": {
+			"Description": "Lane table does not exist or excess.",
+			"ShortName": "LaneExist",
+			"Level": "Serious Error"
+		},
+		"50104": {
+			"Description": "LaneConnection table does not exist or excess.",
+			"ShortName": "LaneConnectionExist",
+			"Level": "Serious Error"
+		},
+		"50105": {
+			"Description": "Line table does not exist or excess.",
+			"ShortName": "LineExist",
+			"Level": "Serious Error"
+		},
+		"50106": {
+			"Description": "Curve table does not exist or excess.",
+			"ShortName": "CurveExist",
+			"Level": "Serious Error"
+		},
+		"50107": {
+			"Description": "TrafficSign table does not exist or excess.",
+			"ShortName": "TrafficSignExist",
+			"Level": "Serious Error"
+		},
+		"50108": {
+			"Description": "RoadEdge table does not exist or excess.",
+			"ShortName": "RoadEdgeExist",
+			"Level": "Serious Error"
+		},
+		"50109": {
+			"Description": "Junction table does not exist or excess.",
+			"ShortName": "JunctionExist",
+			"Level": "Serious Error"
+		},
+		"50110": {
+			"Description": "Version table does not exist or excess.",
+			"ShortName": "VersionExist",
+			"Level": "Serious Error"
+		},
+		"50201": {
+			"Description": "Road table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "RoadStructure",
+			"Level": "Serious Error"
+		},
+		"50202": {
+			"Description": "Segment table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "SegmentStructure",
+			"Level": "Serious Error"
+		},
+		"50203": {
+			"Description": "Lane table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "LaneStructure",
+			"Level": "Serious Error"
+		},
+		"50204": {
+			"Description": "LaneConnection table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "LaneConnectionStructure",
+			"Level": "Serious Error"
+		},
+		"50205": {
+			"Description": "Line table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "LineStructure",
+			"Level": "Serious Error"
+		},
+		"50206": {
+			"Description": "Curve table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "CurveStructure",
+			"Level": "Serious Error"
+		},
+		"50207": {
+			"Description": "TrafficSign table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "TrafficSignStructure",
+			"Level": "Serious Error"
+		},
+		"50208": {
+			"Description": "RoadEdge table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "RoadEdgeStructure",
+			"Level": "Serious Error"
+		},
+		"50209": {
+			"Description": "Junction table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "JunctionStructure",
+			"Level": "Serious Error"
+		},
+		"50210": {
+			"Description": "Version table structure is incorrect (extra fields, missing fields, wrong fields).",
+			"ShortName": "VersionStructure",
+			"Level": "Serious Error"
+		},
+		"50301": {
+			"Description": "Road table field type error.",
+			"ShortName": "RoadFieldtype",
+			"Level": "Serious Error"
+		},
+		"50302": {
+			"Description": "Segment table field type error.",
+			"ShortName": "SegmentFieldtype",
+			"Level": "Serious Error"
+		},
+		"50303": {
+			"Description": "Lane table field type error.",
+			"ShortName": "LaneFieldtype",
+			"Level": "Serious Error"
+		},
+		"50304": {
+			"Description": "LaneConnection table field type error.",
+			"ShortName": "LaneConnectionFieldtype",
+			"Level": "Serious Error"
+		},
+		"50305": {
+			"Description": "Line table field type error.",
+			"ShortName": "LineFieldtype",
+			"Level": "Serious Error"
+		},
+		"50306": {
+			"Description": "Curve table field type error.",
+			"ShortName": "CurveFieldtype",
+			"Level": "Serious Error"
+		},
+		"50307": {
+			"Description": "TrafficSign table field type error.",
+			"ShortName": "TrafficSignFieldtype",
+			"Level": "Serious Error"
+		},
+		"50308": {
+			"Description": "RoadEdge table field type error.",
+			"ShortName": "RoadEdgeFieldtype",
+			"Level": "Serious Error"
+		},
+		"50309": {
+			"Description": "Junction table field type error.",
+			"ShortName": "JunctionFieldtype",
+			"Level": "Serious Error"
+		},
+		"50310": {
+			"Description": "Version table field type error.",
+			"ShortName": "VersionFieldtype",
+			"Level": "Serious Error"
+		},
+		"50401": {
+			"Description": "Road ID uniqueness.",
+			"ShortName": "RoadIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50402": {
+			"Description": "Segment ID uniqueness.",
+			"ShortName": "SegmentIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50403": {
+			"Description": "Lane ID uniqueness.",
+			"ShortName": "LaneIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50404": {
+			"Description": "LaneConnection srcID,dstID uniqueness.",
+			"ShortName": "LaneConnectionSrcIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50405": {
+			"Description": "Line ID uniqueness.",
+			"ShortName": "LineIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50406": {
+			"Description": "Curve ID uniqueness.",
+			"ShortName": "CurveIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50407": {
+			"Description": "TrafficSign ID uniqueness.",
+			"ShortName": "TrafficSignIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50408": {
+			"Description": "RoadEdge ID uniqueness.",
+			"ShortName": "RoadEdgeIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50409": {
+			"Description": "Junction ID uniqueness.",
+			"ShortName": "JunctionIDUniqueness",
+			"Level": "Serious Error"
+		},
+		"50501": {
+			"Description": "The RoadID field of the Lane table does not exist in the ID field of the Road table.",
+			"ShortName": "LaneRoadIDWithinRoadID",
+			"Level": "Need To Verify"
+		},
+		"50502": {
+			"Description": "The LlineID field of the Lane table does not exist in the ID field of the Line table.",
+			"ShortName": "LaneLlineIDWithinLineID",
+			"Level": "Need To Verify"
+		},
+		"50503": {
+			"Description": "The RoadID field of the Lane table does not exist in the ID field of the Line table.",
+			"ShortName": "LaneRoadIDWithinRoadID",
+			"Level": "Need To Verify"
+		},
+		"50504": {
+			"Description": "The AvgSlamTrace field of the Lane table does not exist in the ID field of the Line table.",
+			"ShortName": "LaneAvgSlamTraceWithinLineID",
+			"Level": "Need To Verify"
+		},
+		"50505": {
+			"Description": "The TrafficSignID field of the Lane table does not exist in the ID field of the TrafficSign table.",
+			"ShortName": "LaneTrafficSignIDWithinTrafficSignID",
+			"Level": "Need To Verify"
+		},
+		"50506": {
+			"Description": "The SegID field of the Road table does not exist in the ID field of the Segment table.",
+			"ShortName": "RoadSegIDWithinSegmentID",
+			"Level": "Need To Verify"
+		},
+		"50507": {
+			"Description": "The SrcID field of the LaneConnection table does not exist in the ID field of the Lane table in itself DB file.",
+			"ShortName": "LaneConnectionSrcIDWithinLaneID",
+			"Level": "Need To Verify"
+		},
+		"50508": {
+			"Description": "The LaneID field of the Line table does not exist in the ID field of the Lane table.",
+			"ShortName": "LineLaneIDWithinLaneID",
+			"Level": "Need To Verify"
+		},
+		"50509": {
+			"Description": "The LlineID field of the Curve table does not exist in the ID field of the Line table.",
+			"ShortName": "CurveLineIDWithinLineID",
+			"Level": "Need To Verify"
+		},
+		"50510": {
+			"Description": "The SegID field of the TrafficSign table does not exist in the ID field of the Segment table.",
+			"ShortName": "TrafficSignSegIDWithinSegmentID",
+			"Level": "Need To Verify"
+		},
+		"50511": {
+			"Description": "The RoadID field of the RoadEdge table does not exist in the ID field of the Road table.",
+			"ShortName": "RoadEdgeRoadIDWithinRoadID",
+			"Level": "Need To Verify"
+		},
+		"50512": {
+			"Description": "The LlineID field of the RoadEdge table does not exist in the ID field of the Line table.",
+			"ShortName": "RoadEdgeLineIDWithinLineID",
+			"Level": "Need To Verify"
+		},
+		"50513": {
+			"Description": "The SegID field of the Junction table does not exist in the ID field of the Segment table.",
+			"ShortName": "JunctionSegIDWithinSegmentID",
+			"Level": "Need To Verify"
+		},
+		"50601": {
+			"Description": "The Type value of the LaneConnection table is not in the range of (0,1,2,3).",
+			"ShortName": "LaneConnectionTypeRange",
+			"Level": "Need To Verify"
+		},
+		"50602": {
+			"Description": "The Type value of the Curve table is not in the range of (0, 1, 2, 3).",
+			"ShortName": "CurveTypeRange",
+			"Level": "Need To Verify"
+		},
+		"50603": {
+			"Description": "The Type value of the TrafficSign table is not in the range of (not defined).",
+			"ShortName": "TrafficSignTypeRange",
+			"Level": "Need To Verify"
+		},
+		"50604": {
+			"Description": "The SideType value of the RoadEdge table is not in the range of (0, 1).",
+			"ShortName": "RoadEdgeSideTypeRange",
+			"Level": "Need To Verify"
+		},
+		"50605": {
+			"Description": "The EdgeType value of the RoadEdge table is not in the range of (not defined).",
+			"ShortName": "RoadEdgeEdgeTypeRange",
+			"Level": "Need To Verify"
+		},
+		"50606": {
+			"Description": "The Confidence value of the Line table is not in the range of (0, 1).",
+			"ShortName": "LineConfidenceRange",
+			"Level": "Need To Verify"
+		},
+		"50607": {
+			"Description": "The Confidence value of the TrafficSign table is not in the range of (0, 1).",
+			"ShortName": "TrafficSignConfidenceRange",
+			"Level": "Need To Verify"
+		},
+		"50608": {
+			"Description": "The Color value of the Curve table is not in the range of (not defined).",
+			"ShortName": "CurveColorRange",
+			"Level": "Need To Verify"
+		},
+		"50701": {
+			"Description": "There are illegal characters in the PassedSegList field of the Road table.Allowed:,-.1234567890.",
+			"ShortName": "RoadPassedSegListIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50702": {
+			"Description": "There are illegal characters in the ReferencePoint field of the Segment table.Allowed:,-.1234567890.",
+			"ShortName": "SegmentReferencePointIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50703": {
+			"Description": "There are illegal characters in the ID field of the Lane table.Allowed:_1234567890.",
+			"ShortName": "LaneIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50704": {
+			"Description": "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890.",
+			"ShortName": "LaneLLineIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50705": {
+			"Description": "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890.",
+			"ShortName": "LaneRlineIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50706": {
+			"Description": "There are illegal characters in the AvgSlamTrace field of the Lane table.Allowed:_1234567890.",
+			"ShortName": "LaneAvgSlamTraceIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50707": {
+			"Description": "There are illegal characters in the TrafficSignID field of the Lane table.Allowed:,-.1234567890.",
+			"ShortName": "LaneTrafficSignIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50708": {
+			"Description": "There are illegal characters in the Attribute field of the Lane table.Allowed:,-.1234567890.",
+			"ShortName": "LaneAttributeIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50709": {
+			"Description": "There are illegal characters in the SrcID field of the LaneConnection table.Allowed:_1234567890.",
+			"ShortName": "LaneConnectionSrcIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50710": {
+			"Description": "There are illegal characters in the DstID field of the LaneConnection table.Allowed:_1234567890.",
+			"ShortName": "LaneConnectionDstIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50711": {
+			"Description": "There are illegal characters in the ID field of the Line table.Allowed:_1234567890.",
+			"ShortName": "LineIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50712": {
+			"Description": "There are illegal characters in the LaneID field of the Line table.Allowed:_1234567890.",
+			"ShortName": "LineLaneIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50713": {
+			"Description": "There are illegal characters in the ID field of the Curve table.Allowed:_1234567890.",
+			"ShortName": "CurveIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50714": {
+			"Description": "There are illegal characters in the LineID field of the Curve table.Allowed:_1234567890.",
+			"ShortName": "CurveLineIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50715": {
+			"Description": "There are illegal characters in the EquationDescription field of the Curve.",
+			"ShortName": "CurveEquationDescriptionIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50716": {
+			"Description": "There are illegal characters in the Color field of the Curve table.Allowed:,-.1234567890.",
+			"ShortName": "CurveColorIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50717": {
+			"Description": "There are illegal characters in the ID field of the TrafficSign table.Allowed:-.1234567890.",
+			"ShortName": "TrafficSignIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50718": {
+			"Description": "There are illegal characters in the GPS field of the TrafficSign table.Allowed:,.1234567890.",
+			"ShortName": "TrafficSignGPSIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50719": {
+			"Description": "There are illegal characters in the GPS field of the Junction  table.Allowed:,.1234567890.",
+			"ShortName": "JunctionGPSIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50720": {
+			"Description": "There are illegal characters in the LineID field of the RoadEdge table.Allowed:_1234567890.",
+			"ShortName": "RoadEdgeLineIDIllegalCharacters",
+			"Level": "Need To Verify"
+		},
+		"50801": {
+			"Description": "The ID/LaneID/Length of the Line table is not equal to 0 or Null or \"\" or 0.0",
+			"ShortName": "LineLengthEmpty",
+			"Level": "Need To Verify"
+		},
+		"50802": {
+			"Description": "The ID/LineID/EquationDescription/Length/Width of the Curve table is not equal to 0 or Null or \"\" or  0.0.",
+			"ShortName": "CurveLengthEmpty",
+			"Level": "Need To Verify"
+		},
+		"50803": {
+			"Description": "All of the Road table field should not equal to 0 or Null or \"\".",
+			"ShortName": "RoadAllFieldEmpty",
+			"Level": "Need To Verify"
+		},
+		"50804": {
+			"Description": "The ID/ReferencePoint of the Segment table is not equal to 0 or Null or \"\" or 0,0,0.",
+			"ShortName": "SegmentIDRelateReferencePointEmpty",
+			"Level": "Need To Verify"
+		},
+		"50805": {
+			"Description": "The Version field of the Version table is 0 or Null or \"\".",
+			"ShortName": "VersionVersionEmpty",
+			"Level": "Need To Verify"
+		},
+		"50806": {
+			"Description": "All of the TrafficSign table field should not equal to 0 or Null or \"\",except Confidence can be 0.",
+			"ShortName": "TrafficSignAllFieldEmpty",
+			"Level": "Need To Verify"
+		},
+		"50807": {
+			"Description": "All of the Junction table field should not equal to 0 or Null or \"\".",
+			"ShortName": "JunctionAllFieldEmpty",
+			"Level": "Need To Verify"
+		},
+		"50808": {
+			"Description": "All of the LaneConnection table field should not be Null or  \"\",except type field can be 0.",
+			"ShortName": "LaneConnectionSrcIDlDstIDEmpty",
+			"Level": "Need To Verify"
+		},
+		"50809": {
+			"Description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table is not equal to 0 or Null or \"\".",
+			"ShortName": "LaneFieldEmpty",
+			"Level": "Need To Verify"
+		},
+		"50810": {
+			"Description": "The ID/RoadID/LineID/Height of the RoadEdge table is not equal to 0 or Null or \"\".",
+			"ShortName": "RoadEdgeFieldEmpty",
+			"Level": "Need To Verify"
+		}
+	}
+}

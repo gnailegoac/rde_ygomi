@@ -1,0 +1,359 @@
+{
+    "taskid": "203372",
+    "module": "basic_measure",
+    "measures": 
+    [
+        {
+            "measureId": 50101,
+            "description": "Road table does not exist"
+        },
+        {
+            "measureId": 50102,
+            "description": "Segment table does not exist"
+        },
+        {
+            "measureId": 50103,
+            "description": "Lane table does not exist"
+        },
+        {
+            "measureId": 50104,
+            "description": "LaneConnection table does not exist"
+        },
+        {
+            "measureId": 50105,
+            "description": "Segment table does not exist"
+        },
+        {
+            "measureId": 50106,
+            "description": "Lane table does not exist"
+        },
+        {
+            "measureId": 50107,
+            "description": "LaneConnection table does not exist"
+        },
+        {
+            "measureId": 50108,
+            "description": "Segment table does not exist"
+        },
+        {
+            "measureId": 50109,
+            "description": "Lane table does not exist"
+        },
+        {
+            "measureId": 50110,
+            "description": "LaneConnection table does not exist"
+        },
+        {
+            "measureId": 50201,
+            "description": "Road table structure is incorrect"
+        },
+        {
+            "measureId": 50202,
+            "description": "Segment table structure is incorrect"
+        },
+        {
+            "measureId": 50203,
+            "description": "Lane table structure is incorrect"
+        },
+        {
+            "measureId": 50204,
+            "description": "LaneConnection table structure is incorrect"
+        },
+                {
+            "measureId": 50205,
+            "description": "Line table structure is incorrect"
+        },
+        {
+            "measureId": 50206,
+            "description": "Curve table structure is incorrect"
+        },
+        {
+            "measureId": 50207,
+            "description": "TraffciSign table structure is incorrect"
+        },
+        {
+            "measureId": 50208,
+            "description": "RoadEdge table structure is incorrect"
+        },
+        {
+            "measureId": 50209,
+            "description": "Junction table structure is incorrect"
+        },
+        {
+            "measureId": 50210,
+            "description": "version table structure is incorrect"
+        },
+        {
+            "measureId": 50301,
+            "description": "Road table field type err"
+        },
+        {
+            "measureId": 50302,
+            "description": "Segment table field type err"
+        },
+        {
+            "measureId": 50303,
+            "description": "Lane table field type err"
+        },
+        {
+            "measureId": 50304,
+            "description": "LaneConnection table field type err"
+        },
+        {
+            "measureId": 50305,
+            "description": "Line table field type err"
+        },
+        {
+            "measureId": 50306,
+            "description": "Curve table field type err"
+        },
+        {
+            "measureId": 50307,
+            "description": "TraffciSign table field type err"
+        },
+        {
+            "measureId": 50308,
+            "description": "RoadEdge table field type err"
+        },
+        {
+            "measureId": 50309,
+            "description": "Junction table field type err"
+        },
+        {
+            "measureId": 50310,
+            "description": "version table field type err"
+        },
+        {
+            "measureId": 50401,
+            "description": "The Type value of the LaneConnection table is not in the range of (0,1,2,3)"
+        },
+        {
+            "measureId": 50402,
+            "description": "The Type value of the Curve table is not in the range of (0, 1, 2, 3)"
+        },
+        {
+            "measureId": 50403,
+            "description": "The Type value of the Curve table is not in the range of (0, 1, 2, 3)"
+        },
+        {
+            "measureId": 50404,
+            "description": "The SideType value of the RoadEdge table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50405,
+            "description": "The SideType value of the RoadEdge table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50406,
+            "description": "The Confidence value of the Line table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50407,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50408,
+            "description": "The SideType value of the RoadEdge table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50409,
+            "description": "The Confidence value of the Line table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50501,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50502,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50503,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50504,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50505,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50506,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50507,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50508,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50509,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50510,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50511,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50512,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50513,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50601,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50602,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50604,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50606,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50607,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50701,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50702,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50703,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50704,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50705,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50706,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50707,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50708,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50709,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },  
+        {
+            "measureId": 50710,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50711,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50712,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50713,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },  
+        {
+            "measureId": 50714,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50715,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50716,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },   
+        {
+            "measureId": 50717,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50718,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50719,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },         
+        {
+            "measureId": 50720,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        }, 
+        {
+            "measureId": 50804,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50806,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },         
+        {
+            "measureId": 50801,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        }, 
+        {
+            "measureId": 50802,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50804,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50806,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50807,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        }, 
+        {
+            "measureId": 50808,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        }, 
+        {
+            "measureId": 50809,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        },
+        {
+            "measureId": 50810,
+            "description": "The Confidence value of the TraffciSign table is not in the range of (0, 1)"
+        }, 
+        {
+            "measureId": 508,
+            "description": "Non-empty field value is null or 0"
+        }
+    ]
+}

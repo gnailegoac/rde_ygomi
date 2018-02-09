@@ -18,7 +18,6 @@
 #include "control/FileSerializeCommand.h"
 #include "control/SceneManageCommand.h"
 #include "control/NodeHighlightCommand.h"
-#include "control/DbValidationCommand.h"
 
 const std::string ApplicationFacade::NAME = "ApplicationFacade";
 std::map<std::string, PureMVC::Patterns::IProxy*> ApplicationFacade::mProxyList;
@@ -55,8 +54,6 @@ const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
 const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
 const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering";
-const std::string ApplicationFacade::DB_VALIDATION_START = "DbValidationStart";
-const std::string ApplicationFacade::DB_VALIDATION_FINISH = "DbValidationFinish";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -118,8 +115,6 @@ void ApplicationFacade::initializeCommands()
                     std::shared_ptr<Controller::SceneManageCommand>(new Controller::SceneManageCommand);
     mCommandList[Controller::NodeHighlightCommand::GetCommandName()] =
                     std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
-    mCommandList[Controller::DbValidationCommand::GetCommandName()] =
-                    std::shared_ptr<Controller::DbValidationCommand>(new Controller::DbValidationCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()
@@ -136,7 +131,6 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[CHANGE_SELECT_TYPE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[DEHIGHLIGHT_ALL_NODE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[SELECT_NODE_IN_3DVIEW] = Controller::NodeHighlightCommand::GetCommandName();
-    mMessageList[DB_VALIDATION_START] = Controller::DbValidationCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

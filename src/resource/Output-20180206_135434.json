@@ -1,0 +1,1027 @@
+{
+   "50101" : {
+      "Description" : "Road table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50102" : {
+      "Description" : "Segment table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50103" : {
+      "Description" : "Lane table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50104" : {
+      "Description" : "LaneConnection table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50105" : {
+      "Description" : "Line table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50106" : {
+      "Description" : "Curve table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50107" : {
+      "Description" : "TrafficSign table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50108" : {
+      "Description" : "RoadEdge table does not exist or excess.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50109" : {
+      "Description" : "Junction table does not exist or excess.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50110" : {
+      "Description" : "Version table does not exist or excess.",
+      "Level" : "Serious Error"
+   },
+   "50201" : {
+      "Description" : "Road table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50202" : {
+      "Description" : "Segment table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50203" : {
+      "Description" : "Lane table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50204" : {
+      "Description" : "LaneConnection table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50205" : {
+      "Description" : "Line table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50206" : {
+      "Description" : "Curve table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50207" : {
+      "Description" : "TrafficSign table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50208" : {
+      "Description" : "RoadEdge table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50209" : {
+      "Description" : "Junction table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50210" : {
+      "Description" : "Version table structure is incorrect (extra fields, missing fields, wrong fields).",
+      "Level" : "Serious Error"
+   },
+   "50301" : {
+      "Description" : "Road table field type error.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Road_346951003",
+            "errorValue" : "Field type unmatch : SegID(INSSTEGER)",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Road_346951001",
+            "errorValue" : "Field type unmatch : SegID(INSSTEGER)",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50302" : {
+      "Description" : "Segment table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50303" : {
+      "Description" : "Lane table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50304" : {
+      "Description" : "LaneConnection table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50305" : {
+      "Description" : "Line table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50306" : {
+      "Description" : "Curve table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50307" : {
+      "Description" : "TrafficSign table field type error.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "TrafficSign_346951003",
+            "errorValue" : "Field type unmatch : ShapeWidth(float)",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50308" : {
+      "Description" : "RoadEdge table field type error.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50309" : {
+      "Description" : "Junction table field type error.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50310" : {
+      "Description" : "Version table field type error.",
+      "Level" : "Serious Error"
+   },
+   "50401" : {
+      "Description" : "Road ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50402" : {
+      "Description" : "Segment ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50403" : {
+      "Description" : "Lane ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50404" : {
+      "Description" : "LaneConnection srcID,dstID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50405" : {
+      "Description" : "Line ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50406" : {
+      "Description" : "Curve ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50407" : {
+      "Description" : "TrafficSign ID uniqueness.",
+      "Level" : "Serious Error"
+   },
+   "50408" : {
+      "Description" : "RoadEdge ID uniqueness.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50409" : {
+      "Description" : "Junction ID uniqueness.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Serious Error"
+   },
+   "50501" : {
+      "Description" : "The RoadID field of the Lane table does not exist in the ID field of the Road table.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(1) | RoadID(1490143202609463291)",
+            "rowID" : 1
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(2) | RoadID(1490143202609463291)",
+            "rowID" : 2
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(3) | RoadID(1490143202609463291)",
+            "rowID" : 3
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(4) | RoadID(1490143202609463291)",
+            "rowID" : 4
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(5) | RoadID(1490143202609463291)",
+            "rowID" : 5
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(6) | RoadID(1490143202609463291)",
+            "rowID" : 6
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(7) | RoadID(1490143202609463291)",
+            "rowID" : 7
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(8) | RoadID(1490143202609463291)",
+            "rowID" : 8
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50502" : {
+      "Description" : "The LlineID field of the Lane table does not exist in the ID field of the Line table.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(8) | LLineID(1490143202609463298_66)",
+            "rowID" : 8
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50503" : {
+      "Description" : "The RoadID field of the Lane table does not exist in the ID field of the Line table.",
+      "Level" : "Need To Verify"
+   },
+   "50504" : {
+      "Description" : "The AvgSlamTrace field of the Lane table does not exist in the ID field of the Line table.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(8) | AvgSlamTrace(1490143202609463298_250)",
+            "rowID" : 8
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50505" : {
+      "Description" : "The TrafficSignID field of the Lane table does not exist in the ID field of the TrafficSign table.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(1) | TrafficSignID()",
+            "rowID" : 1
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(2) | TrafficSignID()",
+            "rowID" : 2
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(3) | TrafficSignID()",
+            "rowID" : 3
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(4) | TrafficSignID()",
+            "rowID" : 4
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(5) | TrafficSignID()",
+            "rowID" : 5
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(6) | TrafficSignID()",
+            "rowID" : 6
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(7) | TrafficSignID()",
+            "rowID" : 7
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(8) | TrafficSignID()",
+            "rowID" : 8
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(9) | TrafficSignID()",
+            "rowID" : 9
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(10) | TrafficSignID()",
+            "rowID" : 10
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(11) | TrafficSignID()",
+            "rowID" : 11
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(12) | TrafficSignID()",
+            "rowID" : 12
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(13) | TrafficSignID()",
+            "rowID" : 13
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(14) | TrafficSignID()",
+            "rowID" : 14
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(15) | TrafficSignID()",
+            "rowID" : 15
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(16) | TrafficSignID()",
+            "rowID" : 16
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(17) | TrafficSignID()",
+            "rowID" : 17
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(18) | TrafficSignID()",
+            "rowID" : 18
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(19) | TrafficSignID()",
+            "rowID" : 19
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(20) | TrafficSignID()",
+            "rowID" : 20
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(21) | TrafficSignID()",
+            "rowID" : 21
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(22) | TrafficSignID()",
+            "rowID" : 22
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(23) | TrafficSignID()",
+            "rowID" : 23
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(24) | TrafficSignID()",
+            "rowID" : 24
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(25) | TrafficSignID()",
+            "rowID" : 25
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Lane_346951003",
+            "errorValue" : "ID existence error : rowID(26) | TrafficSignID()",
+            "rowID" : 26
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(1) | TrafficSignID()",
+            "rowID" : 1
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(2) | TrafficSignID()",
+            "rowID" : 2
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(3) | TrafficSignID()",
+            "rowID" : 3
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(4) | TrafficSignID()",
+            "rowID" : 4
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(5) | TrafficSignID()",
+            "rowID" : 5
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(6) | TrafficSignID()",
+            "rowID" : 6
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(7) | TrafficSignID()",
+            "rowID" : 7
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Lane_346951001",
+            "errorValue" : "ID existence error : rowID(8) | TrafficSignID()",
+            "rowID" : 8
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50506" : {
+      "Description" : "The SegID field of the Road table does not exist in the ID field of the Segment table.",
+      "Level" : "Need To Verify"
+   },
+   "50507" : {
+      "Description" : "The SrcID field of the LaneConnection table does not exist in the ID field of the Lane table in itself DB file.",
+      "Details" : [
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "LaneConnection_346951001",
+            "errorValue" : "ID existence error : rowID(22) | SrcID(1490143202609463298_5)",
+            "rowID" : 22
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "LaneConnection_346951001",
+            "errorValue" : "ID existence error : rowID(23) | SrcID(1490143202609463298_5)",
+            "rowID" : 23
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "LaneConnection_346951001",
+            "errorValue" : "ID existence error : rowID(24) | SrcID(1490143202609463298_5)",
+            "rowID" : 24
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50508" : {
+      "Description" : "The LaneID field of the Line table does not exist in the ID field of the Lane table.",
+      "Level" : "Need To Verify"
+   },
+   "50509" : {
+      "Description" : "The LlineID field of the Curve table does not exist in the ID field of the Line table.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Curve_346951003",
+            "errorValue" : "ID existence error : rowID(53) | LineID(149014321119939a7894_102)",
+            "rowID" : 53
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Curve_346951003",
+            "errorValue" : "ID existence error : rowID(61) | LineID(1490143211199397895_*)",
+            "rowID" : 61
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50510" : {
+      "Description" : "The SegID field of the TrafficSign table does not exist in the ID field of the Segment table.",
+      "Level" : "Need To Verify"
+   },
+   "50511" : {
+      "Description" : "The RoadID field of the RoadEdge table does not exist in the ID field of the Road table.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50512" : {
+      "Description" : "The LlineID field of the RoadEdge table does not exist in the ID field of the Line table.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50513" : {
+      "Description" : "The SegID field of the Junction table does not exist in the ID field of the Segment table.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50601" : {
+      "Description" : "The Type value of the LaneConnection table is not in the range of (0,1,2,3).",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(1) | Type(4)",
+            "rowID" : 1
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(2) | Type(4)",
+            "rowID" : 2
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(3) | Type(4)",
+            "rowID" : 3
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(4) | Type(4)",
+            "rowID" : 4
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(5) | Type(4)",
+            "rowID" : 5
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(10) | Type(4)",
+            "rowID" : 10
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(15) | Type(4)",
+            "rowID" : 15
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(20) | Type(4)",
+            "rowID" : 20
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(25) | Type(4)",
+            "rowID" : 25
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(30) | Type(4)",
+            "rowID" : 30
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(35) | Type(4)",
+            "rowID" : 35
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(40) | Type(4)",
+            "rowID" : 40
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(45) | Type(4)",
+            "rowID" : 45
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(50) | Type(4)",
+            "rowID" : 50
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(55) | Type(4)",
+            "rowID" : 55
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(60) | Type(4)",
+            "rowID" : 60
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(65) | Type(4)",
+            "rowID" : 65
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(70) | Type(4)",
+            "rowID" : 70
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(75) | Type(4)",
+            "rowID" : 75
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "LaneConnection_346951003",
+            "errorValue" : "Field value outrange : rowID(80) | Type(4)",
+            "rowID" : 80
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50602" : {
+      "Description" : "The Type value of the Curve table is not in the range of (0, 1, 2, 3).",
+      "Level" : "Need To Verify"
+   },
+   "50604" : {
+      "Description" : "The SideType value of the RoadEdge table is not in the range of (0, 1).",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50606" : {
+      "Description" : "The Confidence value of the Line table is not in the range of (0, 1).",
+      "Level" : "Need To Verify"
+   },
+   "50607" : {
+      "Description" : "The Confidence value of the TrafficSign table is not in the range of (0, 1).",
+      "Level" : "Need To Verify"
+   },
+   "50701" : {
+      "Description" : "There are illegal characters in the PassedSegList field of the Road table.Allowed:,-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50702" : {
+      "Description" : "There are illegal characters in the ReferencePoint field of the Segment table.Allowed:,-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50703" : {
+      "Description" : "There are illegal characters in the ID field of the Lane table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50704" : {
+      "Description" : "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50705" : {
+      "Description" : "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50706" : {
+      "Description" : "There are illegal characters in the AvgSlamTrace field of the Lane table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50707" : {
+      "Description" : "There are illegal characters in the TrafficSignID field of the Lane table.Allowed:,-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50708" : {
+      "Description" : "There are illegal characters in the Attribute field of the Lane table.Allowed:,-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50709" : {
+      "Description" : "There are illegal characters in the SrcID field of the LaneConnection table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50710" : {
+      "Description" : "There are illegal characters in the DstID field of the LaneConnection table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50711" : {
+      "Description" : "There are illegal characters in the ID field of the Line table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50712" : {
+      "Description" : "There are illegal characters in the LaneID field of the Line table.Allowed:_1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50713" : {
+      "Description" : "There are illegal characters in the ID field of the Curve table.Allowed:_1234567890.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Curve_346951003",
+            "errorValue" : "Illegal character error : rowID(61) | ID(1490143211199397~  ^、)",
+            "rowID" : 61
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50714" : {
+      "Description" : "There are illegal characters in the LineID field of the Curve table.Allowed:_1234567890.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Curve_346951003",
+            "errorValue" : "Illegal character error : rowID(53) | LineID(149014321119939a7894_102)",
+            "rowID" : 53
+         },
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Curve_346951003",
+            "errorValue" : "Illegal character error : rowID(61) | LineID(1490143211199397895_*)",
+            "rowID" : 61
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50715" : {
+      "Description" : "There are illegal characters in the EquationDescription field of the Curve.",
+      "Level" : "Need To Verify"
+   },
+   "50716" : {
+      "Description" : "There are illegal characters in the Color field of the Curve table.Allowed:,-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50717" : {
+      "Description" : "There are illegal characters in the ID field of the TrafficSign table.Allowed:-.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50718" : {
+      "Description" : "There are illegal characters in the GPS field of the TrafficSign table.Allowed:,.1234567890.",
+      "Level" : "Need To Verify"
+   },
+   "50719" : {
+      "Description" : "There are illegal characters in the GPS field of the Junction  table.Allowed:,.1234567890.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50720" : {
+      "Description" : "There are illegal characters in the LineID field of the RoadEdge table.Allowed:_1234567890.",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50801" : {
+      "Description" : "The ID/LaneID/Length of the Line table is not equal to 0 or Null or \"\" or 0.0",
+      "Level" : "Need To Verify"
+   },
+   "50802" : {
+      "Description" : "The ID/LineID/EquationDescription/Length/Width of the Curve table is not equal to 0 or Null or \"\" or  0.0.",
+      "Level" : "Need To Verify"
+   },
+   "50804" : {
+      "Description" : "The ID/ReferencePoint of the Segment table is not equal to 0 or Null or \"\" or 0,0,0.",
+      "Level" : "Need To Verify"
+   },
+   "50806" : {
+      "Description" : "All of the TrafficSign table field should not equal to 0 or Null or \"\",except Confidence can be 0.",
+      "Level" : "Need To Verify"
+   },
+   "50807" : {
+      "Description" : "All of the Junction table field should not equal to 0 or Null or \"\".",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "Junctsdion",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "50808" : {
+      "Description" : "All of the LaneConnection table field should not be Null or  \"\",except type field can be 0.",
+      "Level" : "Need To Verify"
+   },
+   "50809" : {
+      "Description" : "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table is not equal to 0 or Null or \"\".",
+      "Level" : "Need To Verify"
+   },
+   "50810" : {
+      "Description" : "The ID/RoadID/LineID/Height of the RoadEdge table is not equal to 0 or Null or \"\".",
+      "Details" : [
+         {
+            "DBName" : "logic_1_346951003.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         },
+         {
+            "DBName" : "logic_2_346951001.db",
+            "TableName" : "RoadEdssge",
+            "errorValue" : "Not find table.",
+            "rowID" : ""
+         }
+      ],
+      "Level" : "Need To Verify"
+   },
+   "Version" : "1.0.0"
+}
