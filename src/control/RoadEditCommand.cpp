@@ -12,11 +12,14 @@
  */
 
 #include "RoadEditCommand.h"
+
+#include <CoordinateTransform/Factory.h>
 #include <PureMVC/PureMVC.hpp>
-#include "facade/ApplicationFacade.h"
-#include "CommonFunction.h"
 #include <QDebug>
 
+#include "CommonFunction.h"
+#include "facade/ApplicationFacade.h"
+#include "model/FitNurbs.h"
 #include "model/Lane.h"
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
@@ -42,6 +45,8 @@ std::string Controller::RoadEditCommand::GetCommandName()
 void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const uint64_t& aToRoadId)
 {
     // The pointer should all be valid if come here.
+    // No need to check if the two roads are in the same tile.
+    // We will convert the points' geodetic coordinate to the same relative coordinate.
     const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
     const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
     std::shared_ptr<Model::Road> fromRoad = memoryModel->GetRoadById(aFromRoadId);
@@ -52,11 +57,15 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         const Model::TilePtr& tile = fromRoad->GetTile();
         // Merge roads, update road1, remove road2
         // 1. Merge line
-        std::vector<uint64_t> lineIdVec;
+        QVector<uint64_t> lineIdVec;
         for (const auto& lane : *(fromRoad->GetLaneList()))
         {
             uint64_t successorLaneId = lane->GetSuccessorLaneId();
             Model::LanePtr successorLane = toRoad->GetLaneById(successorLaneId);
+            mergeLine(lineIdVec, lane->GetLeftLine(), successorLane->GetLeftLine());
+//            mergeLine(lineIdVec, lane->GetRightLine(), successorLane->GetRightLine());
+//            mergeLine(lineIdVec, lane->GetCenterLine(), successorLane->GetCenterLine());
+//            mergeLine(lineIdVec, lane->GetAvgSlamTrace(), successorLane->GetAvgSlamTrace());
         }
         // 2. Update lane predecessor/successor connection
         // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
@@ -70,6 +79,77 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         // Add merged fromRoad to scene model again
         sceneModel->AddRoadToScene(fromRoad);
         // Update tree model
+    }
+}
+
+void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
+                                            const Model::LinePtr& aFromLine, const Model::LinePtr& aToLine)
+{
+    if (aFromLine == nullptr && aToLine == nullptr)
+    {
+        return;
+    }
+    uint64_t fromLineId = aFromLine->GetLineId();
+    if (aMergedLineIds.count(fromLineId) != 0)
+    {
+        return;
+    }
+    aMergedLineIds.push_back(fromLineId);
+    qDebug() << "To merge line " << fromLineId << " and " << aToLine->GetLineId();
+    // Keep the curve type, modify curve length.
+    const Model::PaintListPtr& fromPaintList = aFromLine->GetGeodeticPointsList();
+    const Model::PaintListPtr& toPaintList = aToLine->GetGeodeticPointsList();
+    // Convert to relative coordinates
+    std::shared_ptr<Model::NurbsCurve> mergedCurve = mergePaintList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(),
+                                                          fromPaintList, toPaintList);
+    aFromLine->GetMutableCurveList()->clear();
+    aFromLine->GetMutableCurveList()->push_back(mergedCurve);
+    aFromLine->SetLength(mergedCurve->GetLength());
+}
+
+std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
+        const Model::Point3DPtr& aReferencePoint,
+        const Model::PaintListPtr& aFromPaint,
+        const Model::PaintListPtr& aToPaint)
+{
+    if ((aFromPaint->size() == 1) && (aToPaint->size() == 1))
+    {
+        // Both are solid, will merge to a new solid line.
+        Model::Point3DListPtr point3DList = aFromPaint->front();
+        Model::Point3DListPtr bPoint3DList = aToPaint->front();
+        point3DList->insert(point3DList->end(), bPoint3DList->begin(), bPoint3DList->end());
+    }
+    else
+    {
+        // Merge to a dashed line.
+    }
+    convertWgs84ToRelative(aReferencePoint, aFromPaint);
+    std::string errorInfo;
+    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, 2, errorInfo);
+    return fitCurve;
+}
+
+void Controller::RoadEditCommand::convertWgs84ToRelative(const Model::Point3DPtr& aReferencePoint,
+                                                         const Model::PaintListPtr& aPaintList)
+{
+    auto wgs84ToRelative = CRS::Factory().CreateRelativeTransform(
+                                            CRS::CoordinateType::Wgs84,
+                                            CRS::CoordinateType::Relative,
+                                            aReferencePoint->GetX(),
+                                            aReferencePoint->GetY(),
+                                            aReferencePoint->GetZ());
+    for (auto& point3DList : *aPaintList)
+    {
+        for (auto& point : *point3DList)
+        {
+            double x = point->GetX();
+            double y = point->GetY();
+            double z = point->GetZ();
+            wgs84ToRelative->Transform(x, y, z);
+            point->SetX(x);
+            point->SetY(y);
+            point->SetZ(z);
+        }
     }
 }
 
@@ -103,6 +183,7 @@ bool Controller::RoadEditCommand::isRoadConnected(const Model::RoadPtr& aFromRoa
 
 bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Model::RoadPtr& aToRoad)
 {
+    // TODO: shall we check if connected lines have the same type?
     QString message;
     // Check if the roads to merge have the same number of lanes
     if (aFromRoad->GetLaneListSize() != aToRoad->GetLaneListSize())
