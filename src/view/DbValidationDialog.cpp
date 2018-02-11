@@ -12,8 +12,8 @@
 
 #include "DbValidationDialog.h"
 #include "ui_DbValidationDialog.h"
-#include <QHeaderView>
 #include <QFile>
+#include <QHeaderView>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -63,7 +63,7 @@ void View::DbValidationDialog::initTableOverView()
     QFont font = mUi->tableOverview->horizontalHeader()->font();
     font.setBold(true);
     mUi->tableOverview->horizontalHeader()->setFont(font);
-    mUi->tableOverview->horizontalHeader()->setDefaultAlignment (Qt::AlignLeft);
+    mUi->tableOverview->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
     mUi->tableOverview->horizontalHeader()->setStretchLastSection(true);
     mUi->tableOverview->verticalHeader()->setVisible(false);
     mUi->tableOverview->setFrameShape(QFrame::NoFrame);
@@ -80,19 +80,26 @@ void View::DbValidationDialog::initTableOverView()
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString("0")));
 }
 
-void View::DbValidationDialog::UpdateData(const QString& aFilePath)
+bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
 {
     QFile file(aFilePath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString data = file.readAll();
     file.close();
 
+    QJsonParseError parseError;
+    QJsonDocument document = QJsonDocument::fromJson(data.toUtf8(), &parseError);
+    if (document.isNull() || parseError.error != QJsonParseError::NoError)
+    {
+        return false;
+    }
+
     int seriousLevelCount = 0;
     int verifyLevelCount = 0;
     QString space = "&nbsp;&nbsp;&nbsp;&nbsp;";
     QString textContent = "<html>\n<body>\n";
     textContent += "<p style=""line-height:120%"">";
-    QJsonObject mainObject = QJsonDocument::fromJson(data.toUtf8()).object();
+    QJsonObject mainObject = document.object();
     for(int i = 50100; i < 50815; ++i)
     {
         QJsonValue value = mainObject.value(QString::number(i));
@@ -100,19 +107,25 @@ void View::DbValidationDialog::UpdateData(const QString& aFilePath)
         {
             continue;
         }
-        QJsonObject ErrorCodeObject = value.toObject();
-        QString description = ErrorCodeObject.value("Description").toString();
-        QString level = ErrorCodeObject.value("Level").toString();
         textContent += "<font size=""4"" color=""red""><b>" + tr("Error Code: ") + QString::number(i) + "</b></font><br>";
-        textContent +=  space + tr("Description: ") + description + "<br>";
-        textContent +=  space + tr("Level: ") + level;
-        if(!level.compare("Serious Error"))
+        QJsonObject ErrorCodeObject = value.toObject();
+        if(ErrorCodeObject.contains(QString("Description")))
         {
-            ++seriousLevelCount;
+            QString description = ErrorCodeObject.value("Description").toString();
+            textContent += space + tr("Description: ") + description + "<br>";
         }
-        if(!level.compare("Need To Verify"))
+        if(ErrorCodeObject.contains(QString("Level")))
         {
-            ++verifyLevelCount;
+            QString level = ErrorCodeObject.value("Level").toString();
+            textContent += space + tr("Level: ") + level;
+            if(!level.compare("Serious Error"))
+            {
+                ++seriousLevelCount;
+            }
+            if(!level.compare("Need To Verify"))
+            {
+                ++verifyLevelCount;
+            }
         }
         if(!ErrorCodeObject.value("Details").isArray())
         {
@@ -125,14 +138,26 @@ void View::DbValidationDialog::UpdateData(const QString& aFilePath)
         {
             textContent += "<br>";
             QJsonObject itemObject = details.at(i).toObject();
-            QString DBName = itemObject.value("DBName").toString();
-            QString TableName = itemObject.value("TableName").toString();
-            QString errorValue = itemObject.value("errorValue").toString();
-            QString rowID = itemObject.value("rowID").toString();
-            textContent +=  space + space + tr("DBName: ") + DBName + "<br>";
-            textContent +=  space + space + tr("TableName: ") + TableName + "<br>";
-            textContent +=  space + space + tr("errorValue: ") + errorValue + "<br>";
-            textContent +=  space + space + tr("rowID: ") + rowID;
+            if(itemObject.contains(QString("DBName")))
+            {
+                QString DBName = itemObject.value("DBName").toString();
+                textContent += space + space + tr("DBName: ") + DBName + "<br>";
+            }
+            if(itemObject.contains(QString("TableName")))
+            {
+                QString TableName = itemObject.value("TableName").toString();
+                textContent += space + space + tr("TableName: ") + TableName + "<br>";
+            }
+            if(itemObject.contains(QString("errorValue")))
+            {
+                QString errorValue = itemObject.value("errorValue").toString();
+                textContent += space + space + tr("errorValue: ") + errorValue + "<br>";
+            }
+            if(itemObject.contains(QString("rowID")))
+            {
+                QString rowID = itemObject.value("rowID").toString();
+                textContent += space + space + tr("rowID: ") + rowID;
+            }
         }
         textContent += "<br><br>";
     }
@@ -141,6 +166,7 @@ void View::DbValidationDialog::UpdateData(const QString& aFilePath)
     mUi->textBrowser->setText(textContent);
     mUi->tableOverview->setItem(0, 1, new QTableWidgetItem(QString::number(verifyLevelCount)));
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString::number(seriousLevelCount)));
+    return true;
 }
 
 void View::DbValidationDialog::ResetPos()

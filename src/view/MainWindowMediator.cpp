@@ -346,7 +346,7 @@ void View::MainWindowMediator::closeRoadRendering()
     getMainWindow()->centralWidget()->repaint();
 }
 
-bool View::MainWindowMediator::dbValidation(const std::string& dbPath)
+bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
 {
     QString config = "../src/resource/ValidationConfiger";
     QString savePath = QDir::currentPath();
@@ -354,9 +354,13 @@ bool View::MainWindowMediator::dbValidation(const std::string& dbPath)
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
     savePath += "/validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
-    pCheck->Initialize(dbPath, config.toStdString(), savePath.toStdString());
+    pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
-    getMainWindow()->GetDbValidationDialog()->UpdateData(savePath);
+    if(!getMainWindow()->GetDbValidationDialog()->UpdateData(savePath))
+    {
+        getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
+        return false;
+    }
     if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
     {
         getMainWindow()->GetDbValidationDialog()->show();
