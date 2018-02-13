@@ -45,6 +45,14 @@ private:
                     const Point3DListPtr& aPoints,
                     std::uint32_t aBegin,
                     std::uint32_t aEnd);
+    static Point3DPtr crossProduct(const Point3DPtr& aLhs,
+                                   const Point3DPtr& aRhs);
+    static double modSquare(const Point3DPtr& aVector);
+    static double pointToPointDistanceSquare(const Point3DPtr& aLhs,
+                                             const Point3DPtr& aRhs);
+    static double pointToLineDistanceSquare(const Point3DPtr& aPoint,
+                                            const Point3DPtr& aL1,
+                                            const Point3DPtr& aL2);
 };
 
 }

@@ -34,7 +34,8 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
                 const double& aThreshold)
 {
     std::vector<Point3DPtr> simplified;
-    auto index = GetSimplifyIndex(aPoints, aThreshold, 0, aPoints->size() - 1);
+    double threshold = aThreshold * aThreshold;
+    auto index = GetSimplifyIndex(aPoints, threshold, 0, aPoints->size() - 1);
     for (auto& idx : *index)
     {
         simplified.push_back(aPoints->at(idx));
@@ -169,9 +170,9 @@ std::pair<std::uint32_t, double> Model::DouglasPeucker::getFarthestPoint(
     double maxDistance = 0;
     for (std::uint32_t i = aBegin + 1; i < aEnd; ++i)
     {
-        double distance = pointToLineDistance(aPoints->at(i),
-                                              aPoints->at(aBegin),
-                                              aPoints->at(aEnd));
+        double distance = pointToLineDistanceSquare(aPoints->at(i),
+                                                    aPoints->at(aBegin),
+                                                    aPoints->at(aEnd));
         if (distance > maxDistance)
         {
             idx = i;
@@ -179,4 +180,44 @@ std::pair<std::uint32_t, double> Model::DouglasPeucker::getFarthestPoint(
         }
     }
     return std::make_pair(idx, maxDistance);
+}
+
+Model::Point3DPtr Model::DouglasPeucker::crossProduct(const Model::Point3DPtr& aLhs, const Model::Point3DPtr& aRhs)
+{
+    return  std::make_shared<Point3D>(aLhs->GetY() * aRhs->GetZ() - aLhs->GetZ() * aRhs->GetY(),
+                                      aLhs->GetZ() * aRhs->GetX() - aLhs->GetX() * aRhs->GetZ(),
+                                      aLhs->GetX() * aRhs->GetY() - aLhs->GetY() * aRhs->GetX());
+}
+
+double Model::DouglasPeucker::modSquare(const Model::Point3DPtr& aVector)
+{
+    return aVector->GetX() * aVector->GetX()
+           + aVector->GetY() * aVector->GetY()
+           + aVector->GetZ() * aVector->GetZ();
+}
+
+double Model::DouglasPeucker::pointToPointDistanceSquare(const Model::Point3DPtr& aLhs, const Model::Point3DPtr& aRhs)
+{
+    return modSquare(std::make_shared<Point3D>(aLhs->GetX() - aRhs->GetX(),
+                                               aLhs->GetY() - aRhs->GetY(),
+                                               aLhs->GetZ() - aRhs->GetZ()));
+}
+
+double Model::DouglasPeucker::pointToLineDistanceSquare(
+                const Model::Point3DPtr& aPoint,
+                const Model::Point3DPtr& aL1,
+                const Model::Point3DPtr& aL2)
+{
+    Point3DPtr vecL1p = std::make_shared<Point3D>(aPoint->GetX() - aL1->GetX(),
+                                                  aPoint->GetY() - aL1->GetY(),
+                                                  aPoint->GetZ() - aL1->GetZ());
+    Point3DPtr vecL12 = std::make_shared<Point3D>(aL2->GetX() - aL1->GetX(),
+                                                  aL2->GetY() - aL1->GetY(),
+                                                  aL2->GetZ() - aL1->GetZ());
+    double hSquare = modSquare(vecL12);
+    if(hSquare < ZERO)
+    {
+        return 0.0;
+    }
+    return modSquare(crossProduct(vecL1p, vecL12)) / hSquare;
 }
