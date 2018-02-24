@@ -440,7 +440,7 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
     double s = 1000;
     double t = 100;
     const double widthMin = 1.0;
-    const double widthMax = 15.0;
+    const double widthMax = 10.0;
     if(aDistance > s)
     {
         width = widthMin;
@@ -462,7 +462,7 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
     }
 }
 
-int Model::SceneModel::getLevel(const double& aDistance)
+std::uint8_t Model::SceneModel::getLevel(const double& aDistance)
 {
     if(aDistance >= 3000)
     {
@@ -490,7 +490,8 @@ int Model::SceneModel::getLevel(const double& aDistance)
 void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance)
 {
     RedrawRoadMarks(aDistance);
-    int level = getLevel(aDistance);
+
+    std::uint8_t level = getLevel(aDistance);
     if(mLevel == level)
     {
         return;

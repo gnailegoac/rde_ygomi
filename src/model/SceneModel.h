@@ -55,7 +55,7 @@ private:
     bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
                              int aRightLinePointsNum, osg::ref_ptr<osg::DrawElementsUInt>& aTris);
     void createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
-    int getLevel(const double& aDistance);
+    std::uint8_t getLevel(const double& aDistance);
 
 private:
     osg::ref_ptr<osg::Group> mSceneModelRoot;
@@ -65,6 +65,6 @@ private:
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mRoadModelNodeMap;
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mLaneNodeMap;
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mMarksNodeMap;
-    int mLevel;
+    std::uint8_t mLevel;
 };
 }

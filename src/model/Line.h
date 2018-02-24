@@ -16,6 +16,7 @@
 #include "Element.h"
 #include "Point3D.h"
 #include "Curve.h"
+#include <map>
 
 namespace  CRS
 {
@@ -29,9 +30,10 @@ namespace Model
 
 class Lane;
 
-
 typedef std::shared_ptr<Lane> LanePtr;
 typedef std::shared_ptr<const Lane> LaneConstPtr;
+typedef std::map<std::uint8_t, double> SimplingLevelMap;
+typedef std::shared_ptr<SimplingLevelMap> SimplingLevelMapPtr;
 
 class Line : public Element
 {
@@ -68,6 +70,7 @@ public:
     PaintListPtr GetPaintListByLevel(std::uint8_t aLevel);
     PaintListPtr GetMutablePaintListByLevel(std::uint8_t aLevel);
     void GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer);
+    void GenerateViewPaintMap(std::uint8_t aLevel);
 
     CurveType GetLineType() const;
 
@@ -79,6 +82,7 @@ private:
     LanePtr mLane;
     PaintListPtr mGeodeticPointsList;
     ViewPaintMapPtr mPaintListMap;
+    SimplingLevelMapPtr mSimplingLevelMap;
 };
 
 typedef std::shared_ptr<Line> LinePtr;
