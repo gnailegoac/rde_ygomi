@@ -25,6 +25,8 @@
 #include "model/SceneModel.h"
 #include "proxy/MainProxy.h"
 
+#include "model/Utilities.h"
+
 void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotification& aNotification)
 {
     if (ApplicationFacade::MERGE_ROAD == aNotification.getName())
@@ -33,6 +35,7 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
         qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
+        // TODO: selected nodes will be deleted, need clear mSelectedNodes.
     }
 
 }
@@ -53,6 +56,9 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
     std::shared_ptr<Model::Road> toRoad = memoryModel->GetRoadById(aToRoadId);
     if (canRoadsBeMerged(fromRoad, toRoad))
     {
+        // Remove road from scene model
+        sceneModel->RemoveRoadFromScene(aFromRoadId);
+        sceneModel->RemoveRoadFromScene(aToRoadId);
         size_t laneCount = fromRoad->GetLaneListSize();
         const Model::TilePtr& tile = fromRoad->GetTile();
         // Merge roads, update road1, remove road2
@@ -63,9 +69,9 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
             uint64_t successorLaneId = lane->GetSuccessorLaneId();
             Model::LanePtr successorLane = toRoad->GetLaneById(successorLaneId);
             mergeLine(lineIdVec, lane->GetLeftLine(), successorLane->GetLeftLine());
-//            mergeLine(lineIdVec, lane->GetRightLine(), successorLane->GetRightLine());
-//            mergeLine(lineIdVec, lane->GetCenterLine(), successorLane->GetCenterLine());
-//            mergeLine(lineIdVec, lane->GetAvgSlamTrace(), successorLane->GetAvgSlamTrace());
+            mergeLine(lineIdVec, lane->GetRightLine(), successorLane->GetRightLine());
+            mergeLine(lineIdVec, lane->GetCenterLine(), successorLane->GetCenterLine());
+            mergeLine(lineIdVec, lane->GetAvgSlamTrace(), successorLane->GetAvgSlamTrace());
         }
         // 2. Update lane predecessor/successor connection
         // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
@@ -73,9 +79,6 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         // Remove toRoad from memory model
 
         // Update scene model
-        // Remove road from scene model
-        sceneModel->RemoveRoadFromScene(aFromRoadId);
-        sceneModel->RemoveRoadFromScene(aToRoadId);
         // Add merged fromRoad to scene model again
         sceneModel->AddRoadToScene(fromRoad);
         // Update tree model
@@ -85,7 +88,7 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
 void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
                                             const Model::LinePtr& aFromLine, const Model::LinePtr& aToLine)
 {
-    if (aFromLine == nullptr && aToLine == nullptr)
+    if (aFromLine == nullptr || aToLine == nullptr)
     {
         return;
     }
@@ -105,6 +108,13 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
     aFromLine->GetMutableCurveList()->clear();
     aFromLine->GetMutableCurveList()->push_back(mergedCurve);
     aFromLine->SetLength(mergedCurve->GetLength());
+    const double samplingInterval = 0.5;
+    aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), samplingInterval);
+    // Convert geodetic coordinates into ECEF coordinates
+    auto ecef = CRS::Factory().CreateEcefProjection(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Ecef);
+    aFromLine->GenerateViewPaintMap(ecef);
 }
 
 std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
@@ -122,10 +132,11 @@ std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
     else
     {
         // Merge to a dashed line.
+        aFromPaint->insert(aFromPaint->end(), aToPaint->begin(), aToPaint->end());
     }
     convertWgs84ToRelative(aReferencePoint, aFromPaint);
     std::string errorInfo;
-    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, 2, errorInfo);
+    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, 3, errorInfo);
     return fitCurve;
 }
 

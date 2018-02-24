@@ -30,41 +30,10 @@ Controller::NodeHighlightCommand::NodeHighlightCommand() :
 
 }
 
-std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByRoadNode(osg::Node* aNode)
-{
-    std::vector<osg::Node*> lineNodeList;
-    osg::Group* roadNode = dynamic_cast<osg::Group*>(aNode);
-    int childrenNum = roadNode->getNumChildren();
-    for(int childIndex = 0; childIndex < childrenNum; ++childIndex)
-    {
-        osg::Node* laneNode = roadNode->getChild(childIndex);
-        std::string laneName = laneNode->getName();
-        if(laneName.find("Lane") != std::string::npos)
-        {
-            std::vector<osg::Node*> nodeList = getLineNodesByLaneName(laneName);
-            lineNodeList.insert(lineNodeList.end(), nodeList.begin(), nodeList.end());
-        }
-    }
-
-    return lineNodeList;
-}
-
-uint64_t Controller::NodeHighlightCommand::getIdByNodeName(const std::string& aNodeName)
-{
-    std::vector<std::string> results;
-    results = strings::Split(aNodeName, ":");
-    if(results.size() != 2)
-    {
-        return 0;
-    }
-
-    return QString::fromStdString(results[1]).toULong();
-}
-
 std::vector<osg::Node*> Controller::NodeHighlightCommand::getLineNodesByLaneName(const std::string& aLaneNodeName)
 {
     std::vector<osg::Node*> nodeList;
-    uint64_t laneId = getIdByNodeName(aLaneNodeName);
+    uint64_t laneId = Model::SceneModel::GetIdByNodeName(aLaneNodeName);
     MainProxy* mainProxy = getMainProxy();
     std::shared_ptr<Model::MemoryModel> memoryModel = mainProxy->GetMemoryModel();
     std::shared_ptr<Model::SceneModel> sceneModel = mainProxy->GetSceneModel();
@@ -106,7 +75,7 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
         std::string nodeName = node->getName();
         if(mSelectType == Model::SelectType::Road && nodeName.find("Road") != std::string::npos)
         {
-            nodeList = getLineNodesByRoadNode(node);
+            nodeList = Model::SceneModel::GetLineNodesByRoadNode(node);
             mSelectNodeName = nodeName;
             break;
         }
@@ -135,7 +104,7 @@ std::vector<osg::Node*> Controller::NodeHighlightCommand::findNode(const std::ve
 
 void Controller::NodeHighlightCommand::highlightNodeOnTreeView()
 {
-    uint64_t id = getIdByNodeName(mSelectNodeName);
+    uint64_t id = Model::SceneModel::GetIdByNodeName(mSelectNodeName);
     if(mSelectType == Model::SelectType::Road)
     {
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ROAD_ON_TREE, &id);
@@ -177,14 +146,14 @@ void Controller::NodeHighlightCommand::execute(PureMVC::Interfaces::INotificatio
             if (selectNodes.size() > 0)
             {
                 mSelectNodes.insert(mSelectNodes.end(), selectNodes.begin(), selectNodes.end());
-                Service::RoadEditParameters::Instance()->AddSelectedElementId(getIdByNodeName(mSelectNodeName));
+                Service::RoadEditParameters::Instance()->AddSelectedElementId(Model::SceneModel::GetIdByNodeName(mSelectNodeName));
             }
         }
         else
         {
             clearSelectNodes();
             mSelectNodes = findNode(nodeList);
-            Service::RoadEditParameters::Instance()->SetSelectedElementId(getIdByNodeName(mSelectNodeName));
+            Service::RoadEditParameters::Instance()->SetSelectedElementId(Model::SceneModel::GetIdByNodeName(mSelectNodeName));
         }
         if(mSelectNodes.size() > 0)
         {

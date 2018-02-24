@@ -37,6 +37,8 @@ public:
     void AddRoadModelToScene(const std::shared_ptr<Model::Road>& aRoad);
     void RemoveRoadModelFromScene();
     void RedrawRoadMarks(const double& aDistance);
+    static std::vector<osg::Node*> GetLineNodesByRoadNode(osg::Node* aNode);
+    static uint64_t GetIdByNodeName(const std::string& aNodeName);
 
 private:
     osg::ref_ptr<osg::Node>  buildLineNode(const Model::LinePtr& aLine);

@@ -55,6 +55,7 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
         QJsonArray lanes;
 
         road["type"] = "road";
+        // How to store uint64 in QJson?
         roadData["id"] = static_cast<double>(roadPtr->GetRoadId());
         roadData["ndsId"] = static_cast<double>(aTile->GetTileId());
 
