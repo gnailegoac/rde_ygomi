@@ -51,6 +51,11 @@ void WebGlobeChannelObject::fetchRoadListByTile(const QJsonValue& aLevel, const 
     emit requestRoadsInTile(level, tileId);
 }
 
+void WebGlobeChannelObject::addLineData(const QJsonObject& aData)
+{
+    emit addLineToRoad(aData);
+}
+
 WebRoadEditor::WebRoadEditor() :
     mWebChannelObject(new WebGlobeChannelObject())
 {
