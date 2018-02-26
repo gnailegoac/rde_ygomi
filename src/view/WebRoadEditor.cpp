@@ -111,4 +111,10 @@ void WebRoadEditor::setupConnections()
         std::pair<std::uint64_t, std::uint64_t> tileInfo = std::make_pair(aLevel, aTileId);
         ApplicationFacade::SendNotification(ApplicationFacade::REQUEST_ROADS_IN_TILE, &tileInfo);
     });
+
+    connect(mWebChannelObject.data(), &WebGlobeChannelObject::addLineToRoad,
+            [=](const QJsonObject& aData)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::ADD_LINE_TO_ROAD, &aData);
+    });
 }

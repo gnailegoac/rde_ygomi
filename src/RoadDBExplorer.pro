@@ -87,7 +87,8 @@ SOURCES +=\
     model/data_handler/DLMInterpreter.cpp \
     model/data_handler/DLMSetting.cpp \
     service/RoadEditParameters.cpp \
-    control/RoadEditCommand.cpp
+    control/RoadEditCommand.cpp \
+    model/RoadModelUtilities.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -154,7 +155,8 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/DLMInterpreter.h \
     model/data_handler/DLMSetting.h \
     service/RoadEditParameters.h \
-    control/RoadEditCommand.h
+    control/RoadEditCommand.h \
+    model/RoadModelUtilities.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui

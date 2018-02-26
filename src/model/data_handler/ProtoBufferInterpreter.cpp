@@ -16,6 +16,8 @@
 #include <QDebug>
 #include <fstream>
 
+#include "model/RoadModelUtilities.h"
+
 #include "CoordinateTransform/Factory.h"
 
 static const std::map<Model::CurveType, LaneBoundaryType> scBoundaryTypeMap =
@@ -76,7 +78,7 @@ void Model::ProtoBufferInterpreter::saveRoad(RoadSection* aRoadSection,
     aRoadSection->set_sectionid(convertRoadId(aRoad->GetRoadId()));
 
     LaneModel *laneModel = aRoadSection->mutable_lanemodel();
-    LanePtr lane = getLeftMostLane(aRoad);
+    LanePtr lane = GetLeftMostLane(aRoad);
 
     if (lane)
     {
@@ -92,7 +94,7 @@ void Model::ProtoBufferInterpreter::saveRoad(RoadSection* aRoadSection,
         saveLaneBoundary(laneModel->add_boundaries(), lane->GetLeftLine());
         saveLaneBoundary(laneModel->add_boundaries(), lane->GetRightLine());
 
-        while ((lane = getRightLane(lane)) != nullptr)
+        while ((lane = GetRightLane(lane)) != nullptr)
         {
             saveLane(laneModel->add_lanes(), lane, aTileMap);
             saveLaneBoundary(laneModel->add_boundaries(), lane->GetRightLine());
@@ -158,38 +160,11 @@ void Model::ProtoBufferInterpreter::saveGeometry(Geometry* aGeometry, const Mode
     }
 }
 
-Model::LanePtr Model::ProtoBufferInterpreter::getLeftMostLane(const Model::RoadPtr& aRoad)
-{
-    for (size_t i = 0; i < aRoad->GetLaneListSize(); ++i)
-    {
-        LanePtr lanePtr = aRoad->GetLane(i);
-        // After data validation, there will be only one lane in a road has no left-lane or right-lane.
-        if (0 == lanePtr->GetLeftLaneId())
-        {
-            return lanePtr;
-        }
-    }
-
-    return nullptr;
-}
-
-Model::LanePtr Model::ProtoBufferInterpreter::getRightLane(const Model::LanePtr& aLane)
-{
-    std::uint64_t rightLaneId = aLane->GetRightLaneId();
-
-    if (0 != rightLaneId)
-    {
-        return aLane->GetRoad()->GetTile()->GetLane(rightLaneId);
-    }
-
-    return nullptr;
-}
-
 uint32_t Model::ProtoBufferInterpreter::getLaneIndex(const Model::LanePtr& aLane)
 {
     std::uint32_t index = 0;
     RoadPtr road = aLane->GetRoad();
-    LanePtr lane = getLeftMostLane(road);
+    LanePtr lane = GetLeftMostLane(road);
 
     while (nullptr != lane)
     {
@@ -198,7 +173,7 @@ uint32_t Model::ProtoBufferInterpreter::getLaneIndex(const Model::LanePtr& aLane
             break;
         }
         ++index;
-        lane = getRightLane(lane);
+        lane = GetRightLane(lane);
     }
 
     return index;

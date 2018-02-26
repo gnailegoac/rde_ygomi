@@ -17,15 +17,17 @@
 #include <PureMVC/PureMVC.hpp>
 #include <QDebug>
 
+#include <memory>
+
 #include "CommonFunction.h"
 #include "facade/ApplicationFacade.h"
 #include "model/FitNurbs.h"
 #include "model/Lane.h"
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
-#include "proxy/MainProxy.h"
-
+#include "model/RoadModelUtilities.h"
 #include "model/Utilities.h"
+#include "proxy/MainProxy.h"
 
 void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotification& aNotification)
 {
@@ -35,9 +37,15 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
         qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
-        // TODO: selected nodes will be deleted, need clear mSelectedNodes.
     }
-
+    else if (ApplicationFacade::ADD_LINE_TO_ROAD == aNotification.getName())
+    {
+        QJsonObject lineData = *CommonFunction::ConvertToNonConstType<QJsonObject>(aNotification.getBody());
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        uint64_t roadId = lineData["roadId"].toString().toULongLong();
+        Model::RoadPtr road = memoryModel->GetRoadById(roadId);
+        addLineToRoad(memoryModel, road, lineData);
+    }
 }
 
 std::string Controller::RoadEditCommand::GetCommandName()
@@ -134,14 +142,15 @@ std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
         // Merge to a dashed line.
         aFromPaint->insert(aFromPaint->end(), aToPaint->begin(), aToPaint->end());
     }
-    convertWgs84ToRelative(aReferencePoint, aFromPaint);
-    std::string errorInfo;
-    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, 3, errorInfo);
-    return fitCurve;
+//    convertWgs84ToRelative(aReferencePoint, aFromPaint);
+//    std::string errorInfo;
+//    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, NurbsOrder, errorInfo);
+//    return fitCurve;
+    return getFittedCurve(aReferencePoint, aFromPaint);
 }
 
-void Controller::RoadEditCommand::convertWgs84ToRelative(const Model::Point3DPtr& aReferencePoint,
-                                                         const Model::PaintListPtr& aPaintList)
+Model::PaintListPtr Controller::RoadEditCommand::convertWgs84ToRelative(const Model::Point3DPtr& aReferencePoint,
+                                                                        const Model::PaintListPtr& aPaintList)
 {
     auto wgs84ToRelative = CRS::Factory().CreateRelativeTransform(
                                             CRS::CoordinateType::Wgs84,
@@ -149,19 +158,22 @@ void Controller::RoadEditCommand::convertWgs84ToRelative(const Model::Point3DPtr
                                             aReferencePoint->GetX(),
                                             aReferencePoint->GetY(),
                                             aReferencePoint->GetZ());
+    Model::PaintListPtr paintList = std::make_shared<Model::PaintList>();
     for (auto& point3DList : *aPaintList)
     {
+        Model::Point3DListPtr pointList = std::make_shared<Model::Point3DList>();
         for (auto& point : *point3DList)
         {
             double x = point->GetX();
             double y = point->GetY();
             double z = point->GetZ();
             wgs84ToRelative->Transform(x, y, z);
-            point->SetX(x);
-            point->SetY(y);
-            point->SetZ(z);
+            pointList->push_back(std::make_shared<Model::Point3D>(x, y, z));
         }
+        paintList->push_back(pointList);
     }
+
+    return paintList;
 }
 
 bool Controller::RoadEditCommand::isLaneInRoad(const Model::RoadPtr& aRoad, const uint64_t& aLaneId)
@@ -250,4 +262,96 @@ void Controller::RoadEditCommand::updateRoadConnection(Model::RoadPtr& aFromRoad
             }
         }
     }
+}
+
+void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
+                                                Model::RoadPtr& aRoad, const QJsonObject& aData)
+{
+    uint64_t roadId = aRoad->GetRoadId();
+    QString lineType = aData["type"].toString();
+    QString position = aData["position"].toString();
+    QJsonArray paintArray = aData["line"].toArray();
+    uint64_t laneId = aMemoryModel->GenerateNewLaneId(roadId);
+    uint64_t lineId = aMemoryModel->GenerateNewLineId(roadId);
+    uint64_t curveId = aMemoryModel->GenerateNewCurveId(lineId);
+    const Model::Point3DPtr& referencePoint = aRoad->GetTile()->GetReferencePoint();
+    std::shared_ptr<Model::NurbsCurve> curve = getFittedCurve(referencePoint, paintArray);
+    if (nullptr == curve)
+    {
+        QString message = "Too few points to fit to a curve.";
+        ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &message);
+        return;
+    }
+    curve->SetCurveId(curveId);
+    curve->SetIndexInLine(0);
+    curve->SetCurveType(lineType == "solid" ? Model::CurveType::Solid : Model::CurveType::Dashed);
+    Model::LinePtr line = std::make_shared<Model::Line>();
+    line->SetLineId(lineId);
+    line->SetLength(curve->GetLineLength());
+    line->GetMutableCurveList()->push_back(curve);
+    Model::LanePtr lane = std::make_shared<Model::Lane>();
+    lane->SetLaneId(laneId);
+    lane->SetRoad(aRoad);
+    aRoad->GetMutableLaneList()->push_back(lane);
+    line->SetLane(lane);
+    // Only set left/right lane, predecessor/successor should be edited on TreeView.
+    if (position == "left")
+    {
+        Model::LanePtr leftMostLane = Model::GetLeftMostLane(aRoad);
+        lane->SetLeftLine(line);
+        lane->SetRightLine(leftMostLane->GetLeftLine());
+        leftMostLane->SetLeftLaneId(laneId);
+        lane->SetRightLaneId(leftMostLane->GetLaneId());
+    }
+    else
+    {
+        Model::LanePtr rightMostLane = Model::GetRightMostLane(aRoad);
+        lane->SetLeftLine(rightMostLane->GetRightLine());
+        lane->SetRightLine(line);
+        rightMostLane->SetRightLaneId(laneId);
+        lane->SetLeftLaneId(rightMostLane->GetLaneId());
+    }
+}
+
+std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::getFittedCurve(const Model::Point3DPtr& aReferencePoint,
+                                                                               const Model::PaintListPtr& aPaintList)
+{
+    Model::PaintListPtr paintList = convertWgs84ToRelative(aReferencePoint, aPaintList);
+    std::string errorInfo;
+    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(paintList, NurbsOrder, errorInfo);
+    return fitCurve;
+}
+
+std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::getFittedCurve(const Model::Point3DPtr& aReferencePoint,
+                                                                               const QJsonArray& aPaintArray)
+{
+    auto wgs84ToRelative = CRS::Factory().CreateRelativeTransform(
+                                            CRS::CoordinateType::Wgs84,
+                                            CRS::CoordinateType::Relative,
+                                            aReferencePoint->GetX(),
+                                            aReferencePoint->GetY(),
+                                            aReferencePoint->GetZ());
+    Model::PaintListPtr paintList = std::make_shared<Model::PaintList>();
+    for (const auto& paint : aPaintArray)
+    {
+        if (paint.isArray())
+        {
+            Model::Point3DListPtr relativePaint = std::make_shared<Model::Point3DList>();
+            for (const auto& point : paint.toArray())
+            {
+                if (point.isArray())
+                {
+                    double x = point.toArray().at(0).toDouble();
+                    double y = point.toArray().at(1).toDouble();
+                    double z = aReferencePoint->GetZ();
+                    wgs84ToRelative->Transform(x, y, z);
+                    relativePaint->push_back(std::make_shared<Model::Point3D>(x, y, z ));
+                }
+            }
+            paintList->push_back(relativePaint);
+        }
+    }
+    std::string errorInfo;
+    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(paintList, NurbsOrder, errorInfo);
+    return fitCurve;
 }
