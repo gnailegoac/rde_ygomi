@@ -28,10 +28,12 @@ public:
 public slots:
     void setCameraMatrix(const QJsonArray& aMatrix);
     void fetchRoadListByTile(const QJsonValue& aLevel, const QJsonValue& aTileId);
+    void addLineData(const QJsonObject& aData);
 
 signals:
     void cameraMatrixChanged(const osg::Matrixd& aMatrix);
     void requestRoadsInTile(const int& aLevel, const std::uint64_t& aTileId);
+    void addLineToRoad(const QJsonObject& aData);
 };
 
 class WebRoadEditor : public QWebEngineView

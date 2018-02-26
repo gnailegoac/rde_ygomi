@@ -15,6 +15,7 @@
 
 #include <QtGlobal>
 #include <QVector>
+#include <QVariant>
 
 #include <map>
 
@@ -106,6 +107,8 @@ QJsonObject Model::GeoJsonConverter::Convert(int aLevel, const Model::RoadPtr& a
     QJsonArray lanes;
 
     roadObj["type"] = "road";
+    // QJsonValue only supports doubles, and in the JSON strings these are truncated via QByteArray::number to %.6g
+    // so the uint64 values cannot be represented accurately
     roadData["id"] = QString::number(aRoad->GetRoadId());
     roadData["ndsId"] = static_cast<double>(aRoad->GetTile()->GetTileId());
 
