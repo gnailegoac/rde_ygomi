@@ -226,7 +226,7 @@ void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform
         }
 
         // Down-sample points with Douglas-Peucker algorithm
-        mPaintListMap->at(1)->push_back(Model::DouglasPeucker::Simplify(points, 2));
+        mPaintListMap->at(1)->push_back(Model::DouglasPeucker::SimplifyS(points, 2));
         //mPaintListMap->at(2)->push_back(Model::DouglasPeucker::Simplify(points, 1));
         //mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.5));
         //mPaintListMap->at(4)->push_back(Model::DouglasPeucker::Simplify(points, 0.2));
@@ -254,7 +254,7 @@ void Model::Line::GenerateViewPaintMap(std::uint8_t aLevel)
             points->push_back(std::make_shared<Point3D>(lon, lat, ele));
         }
 
-        mPaintListMap->at(aLevel)->push_back(Model::DouglasPeucker::Simplify(points, mSimplingLevelMap->at(aLevel)));
+        mPaintListMap->at(aLevel)->push_back(Model::DouglasPeucker::SimplifyS(points, mSimplingLevelMap->at(aLevel)));
     }
 }
 

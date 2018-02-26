@@ -34,8 +34,7 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
                 const double& aThreshold)
 {
     std::vector<Point3DPtr> simplified;
-    double threshold = aThreshold * aThreshold;
-    auto index = GetSimplifyIndex(aPoints, threshold, 0, aPoints->size() - 1);
+    auto index = GetSimplifyIndex(aPoints, aThreshold, 0, aPoints->size() - 1);
     for (auto& idx : *index)
     {
         simplified.push_back(aPoints->at(idx));
@@ -43,11 +42,11 @@ Model::Point3DListPtr Model::DouglasPeucker::Simplify(
     return std::make_shared<Point3DList>(simplified);
 }
 
-std::shared_ptr<std::vector<uint32_t> > Model::DouglasPeucker::GetSimplifyIndex(
-                const Model::Point3DListPtr& aPoints,
-                const double& aThreshold,
-                const uint32_t& aStartIndex,
-                const uint32_t& aEndIndex)
+std::shared_ptr<std::vector<uint32_t>> Model::DouglasPeucker::GetSimplifyIndex(
+                                                    const Model::Point3DListPtr& aPoints,
+                                                    const double& aThreshold,
+                                                    const uint32_t& aStartIndex,
+                                                    const uint32_t& aEndIndex)
 {
     std::vector<std::uint32_t> resultIndex;
     if (aStartIndex >= aEndIndex || aEndIndex >= aPoints->size())
@@ -170,9 +169,9 @@ std::pair<std::uint32_t, double> Model::DouglasPeucker::getFarthestPoint(
     double maxDistance = 0;
     for (std::uint32_t i = aBegin + 1; i < aEnd; ++i)
     {
-        double distance = pointToLineDistanceSquare(aPoints->at(i),
-                                                    aPoints->at(aBegin),
-                                                    aPoints->at(aEnd));
+        double distance = pointToLineDistance(aPoints->at(i),
+                                              aPoints->at(aBegin),
+                                              aPoints->at(aEnd));
         if (distance > maxDistance)
         {
             idx = i;
@@ -182,21 +181,18 @@ std::pair<std::uint32_t, double> Model::DouglasPeucker::getFarthestPoint(
     return std::make_pair(idx, maxDistance);
 }
 
-Model::Point3DPtr Model::DouglasPeucker::crossProduct(const Model::Point3DPtr& aLhs, const Model::Point3DPtr& aRhs)
+Model::Point3DPtr Model::DouglasPeucker::crossProduct(
+                const Model::Point3DPtr& aLhs,
+                const Model::Point3DPtr& aRhs)
 {
     return  std::make_shared<Point3D>(aLhs->GetY() * aRhs->GetZ() - aLhs->GetZ() * aRhs->GetY(),
                                       aLhs->GetZ() * aRhs->GetX() - aLhs->GetX() * aRhs->GetZ(),
                                       aLhs->GetX() * aRhs->GetY() - aLhs->GetY() * aRhs->GetX());
 }
 
-double Model::DouglasPeucker::modSquare(const Model::Point3DPtr& aVector)
-{
-    return aVector->GetX() * aVector->GetX()
-           + aVector->GetY() * aVector->GetY()
-           + aVector->GetZ() * aVector->GetZ();
-}
-
-double Model::DouglasPeucker::pointToPointDistanceSquare(const Model::Point3DPtr& aLhs, const Model::Point3DPtr& aRhs)
+double Model::DouglasPeucker::pointToPointDistanceSquare(
+                const Model::Point3DPtr& aLhs,
+                const Model::Point3DPtr& aRhs)
 {
     return modSquare(std::make_shared<Point3D>(aLhs->GetX() - aRhs->GetX(),
                                                aLhs->GetY() - aRhs->GetY(),
@@ -220,4 +216,87 @@ double Model::DouglasPeucker::pointToLineDistanceSquare(
         return 0.0;
     }
     return modSquare(crossProduct(vecL1p, vecL12)) / hSquare;
+}
+
+double Model::DouglasPeucker::modSquare(const Model::Point3DPtr& aVector)
+{
+    return aVector->GetX() * aVector->GetX()
+           + aVector->GetY() * aVector->GetY()
+           + aVector->GetZ() * aVector->GetZ();
+}
+
+std::pair<uint32_t, double> Model::DouglasPeucker::getFarthestPointS(
+                const Model::Point3DListPtr& aPoints,
+                uint32_t aBegin,
+                uint32_t aEnd)
+{
+    std::uint32_t idx = 0;
+    double maxDistance = 0;
+    for (std::uint32_t i = aBegin + 1; i < aEnd; ++i)
+    {
+        double distance = pointToLineDistanceSquare(aPoints->at(i),
+                                                    aPoints->at(aBegin),
+                                                    aPoints->at(aEnd));
+        if (distance > maxDistance)
+        {
+            idx = i;
+            maxDistance = distance;
+        }
+    }
+    return std::make_pair(idx, maxDistance);
+}
+
+Model::Point3DListPtr Model::DouglasPeucker::SimplifyS(
+                const Model::Point3DListPtr& aPoints,
+                const double& aThreshold)
+{
+    std::vector<Point3DPtr> simplified;
+    double threshold = aThreshold * aThreshold;
+    auto index = GetSimplifyIndexS(aPoints, threshold, 0, aPoints->size() - 1);
+    for (auto& idx : *index)
+    {
+        simplified.push_back(aPoints->at(idx));
+    }
+    return std::make_shared<Point3DList>(simplified);
+}
+
+std::shared_ptr<std::vector<uint32_t>> Model::DouglasPeucker::GetSimplifyIndexS(
+                                                    const Model::Point3DListPtr& aPoints,
+                                                    const double& aThreshold,
+                                                    const uint32_t& aStartIndex,
+                                                    const uint32_t& aEndIndex)
+{
+    std::vector<std::uint32_t> resultIndex;
+    if (aStartIndex >= aEndIndex || aEndIndex >= aPoints->size())
+    {
+        return std::make_shared<std::vector<uint32_t>>(resultIndex);
+    }
+    std::vector<std::pair<std::uint32_t, std::uint32_t> > periods;
+    periods.push_back(std::make_pair(aStartIndex, aEndIndex));
+    while (!periods.empty())
+    {
+        auto line = periods.back();
+        periods.pop_back();
+        std::pair<std::uint32_t, double> point = getFarthestPointS(aPoints,
+                                                                   line.first,
+                                                                   line.second);
+        if (point.second >= aThreshold)
+        {
+            periods.push_back(std::make_pair(line.first, point.first));
+            periods.push_back(std::make_pair(point.first, line.second));
+        }
+        else
+        {
+            resultIndex.push_back(line.first);
+        }
+    }
+    resultIndex.push_back(aEndIndex);
+
+    // sort index and get points
+    std::sort(resultIndex.begin(), resultIndex.end(),
+              [](const std::uint32_t& a, const std::uint32_t& b) -> bool
+    {
+        return a < b;
+    });
+    return std::make_shared<std::vector<uint32_t>>(resultIndex);
 }
