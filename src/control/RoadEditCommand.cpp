@@ -40,6 +40,7 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
     }
     else if (ApplicationFacade::ADD_LINE_TO_ROAD == aNotification.getName())
     {
+        ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
         QJsonObject lineData = *CommonFunction::ConvertToNonConstType<QJsonObject>(aNotification.getBody());
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
@@ -47,7 +48,7 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
         Model::RoadPtr road = memoryModel->GetRoadById(roadId);
         sceneModel->RemoveRoadFromScene(roadId);
         addLineToRoad(memoryModel, road, lineData);
-        sceneModel->AddRoadModelToScene(road);
+        sceneModel->AddRoadToScene(road);
     }
 }
 
@@ -286,18 +287,18 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
     uint64_t curveId = aMemoryModel->GenerateNewCurveId(lineId);
     curve->SetCurveId(curveId);
     curve->SetIndexInLine(0);
+    curve->SetLength(curve->GetLineLength());
     curve->SetCurveType(lineType == "solid" ? Model::CurveType::Solid : Model::CurveType::Dashed);
-    Model::LinePtr line = std::make_shared<Model::Line>();
+    Model::LinePtr line = aRoad->GetTile()->GetMutableLine(lineId);
     line->SetLineId(lineId);
     line->SetLength(curve->GetLineLength());
     line->GetMutableCurveList()->push_back(curve);
     line->CreateGeodeticPointsList(referencePoint, SamplingInterval);
-    // Convert geodetic coordinates into ECEF coordinates
     auto ecef = CRS::Factory().CreateEcefProjection(
                                CRS::CoordinateType::Wgs84,
                                CRS::CoordinateType::Ecef);
     line->GenerateViewPaintMap(ecef);
-    Model::LanePtr lane = std::make_shared<Model::Lane>();
+    Model::LanePtr lane = aRoad->GetTile()->GetMutableLane(laneId);
     lane->SetLaneId(laneId);
     lane->SetRoad(aRoad);
     aRoad->GetMutableLaneList()->push_back(lane);
@@ -310,6 +311,7 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
         lane->SetRightLine(leftMostLane->GetLeftLine());
         leftMostLane->SetLeftLaneId(laneId);
         lane->SetRightLaneId(leftMostLane->GetLaneId());
+        leftMostLane->GetLeftLine()->SetLane(lane);
     }
     else
     {
@@ -319,6 +321,20 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
         rightMostLane->SetRightLaneId(laneId);
         lane->SetLeftLaneId(rightMostLane->GetLaneId());
     }
+    // AvgSlamTrace
+    std::shared_ptr<Model::NurbsCurve> avgCurve = getFittedCurve(referencePoint, paintArray);
+    uint64_t avgLineId = aMemoryModel->GenerateNewLineId(roadId);
+    uint64_t avgCurveId = aMemoryModel->GenerateNewCurveId(avgLineId);
+    avgCurve->SetCurveId(avgCurveId);
+    avgCurve->SetIndexInLine(0);
+    avgCurve->SetLength(avgCurve->GetLineLength());
+    avgCurve->SetCurveType(Model::CurveType::SlamTrace);
+    Model::LinePtr avgLine = aRoad->GetTile()->GetMutableLine(avgLineId);
+    avgLine->SetLineId(avgLineId);
+    avgLine->SetLength(avgCurve->GetLineLength());
+    avgLine->GetMutableCurveList()->push_back(avgCurve);
+    lane->SetAvgSlamTrace(avgLine);
+    avgLine->SetLane(lane);
 }
 
 std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::getFittedCurve(const Model::Point3DPtr& aReferencePoint,
