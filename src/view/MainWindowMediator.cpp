@@ -233,9 +233,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
 
         MainProxy* mainProxy = getMainProxy();
         const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
-        if(sceneModel != nullptr)
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if(sceneModel != nullptr && memoryModel != nullptr)
         {
-            sceneModel->RedrawRoadMarks(mainWindow->GetDistance());
+            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetDistance());
         }
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)

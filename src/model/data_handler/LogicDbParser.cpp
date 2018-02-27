@@ -104,7 +104,6 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPointsList(referencePoint, samplingInterval);
-            //line->GenerateViewPaintMap(ecef);
         }
 
         // Generate traffic sign map view
