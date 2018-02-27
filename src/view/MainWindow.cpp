@@ -17,6 +17,7 @@
 #include "view/MainWindow.h"
 #include "view/NetworkPreferenceDialog.h"
 #include "ui_MainWindow.h"
+#include "view/DbValidationDialog.h"
 
 #include "OsgWidget.h"
 #include "MainWindowMediator.h"
@@ -27,7 +28,8 @@
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
     ui(new Ui::MainWindow),
-    mRoadInfoView(new QTreeView(this))
+    mRoadInfoView(new QTreeView(this)),
+    mDbValidationDialog(new DbValidationDialog(this))
 {
     ui->setupUi(this);
     this->setCentralWidget(new View::OsgWidget(this));
@@ -39,6 +41,8 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->setStyleSheet("QTreeView{background-color:rgba(185,185,185,195);}");
     mRoadInfoView->raise();
     mRoadInfoView->setVisible(false);
+    mDbValidationDialog->hide();
+    ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/WarningIcon.png")));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -214,6 +218,19 @@ void View::MainWindow::setupConnections()
     {
         onRenderRoad(ui->actionRenderRoad->isChecked());
     });
+
+    connect(ui->actionWarning, &QAction::triggered, [ = ]()
+    {
+        mDbValidationDialog->ResetPos();
+        if(mDbValidationDialog->isHidden())
+        {
+            mDbValidationDialog->show();
+        }
+        else
+        {
+            mDbValidationDialog->hide();
+        }
+    });
 }
 
 void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)
@@ -349,4 +366,9 @@ double View::MainWindow::GetDistance()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
     return viewer->GetDistance();
+}
+
+View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
+{
+    return mDbValidationDialog;
 }

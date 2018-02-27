@@ -17,7 +17,10 @@
 const std::string MainProxy::NAME = "MainProxy";
 
 MainProxy::MainProxy():
-    Proxy("MainProxy")
+    Proxy("MainProxy"),
+    mSceneModel(nullptr),
+    mMemoryModel(nullptr),
+    mTreeModel(nullptr)
 {
 
 }

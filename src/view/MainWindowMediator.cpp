@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QJsonArray>
+#include <QDateTime>
 #include "MainWindowMediator.h"
 #include "facade/ApplicationFacade.h"
 #include "proxy/MainProxy.h"
@@ -26,6 +27,8 @@
 #include "model/MemoryModel.h"
 #include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
+#include "view/DbValidationDialog.h"
+#include "BasicCheck.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -177,9 +180,12 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     std::string noteName = aNotification.getName();
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
-        getMainWindow()->EnableSaveAction(true);
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-        ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
+        if(dbValidation(filePath))
+        {
+            getMainWindow()->EnableSaveAction(true);
+            ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
+        }
     }
     else if (noteName == ApplicationFacade::FOLDER_OPEN)
     {
@@ -187,8 +193,11 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
-            getMainWindow()->EnableSaveAction(true);
-            ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
+            if(dbValidation(folderPath.toStdString()))
+            {
+                getMainWindow()->EnableSaveAction(true);
+                ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
+            }
         }
         else
         {
@@ -224,11 +233,9 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
 
         MainProxy* mainProxy = getMainProxy();
         const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
-        const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy->GetMemoryModel();
-        //sceneModel->RedrawRoadMarks(mainWindow->GetDistance());
-        if(sceneModel != nullptr && memoryModel != nullptr)
+        if(sceneModel != nullptr)
         {
-            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetDistance());
+            sceneModel->RedrawRoadMarks(mainWindow->GetDistance());
         }
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
@@ -337,6 +344,29 @@ void View::MainWindowMediator::closeRoadRendering()
     }
     sceneModel->RemoveRoadModelFromScene();
     getMainWindow()->centralWidget()->repaint();
+}
+
+bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
+{
+    QString config = "../src/resource/ValidationConfiger";
+    QString savePath = QDir::currentPath();
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
+    savePath += "/validation_" + current_date + ".json";
+    std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
+    pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
+    pCheck->RunCheck();
+    if(!getMainWindow()->GetDbValidationDialog()->UpdateData(savePath))
+    {
+        getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
+        return false;
+    }
+    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    {
+        getMainWindow()->GetDbValidationDialog()->show();
+        return false;
+    }
+    return true;
 }
 
 void View::MainWindowMediator::onRemove()
