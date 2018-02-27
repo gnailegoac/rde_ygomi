@@ -31,11 +31,11 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
 {
     if (ApplicationFacade::MERGE_ROAD == aNotification.getName())
     {
+        ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
         std::pair<uint64_t, uint64_t> selectPair =
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
         qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
-        // TODO: selected nodes will be deleted, need clear mSelectedNodes.
     }
 
 }
@@ -77,7 +77,7 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
         updateRoadConnection(fromRoad, toRoad);
         // Remove toRoad from memory model
-
+        memoryModel->RemoveRoad(toRoad);
         // Update scene model
         // Add merged fromRoad to scene model again
         sceneModel->AddRoadToScene(fromRoad);
@@ -105,7 +105,13 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
     // Convert to relative coordinates
     std::shared_ptr<Model::NurbsCurve> mergedCurve = mergePaintList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(),
                                                           fromPaintList, toPaintList);
+    // Set curve ID
+    uint64_t curveId = aFromLine->GetCurve(0)->GetCurveId();
+    Model::CurveType curveType = aFromLine->GetCurve(0)->GetCurveType();
     aFromLine->GetMutableCurveList()->clear();
+    mergedCurve->SetCurveId(curveId);
+    mergedCurve->SetCurveType(curveType);
+    mergedCurve->SetLength(mergedCurve->GetLineLength());
     aFromLine->GetMutableCurveList()->push_back(mergedCurve);
     aFromLine->SetLength(mergedCurve->GetLength());
     const double samplingInterval = 0.5;
