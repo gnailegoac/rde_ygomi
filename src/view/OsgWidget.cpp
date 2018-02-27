@@ -422,6 +422,7 @@ void View::OsgWidget::showContextMenu(const QPoint &aPoint)
     {
         connect(&editAction, &QAction::triggered, [=]()
         {
+//            ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
             const std::vector<uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             uint64_t roadId = roadIdVec.front();
             ApplicationFacade::SendNotification(ApplicationFacade::EDIT_ROAD, &roadId);

@@ -26,6 +26,7 @@ namespace Controller
 {
 
 static const uint8_t NurbsOrder = 3;
+static const double SamplingInterval = 0.5;
 class RoadEditCommand : public BasicCommand
 {
 public:

@@ -42,9 +42,12 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
     {
         QJsonObject lineData = *CommonFunction::ConvertToNonConstType<QJsonObject>(aNotification.getBody());
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
         uint64_t roadId = lineData["roadId"].toString().toULongLong();
         Model::RoadPtr road = memoryModel->GetRoadById(roadId);
+        sceneModel->RemoveRoadFromScene(roadId);
         addLineToRoad(memoryModel, road, lineData);
+        sceneModel->AddRoadModelToScene(road);
     }
 }
 
@@ -116,8 +119,7 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
     aFromLine->GetMutableCurveList()->clear();
     aFromLine->GetMutableCurveList()->push_back(mergedCurve);
     aFromLine->SetLength(mergedCurve->GetLength());
-    const double samplingInterval = 0.5;
-    aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), samplingInterval);
+    aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), SamplingInterval);
     // Convert geodetic coordinates into ECEF coordinates
     auto ecef = CRS::Factory().CreateEcefProjection(
                                CRS::CoordinateType::Wgs84,
@@ -267,14 +269,8 @@ void Controller::RoadEditCommand::updateRoadConnection(Model::RoadPtr& aFromRoad
 void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::MemoryModel>& aMemoryModel,
                                                 Model::RoadPtr& aRoad, const QJsonObject& aData)
 {
-    uint64_t roadId = aRoad->GetRoadId();
-    QString lineType = aData["type"].toString();
-    QString position = aData["position"].toString();
-    QJsonArray paintArray = aData["line"].toArray();
-    uint64_t laneId = aMemoryModel->GenerateNewLaneId(roadId);
-    uint64_t lineId = aMemoryModel->GenerateNewLineId(roadId);
-    uint64_t curveId = aMemoryModel->GenerateNewCurveId(lineId);
     const Model::Point3DPtr& referencePoint = aRoad->GetTile()->GetReferencePoint();
+    QJsonArray paintArray = aData["line"].toArray();
     std::shared_ptr<Model::NurbsCurve> curve = getFittedCurve(referencePoint, paintArray);
     if (nullptr == curve)
     {
@@ -282,6 +278,12 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
         ApplicationFacade::SendNotification(ApplicationFacade::NOTIFY_RESULT, &message);
         return;
     }
+    uint64_t roadId = aRoad->GetRoadId();
+    QString lineType = aData["type"].toString();
+    QString position = aData["position"].toString();
+    uint64_t laneId = aMemoryModel->GenerateNewLaneId(roadId);
+    uint64_t lineId = aMemoryModel->GenerateNewLineId(roadId);
+    uint64_t curveId = aMemoryModel->GenerateNewCurveId(lineId);
     curve->SetCurveId(curveId);
     curve->SetIndexInLine(0);
     curve->SetCurveType(lineType == "solid" ? Model::CurveType::Solid : Model::CurveType::Dashed);
@@ -289,6 +291,12 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
     line->SetLineId(lineId);
     line->SetLength(curve->GetLineLength());
     line->GetMutableCurveList()->push_back(curve);
+    line->CreateGeodeticPointsList(referencePoint, SamplingInterval);
+    // Convert geodetic coordinates into ECEF coordinates
+    auto ecef = CRS::Factory().CreateEcefProjection(
+                               CRS::CoordinateType::Wgs84,
+                               CRS::CoordinateType::Ecef);
+    line->GenerateViewPaintMap(ecef);
     Model::LanePtr lane = std::make_shared<Model::Lane>();
     lane->SetLaneId(laneId);
     lane->SetRoad(aRoad);
