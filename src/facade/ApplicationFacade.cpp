@@ -58,6 +58,7 @@ const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering"
 const std::string ApplicationFacade::MERGE_ROAD = "MergeRoad";
 const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
+const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {

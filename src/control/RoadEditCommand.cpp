@@ -33,10 +33,12 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
 {
     if (ApplicationFacade::MERGE_ROAD == aNotification.getName())
     {
+        ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
         std::pair<uint64_t, uint64_t> selectPair =
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
         qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
+        ApplicationFacade::SendNotification(ApplicationFacade::UPDATE_TREE_VIEW);
     }
     else if (ApplicationFacade::ADD_LINE_TO_ROAD == aNotification.getName())
     {
@@ -49,6 +51,7 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
         sceneModel->RemoveRoadFromScene(roadId);
         addLineToRoad(memoryModel, road, lineData);
         sceneModel->AddRoadToScene(road);
+        ApplicationFacade::SendNotification(ApplicationFacade::UPDATE_TREE_VIEW);
     }
 }
 
@@ -89,11 +92,9 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
         updateRoadConnection(fromRoad, toRoad);
         // Remove toRoad from memory model
-
-        // Update scene model
-        // Add merged fromRoad to scene model again
+        memoryModel->RemoveRoad(toRoad);
+        // Update scene model: Add merged fromRoad to scene model again
         sceneModel->AddRoadToScene(fromRoad);
-        // Update tree model
     }
 }
 
@@ -117,7 +118,13 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
     // Convert to relative coordinates
     std::shared_ptr<Model::NurbsCurve> mergedCurve = mergePaintList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(),
                                                           fromPaintList, toPaintList);
+    // Set curve ID
+    uint64_t curveId = aFromLine->GetCurve(0)->GetCurveId();
+    Model::CurveType curveType = aFromLine->GetCurve(0)->GetCurveType();
     aFromLine->GetMutableCurveList()->clear();
+    mergedCurve->SetCurveId(curveId);
+    mergedCurve->SetCurveType(curveType);
+    mergedCurve->SetLength(mergedCurve->GetLineLength());
     aFromLine->GetMutableCurveList()->push_back(mergedCurve);
     aFromLine->SetLength(mergedCurve->GetLength());
     aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), SamplingInterval);

@@ -57,6 +57,7 @@ public:
     static const std::string MERGE_ROAD;
     static const std::string EDIT_ROAD;
     static const std::string ADD_LINE_TO_ROAD;
+    static const std::string UPDATE_TREE_VIEW;
 
     static ApplicationFacade* GetInstance();
 
