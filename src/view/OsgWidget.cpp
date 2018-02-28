@@ -24,7 +24,6 @@
 #include <QWheelEvent>
 #include <QGLFormat>
 #include <QMenu>
-#include <QMessageBox>
 #include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
@@ -277,8 +276,6 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             aButton = 2;
             break;
         case Qt::RightButton:
-//            aButton = 3;
-//            break;
             this->setContextMenuPolicy(Qt::CustomContextMenu);
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
                     this, SLOT(showContextMenu(const QPoint&)));

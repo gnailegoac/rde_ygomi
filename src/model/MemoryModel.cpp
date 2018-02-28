@@ -227,5 +227,5 @@ std::uint64_t Model::MemoryModel::GenerateNewRoadId(const std::int64_t& aTileId)
 
 void Model::MemoryModel::RemoveRoad(const Model::RoadPtr& aRoad)
 {
-    aRoad->GetTile()->RemoveRoad(aRoad->GetRoadId());
+    aRoad->GetTile()->RemoveRoad(aRoad);
 }
