@@ -38,6 +38,7 @@ private slots:
 
 private:
     void initTableOverView();
+    void initTableDetails();
 
 private:
     Ui::DbValidationDialog* mUi;

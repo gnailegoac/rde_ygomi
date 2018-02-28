@@ -28,7 +28,8 @@ View::DbValidationDialog::DbValidationDialog(QWidget* parent) :
     resize(410, 240);
     connect(mUi->pBtnShowDetails, SIGNAL(clicked()), this, SLOT(onShowDetails()));
     initTableOverView();
-    setMaximumSize(QSize(810, 645));
+    initTableDetails();
+    setMaximumSize(QSize(1210, 645));
 }
 
 View::DbValidationDialog::~DbValidationDialog()
@@ -38,7 +39,7 @@ View::DbValidationDialog::~DbValidationDialog()
 
 void View::DbValidationDialog::onShowDetails()
 {
-    int deltaW = 405;
+    int deltaW = 805;
     int deltaH = 405;
     if(mUi->pBtnShowDetails->isChecked())
     {
@@ -56,7 +57,7 @@ void View::DbValidationDialog::onShowDetails()
 void View::DbValidationDialog::initTableOverView()
 {
     mUi->tableOverview->setColumnCount(2);
-    mUi->tableOverview->horizontalHeader()->setDefaultSectionSize(200);
+    mUi->tableOverview->horizontalHeader()->setDefaultSectionSize(199);
     QStringList header;
     header << tr("Error Level") << tr("Error Number");
     mUi->tableOverview->setHorizontalHeaderLabels(header);
@@ -67,7 +68,7 @@ void View::DbValidationDialog::initTableOverView()
     mUi->tableOverview->horizontalHeader()->setStretchLastSection(true);
     mUi->tableOverview->verticalHeader()->setVisible(false);
     mUi->tableOverview->setFrameShape(QFrame::NoFrame);
-    mUi->tableOverview->setShowGrid(false);
+    mUi->tableOverview->setShowGrid(true);
     mUi->tableOverview->setSelectionMode(QAbstractItemView::ExtendedSelection);
     mUi->tableOverview->setSelectionBehavior(QAbstractItemView::SelectRows);
     mUi->tableOverview->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -78,6 +79,32 @@ void View::DbValidationDialog::initTableOverView()
     mUi->tableOverview->setItem(0, 1, new QTableWidgetItem(QString("0")));
     mUi->tableOverview->setItem(1, 0, new QTableWidgetItem(QString("Serious Error")));
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString("0")));
+}
+
+void View::DbValidationDialog::initTableDetails()
+{
+    mUi->tableDetails->setColumnCount(6);
+    mUi->tableDetails->horizontalHeader()->setDefaultSectionSize(200);
+    QStringList header;
+    header << tr("Level") << tr("Description") << tr("DBName") << tr("TabelName") << tr("ErrorValue") << tr("RowId");
+    mUi->tableDetails->setHorizontalHeaderLabels(header);
+    QFont font = mUi->tableDetails->horizontalHeader()->font();
+    font.setBold(true);
+    mUi->tableDetails->horizontalHeader()->setFont(font);
+    mUi->tableDetails->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    mUi->tableDetails->horizontalHeader()->setStretchLastSection(true);
+    mUi->tableDetails->verticalHeader()->setVisible(false);
+    mUi->tableDetails->setFrameShape(QFrame::NoFrame);
+    mUi->tableDetails->setShowGrid(true);
+    mUi->tableDetails->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    mUi->tableDetails->setSelectionBehavior(QAbstractItemView::SelectRows);
+    mUi->tableDetails->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mUi->tableDetails->setColumnWidth(0, 100);
+    mUi->tableDetails->setColumnWidth(1, 400);
+    mUi->tableDetails->setColumnWidth(2, 200);
+    mUi->tableDetails->setColumnWidth(3, 200);
+    mUi->tableDetails->setColumnWidth(4, 200);
+    mUi->tableDetails->setColumnWidth(5, 85);
 }
 
 bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
@@ -96,9 +123,6 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
 
     int seriousLevelCount = 0;
     int verifyLevelCount = 0;
-    QString space = "&nbsp;&nbsp;&nbsp;&nbsp;";
-    QString textContent = "<html>\n<body>\n";
-    textContent += "<p style=""line-height:120%"">";
     QJsonObject mainObject = document.object();
     for(int i = 50100; i < 50815; ++i)
     {
@@ -107,17 +131,51 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
         {
             continue;
         }
-        textContent += "<font size=""4"" color=""red""><b>" + tr("Error Code: ") + QString::number(i) + "</b></font><br>";
-        QJsonObject ErrorCodeObject = value.toObject();
-        if(ErrorCodeObject.contains(QString("Description")))
+        QJsonObject errorCodeObject = value.toObject();
+        QJsonArray details = errorCodeObject.value("Details").toArray();
+        if(details.empty())
         {
-            QString description = ErrorCodeObject.value("Description").toString();
-            textContent += space + tr("Description: ") + description + "<br>";
+            continue;
         }
-        if(ErrorCodeObject.contains(QString("Level")))
+        int startRow = mUi->tableDetails->rowCount();
+        for(int i = 0; i < details.size(); ++i)
         {
-            QString level = ErrorCodeObject.value("Level").toString();
-            textContent += space + tr("Level: ") + level;
+            int rowNum = mUi->tableDetails->rowCount();
+            mUi->tableDetails->insertRow(rowNum);
+            mUi->tableDetails->setRowHeight(rowNum, 40);
+            QJsonObject itemObject = details.at(i).toObject();
+            if(itemObject.contains(QString("DBName")))
+            {
+                QString DBName = itemObject.value("DBName").toString();
+                mUi->tableDetails->setItem(rowNum, 2, new QTableWidgetItem(DBName));
+            }
+            if(itemObject.contains(QString("TableName")))
+            {
+                QString TableName = itemObject.value("TableName").toString();
+                mUi->tableDetails->setItem(rowNum, 3, new QTableWidgetItem(TableName));
+            }
+            if(itemObject.contains(QString("errorValue")))
+            {
+                QString errorValue = itemObject.value("errorValue").toString();
+                mUi->tableDetails->setItem(rowNum, 4, new QTableWidgetItem(errorValue));
+            }
+            if(itemObject.contains(QString("rowID")))
+            {
+                QString rowID = itemObject.value("rowID").toString();
+                mUi->tableDetails->setItem(rowNum, 5, new QTableWidgetItem(rowID));
+            }
+        }
+        mUi->tableDetails->setSpan(startRow, 0, details.size(), 1);
+        mUi->tableDetails->setSpan(startRow, 1, details.size(), 1);
+        if(errorCodeObject.contains(QString("Description")))
+        {
+            QString description = errorCodeObject.value("Description").toString();
+            mUi->tableDetails->setItem(startRow, 1, new QTableWidgetItem(description));
+        }
+        if(errorCodeObject.contains(QString("Level")))
+        {
+            QString level = errorCodeObject.value("Level").toString();
+            mUi->tableDetails->setItem(startRow, 0, new QTableWidgetItem(level));
             if(!level.compare("Serious Error"))
             {
                 ++seriousLevelCount;
@@ -127,43 +185,12 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
                 ++verifyLevelCount;
             }
         }
-        if(!ErrorCodeObject.value("Details").isArray())
+        if(!errorCodeObject.value("Details").isArray())
         {
-            textContent += "<br><br>";
             continue;
         }
-        QJsonArray details = ErrorCodeObject.value("Details").toArray();
-        textContent += "<br>" + space + tr("Details: ");
-        for(int i = 0; i < details.size(); ++i)
-        {
-            textContent += "<br>";
-            QJsonObject itemObject = details.at(i).toObject();
-            if(itemObject.contains(QString("DBName")))
-            {
-                QString DBName = itemObject.value("DBName").toString();
-                textContent += space + space + tr("DBName: ") + DBName + "<br>";
-            }
-            if(itemObject.contains(QString("TableName")))
-            {
-                QString TableName = itemObject.value("TableName").toString();
-                textContent += space + space + tr("TableName: ") + TableName + "<br>";
-            }
-            if(itemObject.contains(QString("errorValue")))
-            {
-                QString errorValue = itemObject.value("errorValue").toString();
-                textContent += space + space + tr("errorValue: ") + errorValue + "<br>";
-            }
-            if(itemObject.contains(QString("rowID")))
-            {
-                QString rowID = itemObject.value("rowID").toString();
-                textContent += space + space + tr("rowID: ") + rowID;
-            }
-        }
-        textContent += "<br><br>";
     }
-    textContent += "</p>\n</body>\n</html>";
 
-    mUi->textBrowser->setText(textContent);
     mUi->tableOverview->setItem(0, 1, new QTableWidgetItem(QString::number(verifyLevelCount)));
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString::number(seriousLevelCount)));
     return true;

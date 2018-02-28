@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
+    <width>1210</width>
     <height>645</height>
    </rect>
   </property>
@@ -45,12 +45,12 @@
     </rect>
    </property>
   </widget>
-  <widget class="QTextBrowser" name="textBrowser">
+  <widget class="QTableWidget" name="tableDetails">
    <property name="geometry">
     <rect>
      <x>5</x>
      <y>240</y>
-     <width>800</width>
+     <width>1200</width>
      <height>400</height>
     </rect>
    </property>
