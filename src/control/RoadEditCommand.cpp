@@ -28,6 +28,7 @@
 #include "model/RoadModelUtilities.h"
 #include "model/Utilities.h"
 #include "proxy/MainProxy.h"
+#include "view/MainWindow.h"
 
 void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotification& aNotification)
 {
@@ -51,6 +52,7 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
         sceneModel->RemoveRoadFromScene(roadId);
         addLineToRoad(memoryModel, road, lineData);
         sceneModel->AddRoadToScene(road);
+        getMainWindow()->centralWidget()->repaint();
         ApplicationFacade::SendNotification(ApplicationFacade::UPDATE_TREE_VIEW);
     }
 }
