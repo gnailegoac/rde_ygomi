@@ -36,8 +36,8 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
         qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
+        ApplicationFacade::SendNotification(ApplicationFacade::UPDATE_TREE_VIEW);
     }
-
 }
 
 std::string Controller::RoadEditCommand::GetCommandName()
@@ -78,10 +78,8 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         updateRoadConnection(fromRoad, toRoad);
         // Remove toRoad from memory model
         memoryModel->RemoveRoad(toRoad);
-        // Update scene model
-        // Add merged fromRoad to scene model again
+        // Update scene model: Add merged fromRoad to scene model again
         sceneModel->AddRoadToScene(fromRoad);
-        // Update tree model
     }
 }
 
