@@ -42,13 +42,13 @@ public:
     void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance);
 
 private:
-    osg::ref_ptr<osg::Node>  buildLineNode(const Model::LinePtr& aLine);
+    osg::ref_ptr<osg::Node> buildLineNode(const Model::LinePtr& aLine);
     osg::ref_ptr<osg::Group> buildRoadNode(const std::shared_ptr<Model::Road>& aRoad);
     osg::ref_ptr<osg::Group> buildTrafficSignNode(const std::shared_ptr<Model::TrafficSign>& aTrafficSign);
     osg::ref_ptr<osg::Geode> createBox(const osg::Vec3d& aCenter, const std::string& aTexturePath);
     osg::ref_ptr<osg::Geometry> createLaneGeometry(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel);
-    osg::ref_ptr<osg::Node>  buildLaneNode(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel);
-    void  updateLaneNode(osg::ref_ptr<osg::Geode>& geode, const std::shared_ptr<Model::Lane>& aLane, const int& aLevel);
+    osg::ref_ptr<osg::Node> buildLaneNode(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel);
+    void updateLaneNode(osg::ref_ptr<osg::Geode>& geode, const std::shared_ptr<Model::Lane>& aLane, const int& aLevel);
     osg::ref_ptr<osg::Group> buildRoadModelNode(const std::shared_ptr<Model::Road>& aRoad);
     osg::ref_ptr<osg::Group> buildRoadMarksModelNode(const std::shared_ptr<Model::Road>& aRoad);
     double distance(const osg::Vec3& aP1, const osg::Vec3& aP2);
