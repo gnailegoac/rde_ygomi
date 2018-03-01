@@ -44,7 +44,10 @@ TEST(Line_Test, Generate_View_Points_Test)
 
     Model::Line line;
     line.SetGeodeticPointsList(std::make_shared<Model::PaintList>(paint));
-    //line.GenerateViewPaintMap(utm);
+    for(int i = 1; i < 6; ++i)
+    {
+        line.GenerateViewPaintMap(i);
+    }
 
-    //ASSERT_EQ(line.mPaintListMap->size(), 5);
+    ASSERT_EQ(line.mPaintListMap->size(), 5);
 }
