@@ -107,11 +107,8 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
     aFromLine->SetLength(mergedCurve->GetLength());
     const double samplingInterval = 0.5;
     aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), samplingInterval);
-    // Convert geodetic coordinates into ECEF coordinates
-    auto ecef = CRS::Factory().CreateEcefProjection(
-                               CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Ecef);
-    aFromLine->GenerateViewPaintMap(ecef);
+    // Clear the ViewPaintMap, will regenerate when needed.
+    aFromLine->GetMutablePaintListMap()->clear();
 }
 
 std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(

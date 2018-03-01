@@ -34,6 +34,7 @@ class TreeModel;
 
 namespace View
 {
+class DbValidationDialog;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -55,6 +56,7 @@ public:
     void JumpToCenter(const osg::Vec3d& aCenter);
     void EnableSaveAction(bool aEnable);
     double GetDistance();
+    DbValidationDialog* GetDbValidationDialog() const;
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
@@ -68,5 +70,7 @@ private:
     void setupConnections();
     Ui::MainWindow* ui;
     QTreeView* mRoadInfoView;
+    DbValidationDialog* mDbValidationDialog;
+
 };
 }
