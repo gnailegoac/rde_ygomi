@@ -273,7 +273,7 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
         case Qt::RightButton:
             this->setContextMenuPolicy(Qt::CustomContextMenu);
             connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-                    this, SLOT(showContextMenu(const QPoint&)));
+                    this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
             return;
         default:
             break;
@@ -396,6 +396,7 @@ void View::OsgWidget::showContextMenu(const QPoint &aPoint)
         connect(&mergeAction, &QAction::triggered, [=](){
             const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
+            Service::RoadEditParameters::Instance()->ClearSelectedElement();
             ApplicationFacade::SendNotification(ApplicationFacade::MERGE_ROAD, &roadsId);
         });
         contextMenu.addAction(&mergeAction);
