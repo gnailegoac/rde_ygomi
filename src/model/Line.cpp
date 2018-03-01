@@ -24,9 +24,14 @@ Model::Line::Line():
     mLength(0.0),
     mLane(nullptr),
     mGeodeticPointsList(std::make_shared<PaintList>()),
-    mPaintListMap(std::make_shared<ViewPaintMap>())
+    mPaintListMap(std::make_shared<ViewPaintMap>()),
+    mSimplingLevelMap(std::make_shared<SimplingLevelMap>())
 {
-
+    mSimplingLevelMap->insert(std::make_pair<std::uint8_t, double>(1, 2.0));
+    mSimplingLevelMap->insert(std::make_pair<std::uint8_t, double>(2, 1.0));
+    mSimplingLevelMap->insert(std::make_pair<std::uint8_t, double>(3, 0.5));
+    mSimplingLevelMap->insert(std::make_pair<std::uint8_t, double>(4, 0.2));
+    mSimplingLevelMap->insert(std::make_pair<std::uint8_t, double>(5, 0.1));
 }
 
 Model::Line::~Line()
@@ -179,7 +184,11 @@ Model::PaintListPtr Model::Line::GetPaintListByLevel(std::uint8_t aLevel)
     {
         return mPaintListMap->at(aLevel);
     }
-
+    if(0 != mSimplingLevelMap->count(aLevel))
+    {
+        GenerateViewPaintMap(aLevel);
+        return mPaintListMap->at(aLevel);
+    }
     return nullptr;
 }
 
@@ -193,15 +202,12 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
     return mPaintListMap->at(aLevel);
 }
 
-void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer)
+void Model::Line::GenerateViewPaintMap(std::uint8_t aLevel)
 {
-    // map viewer needs level 1-5 data.
-    mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(3, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(4, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(5, std::make_shared<PaintList>()));
-
+    mPaintListMap->insert(std::make_pair(aLevel, std::make_shared<PaintList>()));
+    auto ecef = CRS::Factory().CreateEcefProjection(
+                                CRS::CoordinateType::Wgs84,
+                                CRS::CoordinateType::Ecef);
     for (Point3DListPtr& geodeticPoints : *mGeodeticPointsList)
     {
         Point3DListPtr points = std::make_shared<Point3DList>();
@@ -212,16 +218,11 @@ void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform
             double lon = p->GetX();
             double lat = p->GetY();
             double ele = p->GetZ();
-            aTransformer->Transform(lon, lat, ele);
+            ecef->Transform(lon, lat, ele);
             points->push_back(std::make_shared<Point3D>(lon, lat, ele));
         }
-
         // Down-sample points with Douglas-Peucker algorithm
-        mPaintListMap->at(1)->push_back(Model::DouglasPeucker::Simplify(points, 2));
-        mPaintListMap->at(2)->push_back(Model::DouglasPeucker::Simplify(points, 1));
-        mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.5));
-        mPaintListMap->at(4)->push_back(Model::DouglasPeucker::Simplify(points, 0.2));
-        mPaintListMap->at(5)->push_back(Model::DouglasPeucker::Simplify(points, 0.1));
+        mPaintListMap->at(aLevel)->push_back(Model::DouglasPeucker::SimplifyS(points, mSimplingLevelMap->at(aLevel)));
     }
 }
 
