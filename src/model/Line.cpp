@@ -202,38 +202,6 @@ Model::PaintListPtr Model::Line::GetMutablePaintListByLevel(std::uint8_t aLevel)
     return mPaintListMap->at(aLevel);
 }
 
-void Model::Line::GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer)
-{
-    // map viewer needs level 1-5 data.
-    mPaintListMap->insert(std::make_pair(1, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(2, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(3, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(4, std::make_shared<PaintList>()));
-    mPaintListMap->insert(std::make_pair(5, std::make_shared<PaintList>()));
-
-    for (Point3DListPtr& geodeticPoints : *mGeodeticPointsList)
-    {
-        Point3DListPtr points = std::make_shared<Point3DList>();
-        points->reserve(geodeticPoints->size());
-
-        for (auto& p : *geodeticPoints)
-        {
-            double lon = p->GetX();
-            double lat = p->GetY();
-            double ele = p->GetZ();
-            aTransformer->Transform(lon, lat, ele);
-            points->push_back(std::make_shared<Point3D>(lon, lat, ele));
-        }
-
-        // Down-sample points with Douglas-Peucker algorithm
-        mPaintListMap->at(1)->push_back(Model::DouglasPeucker::SimplifyS(points, 2));
-        mPaintListMap->at(2)->push_back(Model::DouglasPeucker::Simplify(points, 1));
-        mPaintListMap->at(3)->push_back(Model::DouglasPeucker::Simplify(points, 0.5));
-        mPaintListMap->at(4)->push_back(Model::DouglasPeucker::Simplify(points, 0.2));
-        mPaintListMap->at(5)->push_back(Model::DouglasPeucker::Simplify(points, 0.1));
-    }
-}
-
 void Model::Line::GenerateViewPaintMap(std::uint8_t aLevel)
 {
     mPaintListMap->insert(std::make_pair(aLevel, std::make_shared<PaintList>()));
@@ -253,7 +221,7 @@ void Model::Line::GenerateViewPaintMap(std::uint8_t aLevel)
             ecef->Transform(lon, lat, ele);
             points->push_back(std::make_shared<Point3D>(lon, lat, ele));
         }
-
+        // Down-sample points with Douglas-Peucker algorithm
         mPaintListMap->at(aLevel)->push_back(Model::DouglasPeucker::SimplifyS(points, mSimplingLevelMap->at(aLevel)));
     }
 }

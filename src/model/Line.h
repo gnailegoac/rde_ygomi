@@ -69,7 +69,6 @@ public:
     ViewPaintMapPtr GetMutablePaintListMap();
     PaintListPtr GetPaintListByLevel(std::uint8_t aLevel);
     PaintListPtr GetMutablePaintListByLevel(std::uint8_t aLevel);
-    void GenerateViewPaintMap(std::unique_ptr<CRS::ICoordinateTransform>& aTransformer);
     void GenerateViewPaintMap(std::uint8_t aLevel);
 
     CurveType GetLineType() const;
