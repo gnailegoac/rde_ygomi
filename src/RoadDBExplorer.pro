@@ -161,8 +161,15 @@ FORMS    += view/MainWindow.ui \
 IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
                $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
 
-resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
-resource_files.files += $${IMAGE_FILES}
+trafficSign_resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
+trafficSign_resource_files.files += $${IMAGE_FILES}
 
-INSTALLS += resource_files
+icon_files.path = $$OUT_PWD/resource
+icon_files.files += $$files(resource/RoadSurface.png) \
+                        $$files(resource/WarningIcon.png)
+
+config_files.path = $$OUT_PWD/resource/ValidationConfiger
+config_files.files += $$files(resource/ValidationConfiger/*)
+
+INSTALLS += trafficSign_resource_files icon_files config_files
 

@@ -349,7 +349,7 @@ void View::MainWindowMediator::closeRoadRendering()
 
 bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
 {
-    QString config = "../src/resource/ValidationConfiger";
+    QString config = "resource/ValidationConfiger";
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");

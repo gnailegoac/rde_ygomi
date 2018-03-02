@@ -308,7 +308,7 @@ osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::sha
     geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
     geometry->addPrimitiveSet(tris);
     geometry->setTexCoordArray(0, textureCoords.get());
-    std::string path = "../src/resource/RoadSurface.png";
+    std::string path = "resource/RoadSurface.png";
     createRoadTexture(path, geometry);
     return geometry;
 }
