@@ -208,7 +208,6 @@ void Model::DbRepository::queryCurves(std::shared_ptr<MemoryModel>& aMemoryModel
 
                     nurbsCurve->SetCurveId(curveId);
                     nurbsCurve->SetLength(length);
-                    nurbsCurve->SetCurveId(curveId);
                     nurbsCurve->SetIndexInLine(query.getColumn(2).getUInt());
                     nurbsCurve->SetCurveType(CurveType(query.getColumn(3).getUInt()));
                     nurbsCurve->SetWidth(static_cast<std::uint8_t>(query.getColumn(4).getInt()));

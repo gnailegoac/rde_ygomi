@@ -231,40 +231,67 @@ bool Model::TreeItem::changeLaneInfo(const std::shared_ptr<Model::MemoryModel>& 
     {
         std::uint64_t laneId = mParent->Data(1).toULongLong();
         LanePtr lanePtr = aMemoryModel->GetLaneById(laneId);
+        std::uint64_t oldLaneId = mData[1].toULongLong();
+        LanePtr oldLanePtr = aMemoryModel->GetLaneById(oldLaneId);
         if (lanePtr && aValue.canConvert(QMetaType::ULongLong))
         {
             std::uint64_t newLaneId = aValue.toULongLong();
             LanePtr newLanePtr = aMemoryModel->GetLaneById(newLaneId);
-            if (newLanePtr)
+            if (ItemName::scPreLaneId == mData[0].toString())
             {
-                if (ItemName::scPreLaneId == mData[0].toString())
+                // To change predecessor lane id.
+                lanePtr->SetPredecessorLaneId(newLaneId);
+                if (newLanePtr)
                 {
-                    // To change predecessor lane id.
-                    lanePtr->SetPredecessorLaneId(newLaneId);
                     newLanePtr->SetSuccessorLaneId(laneId);
-                    dataChanged = true;
                 }
-                else if (ItemName::scSuccLaneId == mData[0].toString())
+                else if (oldLanePtr)
                 {
-                    // To change successor lane id.
-                    lanePtr->SetSuccessorLaneId(newLaneId);
+                    oldLanePtr->SetSuccessorLaneId(0);
+                }
+                dataChanged = true;
+            }
+            else if (ItemName::scSuccLaneId == mData[0].toString())
+            {
+                // To change successor lane id.
+                lanePtr->SetSuccessorLaneId(newLaneId);
+                if (newLanePtr)
+                {
                     newLanePtr->SetPredecessorLaneId(laneId);
-                    dataChanged = true;
                 }
-                else if (ItemName::scLeftLaneId == mData[0].toString())
+                else if (oldLanePtr)
                 {
-                    // To change left lane id.
-                    lanePtr->SetLeftLaneId(newLaneId);
+                    oldLanePtr->SetPredecessorLaneId(0);
+                }
+                dataChanged = true;
+            }
+            else if (ItemName::scLeftLaneId == mData[0].toString())
+            {
+                // To change left lane id.
+                lanePtr->SetLeftLaneId(newLaneId);
+                if (newLanePtr)
+                {
                     newLanePtr->SetRightLaneId(laneId);
-                    dataChanged = true;
                 }
-                else if (ItemName::scRightLaneId == mData[0].toString())
+                else if (oldLanePtr)
                 {
-                    // To change right lane id.
-                    lanePtr->SetRightLaneId(newLaneId);
-                    newLanePtr->SetLeftLaneId(laneId);
-                    dataChanged = true;
+                    oldLanePtr->SetRightLaneId(0);
                 }
+                dataChanged = true;
+            }
+            else if (ItemName::scRightLaneId == mData[0].toString())
+            {
+                // To change right lane id.
+                lanePtr->SetRightLaneId(newLaneId);
+                if (newLanePtr)
+                {
+                    newLanePtr->SetLeftLaneId(laneId);
+                }
+                else if (oldLanePtr)
+                {
+                    oldLanePtr->SetLeftLaneId(0);
+                }
+                dataChanged = true;
             }
         }
     }

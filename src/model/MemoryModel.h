@@ -66,6 +66,8 @@ public:
     std::uint64_t GenerateNewLaneId(const std::int64_t& aRoadId);
     std::uint64_t GenerateNewRoadId(const std::int64_t& aTileId);
 
+    void RemoveRoad(const Model::RoadPtr& aRoad);
+
 private:
     TileMapPtr mTileMap;
     CurveIdMapPtr mCurveIdMap;

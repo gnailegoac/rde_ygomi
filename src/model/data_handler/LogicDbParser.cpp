@@ -65,17 +65,17 @@ bool Model::LogicDbParser::createTopology(MemoryModelPtr& aMemoryModel)
 {
     for (size_t i = 0; i < mLogicDbFileList->size(); i++)
     {
-         DbRepositoryPtr dbRepository = std::make_shared<DbRepository>(mLogicDbFileList->at(i));
+        DbRepositoryPtr dbRepository = std::make_shared<DbRepository>(mLogicDbFileList->at(i));
 
-         if (!dbRepository->InitializeDataBase())
-         {
-             return false;
-         }
+        if (!dbRepository->InitializeDataBase())
+        {
+            return false;
+        }
 
-         if(!dbRepository->QueryTopology(aMemoryModel))
-         {
-             return false;
-         }
+        if(!dbRepository->QueryTopology(aMemoryModel))
+        {
+            return false;
+        }
     }
 
     return true;
@@ -88,8 +88,8 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
 
     // Convert geodetic coordinates into ECEF coordinates
     auto ecef = CRS::Factory().CreateEcefProjection(
-                               CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Ecef);
+                                CRS::CoordinateType::Wgs84,
+                                CRS::CoordinateType::Ecef);
 
     for (auto& itorTile : *tileMap)
     {
@@ -104,7 +104,6 @@ bool Model::LogicDbParser::createViewMap(MemoryModelPtr& aMemoryModel)
             LinePtr line = itorLine.second;
             line->SortCurve();
             line->CreateGeodeticPointsList(referencePoint, samplingInterval);
-            line->GenerateViewPaintMap(ecef);
         }
 
         // Generate traffic sign map view

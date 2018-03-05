@@ -14,6 +14,8 @@
 #include "SceneModel.h"
 #include "model/Lane.h"
 #include "model/Line.h"
+#include "model/Utilities.h"
+#include "model/MemoryModel.h"
 
 #include <osg/Material>
 #include <osg/LineWidth>
@@ -37,7 +39,8 @@ const static float VIEW_SIGN_LENGTH = 2.0;
 }
 
 Model::SceneModel::SceneModel() :
-    mSceneModelRoot(new osg::Group)
+    mSceneModelRoot(new osg::Group),
+    mLevel(1)
 {
     mSceneModelRoot->getOrCreateStateSet()->setMode(GL_LIGHTING,
                                                     osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
@@ -60,6 +63,13 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
 {
     if (mRoadNodeMap.find(aRoadId) != mRoadNodeMap.end())
     {
+        // Should remove line from mLineNodeMap frist.
+        std::vector<osg::Node*> lineNodeList = GetLineNodesByRoadNode(mRoadNodeMap[aRoadId]);
+        for (const auto& lineNode : lineNodeList)
+        {
+            uint64_t lineId = GetIdByNodeName(lineNode->getName());
+            mLineNodeMap.erase(lineId);
+        }
         mSceneModelRoot->removeChild(mRoadNodeMap[aRoadId].release());
         mRoadNodeMap.erase(aRoadId);
     }
@@ -83,7 +93,7 @@ void Model::SceneModel::RemoveTrafficSignFromScene(const std::uint64_t& aTraffic
 
 osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& aLine)
 {
-    Model::PaintListPtr viewPointListPtr = aLine->GetPaintListByLevel(2);
+    Model::PaintListPtr viewPointListPtr = aLine->GetPaintListByLevel(mLevel);
     if(viewPointListPtr->size() == 0)
     {
         return nullptr;
@@ -237,6 +247,101 @@ void Model::SceneModel::RemoveRoadModelFromScene()
         mSceneModelRoot->removeChild((roadNode.second).release());
     }
     mRoadNodeMap.clear();
+    // TODO: shall we clear lineNodeMap?
+}
+
+osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel)
+{
+    Model::LinePtr rightLine = aLane->GetRightLine();
+    Model::LinePtr leftLine = aLane->GetLeftLine();
+    Model::PaintListPtr rightLinePointListPtr = rightLine->GetPaintListByLevel(aLevel);
+    Model::PaintListPtr leftLinePointListPtr = leftLine->GetPaintListByLevel(aLevel);
+    if(rightLinePointListPtr->size() == 0 || leftLinePointListPtr->size() == 0)
+    {
+        return NULL;
+    }
+
+    osg::ref_ptr<osg::Vec3Array> vertexArray = new osg::Vec3Array;
+    osg::ref_ptr<osg::Vec3Array> normalArray = new osg::Vec3Array;
+    osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
+    osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+    osg::ref_ptr<osg::Vec2Array> textureCoords = new osg::Vec2Array;
+    for (Point3DListPtr& points : *rightLinePointListPtr)
+    {
+        if (0 == points->size())
+        {
+            continue;
+        }
+        for (auto& point : *points)
+        {
+            osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+            if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
+            {
+                continue;
+            }
+            vertexArray->push_back(vec);
+            textureCoords->push_back(osg::Vec2(1, 1));
+        }
+    }
+    int rightLinePointsNum = vertexArray->size();
+    for (Point3DListPtr& points : *leftLinePointListPtr)
+    {
+        if (0 == points->size())
+        {
+            continue;
+        }
+        for (auto& point : *points)
+        {
+            osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+            if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
+            {
+                continue;
+            }
+            vertexArray->push_back(vec);
+            textureCoords->push_back(osg::Vec2(0, 0));
+        }
+    }
+
+    osg::ref_ptr<osg::DrawElementsUInt> tris = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    if(!createRoadTriangles(vertexArray, rightLinePointsNum, tris))
+    {
+        return NULL;
+    }
+
+    normalArray->push_back(osg::Vec3d(0.0, 0.0, 1.0));
+    colorArray->push_back(osg::Vec4d(0.9, 0.9, 0.9, 0.5));
+    geometry->setVertexArray(vertexArray);
+    geometry->setNormalArray(normalArray);
+    geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+    geometry->setColorArray(colorArray);
+    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+    geometry->addPrimitiveSet(tris);
+    geometry->setTexCoordArray(0, textureCoords.get());
+    std::string path = "../src/resource/RoadSurface.png";
+    createRoadTexture(path, geometry);
+    return geometry;
+}
+
+osg::ref_ptr<osg::Node> Model::SceneModel::buildLaneNode(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel)
+{
+    osg::ref_ptr<osg::Geometry> geometry = createLaneGeometry(aLane, aLevel);
+    if(!geometry)
+    {
+        return NULL;
+    }
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->addDrawable(geometry.get());
+    return geode;
+}
+
+void Model::SceneModel::updateLaneNode(osg::ref_ptr<osg::Geode>& geode, const std::shared_ptr<Model::Lane>& aLane, const int& aLevel)
+{
+    osg::ref_ptr<osg::Geometry> geometry = createLaneGeometry(aLane, aLevel);
+    if(!geometry)
+    {
+        return;
+    }
+    geode->addDrawable(geometry.get());
 }
 
 osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadModelNode(const std::shared_ptr<Model::Road>& aRoad)
@@ -246,76 +351,13 @@ osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadModelNode(const std::shared
     Model::LaneListPtr laneListptr = aRoad->GetLaneList();
     for(const auto& lane : *laneListptr.get())
     {
-        Model::LinePtr rightLine = lane->GetRightLine();
-        Model::LinePtr leftLine = lane->GetLeftLine();
-        Model::PaintListPtr rightLinePointListPtr = rightLine->GetPaintListByLevel(2);
-        Model::PaintListPtr leftLinePointListPtr = leftLine->GetPaintListByLevel(2);
-        if(rightLinePointListPtr->size() == 0 || leftLinePointListPtr->size() == 0)
+        osg::ref_ptr<osg::Node> laneNode = buildLaneNode(lane, mLevel);
+        if(laneNode)
         {
-            continue;
+            roadNode->addChild(laneNode.get());
+            std::uint64_t laneId = lane-> GetLaneId();
+            mLaneNodeMap[laneId] = laneNode;
         }
-
-        osg::ref_ptr<osg::Vec3Array> vertexArray = new osg::Vec3Array;
-        osg::ref_ptr<osg::Vec3Array> normalArray = new osg::Vec3Array;
-        osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
-        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-        osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
-        osg::ref_ptr<osg::Vec2Array> textureCoords = new osg::Vec2Array;
-        for (Point3DListPtr& points : *rightLinePointListPtr)
-        {
-            if (0 == points->size())
-            {
-                continue;
-            }
-            for (auto& point : *points)
-            {
-                osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
-                if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
-                {
-                    continue;
-                }
-                vertexArray->push_back(vec);
-                textureCoords->push_back(osg::Vec2(1, 1));
-            }
-        }
-        int rightLinePointsNum = vertexArray->size();
-        for (Point3DListPtr& points : *leftLinePointListPtr)
-        {
-            if (0 == points->size())
-            {
-                continue;
-            }
-            for (auto& point : *points)
-            {
-                osg::Vec3d vec(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
-                if(vertexArray->size() > 0 && distance((*vertexArray)[vertexArray->size() - 1], vec) < 0.1)
-                {
-                    continue;
-                }
-                vertexArray->push_back(vec);
-                textureCoords->push_back(osg::Vec2(0, 0));
-            }
-        }
-
-        osg::ref_ptr<osg::DrawElementsUInt> tris = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
-        if(!createRoadTriangles(vertexArray, rightLinePointsNum, tris))
-        {
-            continue;
-        }
-
-        normalArray->push_back(osg::Vec3d(0.0, 0.0, 1.0));
-        colorArray->push_back(osg::Vec4d(0.9, 0.9, 0.9, 0.5));
-        geometry->setVertexArray(vertexArray);
-        geometry->setNormalArray(normalArray);
-        geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
-        geometry->setColorArray(colorArray);
-        geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-        geometry->addPrimitiveSet(tris);
-        geometry->setTexCoordArray(0, textureCoords.get());
-        std::string path = "../src/resource/RoadSurface.png";
-        createRoadTexture(path, geometry);
-        geode->addDrawable(geometry.get());
-        roadNode->addChild(geode.get());
     }
     return roadNode;
 }
@@ -407,7 +449,7 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
     double s = 1000;
     double t = 100;
     const double widthMin = 1.0;
-    const double widthMax = 15.0;
+    const double widthMax = 10.0;
     if(aDistance > s)
     {
         width = widthMin;
@@ -426,5 +468,111 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
     {
         osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
         geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
+    }
+}
+
+uint64_t Model::SceneModel::GetIdByNodeName(const std::string& aNodeName)
+{
+    std::vector<std::string> results;
+    results = strings::Split(aNodeName, ":");
+    if(results.size() != 2)
+    {
+        return 0;
+    }
+
+    return QString::fromStdString(results[1]).toULong();
+}
+
+std::vector<osg::Node*> Model::SceneModel::GetLineNodesByRoadNode(osg::Node* aNode)
+{
+    std::vector<osg::Node*> lineNodeList;
+    osg::Group* roadNode = dynamic_cast<osg::Group*>(aNode);
+    for(unsigned int i = 0; i < roadNode->getNumChildren(); ++i)
+    {
+        osg::Group* laneNode = dynamic_cast<osg::Group*>(roadNode->getChild(i));
+        for (unsigned int j = 0; j < laneNode->getNumChildren(); ++j)
+        {
+            osg::Node* lineNode = laneNode->getChild(j);
+            lineNodeList.push_back(lineNode);
+        }
+    }
+
+    return lineNodeList;
+}
+
+std::uint8_t Model::SceneModel::getLevel(const double& aDistance)
+{
+    if(aDistance >= 3000)
+    {
+        return 1;
+    }
+    else if(aDistance < 3000 && aDistance > 1500)
+    {
+        return 2;
+    }
+    else if(aDistance <= 1500 && aDistance > 1000)
+    {
+        return 3;
+    }
+    else if(aDistance <= 1000 && aDistance > 400)
+    {
+        return 4;
+    }
+    else if(aDistance <= 400)
+    {
+        return 5;
+    }
+    return 0;
+}
+
+void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance)
+{
+    RedrawRoadMarks(aDistance);
+
+    std::uint8_t level = getLevel(aDistance);
+    if(mLevel == level)
+    {
+        return;
+    }
+    mLevel = level;
+
+    for(auto& node : mLineNodeMap)
+    {
+        osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
+        geode->removeDrawables(0, geode->getNumDrawables());
+
+        std::uint64_t lineId = node.first;
+        std::shared_ptr<Model::Line> line = aMemoryModel->GetLineById(lineId);
+        Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(level);
+        if(pointListPtr->size() == 0)
+        {
+            return;
+        }
+        for (Point3DListPtr& points : *pointListPtr)
+        {
+            if (0 == points->size())
+            {
+                continue;
+            }
+            osg::ref_ptr<osg::Vec3dArray> vertexArray = new osg::Vec3dArray;
+            for (auto& point : *points)
+            {
+                vertexArray->push_back(osg::Vec3d(point->GetX(), point->GetY(), point->GetZ()));
+            }
+            osg::Geometry* geometry = new osg::Geometry;
+            geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::LINE_STRIP, 0, vertexArray->size()));
+            geometry->setVertexArray(vertexArray);
+            geode->addDrawable(geometry);
+        }
+        geode->dirtyBound();
+    }
+    for(auto& node : mLaneNodeMap)
+    {
+        osg::ref_ptr<osg::Geode> geode = dynamic_cast<osg::Geode*>((node.second).get());
+        geode->removeDrawables(0, geode->getNumDrawables());
+
+        std::uint64_t laneId = node.first;
+        std::shared_ptr<Model::Lane> lane = aMemoryModel->GetLaneById(laneId);
+        updateLaneNode(geode, lane, level);
     }
 }

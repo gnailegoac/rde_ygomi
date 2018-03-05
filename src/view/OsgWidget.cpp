@@ -23,7 +23,7 @@
 #include <QPainter>
 #include <QWheelEvent>
 #include <QGLFormat>
-
+#include <QMenu>
 #include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
@@ -44,7 +44,7 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include "PickHandler.h"
-
+#include "service/RoadEditParameters.h"
 #include "facade/ApplicationFacade.h"
 #include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
@@ -146,12 +146,7 @@ void View::OsgWidget::Refresh()
 
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
-    osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
-    osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
-    osg::Vec3d center = eye - direction * 15000.0;
-    osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
-    mView->getCameraManipulator()->setHomePosition(eye, center, up);
-    mView->home();
+    mView->getCameraManipulator()->setByMatrix(aMatrix);
     repaint();
 }
 
@@ -210,16 +205,21 @@ void View::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
-    if(aEvent->key() == Qt::Key_D)
+    if (aEvent->key() == Qt::Key_D)
     {
         osgDB::writeNodeFile( *mViewer->getView(0)->getSceneData(),
                               "./tmp/sceneGraph.osg" );
 
         return;
     }
-    else if(aEvent->key() == Qt::Key_H)
+    else if (aEvent->key() == Qt::Key_H)
     {
         this->onHome();
+        return;
+    }
+    else if (aEvent->key() == Qt::Key_Control)
+    {
+        Service::RoadEditParameters::Instance()->EnableMultiSelectMode(true);
         return;
     }
 
@@ -228,6 +228,11 @@ void View::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 
 void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 {
+    if (aEvent->key() == Qt::Key_Control)
+    {
+        Service::RoadEditParameters::Instance()->EnableMultiSelectMode(false);
+        return;
+    }
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
@@ -266,11 +271,14 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             aButton = 2;
             break;
         case Qt::RightButton:
-            aButton = 3;
-            break;
+            this->setContextMenuPolicy(Qt::CustomContextMenu);
+            connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                    this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
+            return;
         default:
             break;
     }
+
     mSyncMap = true;
     auto aPixelRatio = this->devicePixelRatio();
     this->getEventQueue()->mouseButtonPress(static_cast<float>(aEvent->x() * aPixelRatio),
@@ -375,4 +383,26 @@ void View::OsgWidget::notifyCameraChange()
     osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
+}
+
+void View::OsgWidget::showContextMenu(const QPoint &aPoint)
+{
+    QPoint globalPos = this->mapToGlobal(aPoint);
+    QMenu contextMenu(this);
+    QAction mergeAction("Merge");
+    if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
+        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+    {
+        connect(&mergeAction, &QAction::triggered, [=](){
+            const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
+            std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
+            Service::RoadEditParameters::Instance()->ClearSelectedElement();
+            ApplicationFacade::SendNotification(ApplicationFacade::MERGE_ROAD, &roadsId);
+        });
+        contextMenu.addAction(&mergeAction);
+    }
+    if (contextMenu.actions().size() > 0)
+    {
+        contextMenu.exec(globalPos);
+    }
 }
