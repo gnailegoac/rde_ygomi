@@ -57,6 +57,8 @@ public:
     void EnableSaveAction(bool aEnable);
     double GetDistance();
     DbValidationDialog* GetDbValidationDialog() const;
+    //0 status means pass; 1 warning; 2 error.
+    void setActionWarningIcon(unsigned int aStatus);
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;

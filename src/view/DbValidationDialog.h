@@ -31,10 +31,16 @@ public:
     ~DbValidationDialog();
     bool UpdateData(const QString& aFilePath);
     void ResetPos();
-    bool IsInterrupt();
+    void setBtnShowDetailsEnabled(bool aIsEnabled);
+    void setBtnContinueEnabled(bool aIsEnabled);
+    void setBtnCancelEnabled(bool aIsEnabled);
+    void setLabelWarningVisible(bool aIsVisible);
+    void getErrorNumberOfLevel(std::map<std::string, std::uint32_t>& aErrorNumberOfLevelMap);
 
 private slots:
     void onShowDetails();
+    void onContinue();
+    void onCancel();
 
 private:
     void initTableOverView();

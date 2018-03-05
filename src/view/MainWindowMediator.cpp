@@ -361,13 +361,32 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
         getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
         return false;
     }
-    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    else
     {
-        getMainWindow()->GetDbValidationDialog()->show();
-        return false;
+        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
+        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(0);
+        }
+        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(1);
+        }
+        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        {
+            getMainWindow()->setActionWarningIcon(2);
+            getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);
+            getMainWindow()->GetDbValidationDialog()->setLabelWarningVisible(true);
+            if(!getMainWindow()->GetDbValidationDialog()->exec())
+            {
+                return false;
+            }
+        }
     }
     return true;
 }
+
 
 void View::MainWindowMediator::onRemove()
 {

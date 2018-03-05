@@ -25,11 +25,13 @@ View::DbValidationDialog::DbValidationDialog(QWidget* parent) :
 {
     mUi->setupUi(this);
     setWindowTitle("Validation Information");
+    setMaximumSize(QSize(1210, 645));
     resize(410, 240);
     connect(mUi->pBtnShowDetails, SIGNAL(clicked()), this, SLOT(onShowDetails()));
+    connect(mUi->pBtnContinue, SIGNAL(clicked()), this, SLOT(onContinue()));
+    connect(mUi->pBtnCancel, SIGNAL(clicked()), this, SLOT(onCancel()));
     initTableOverView();
     initTableDetails();
-    setMaximumSize(QSize(1210, 645));
 }
 
 View::DbValidationDialog::~DbValidationDialog()
@@ -52,6 +54,16 @@ void View::DbValidationDialog::onShowDetails()
         this->resize(size.width() - deltaW, size.height() - deltaH);
     }
     move(((QWidget*)parent())->pos());
+}
+
+void View::DbValidationDialog::onContinue()
+{
+    this->accept();
+}
+
+void View::DbValidationDialog::onCancel()
+{
+    this->reject();
 }
 
 void View::DbValidationDialog::initTableOverView()
@@ -201,11 +213,28 @@ void View::DbValidationDialog::ResetPos()
     move(((QWidget*)parent())->pos());
 }
 
-bool View::DbValidationDialog::IsInterrupt()
+void View::DbValidationDialog::setBtnShowDetailsEnabled(bool aIsEnabled)
 {
-    if((mUi->tableOverview->item(1, 1)->text()).compare("0") == 0)
-    {
-        return false;
-    }
-    return true;
+    mUi->pBtnShowDetails->setEnabled(aIsEnabled);
+}
+
+void View::DbValidationDialog::setBtnContinueEnabled(bool aIsEnabled)
+{
+    mUi->pBtnContinue->setEnabled(aIsEnabled);
+}
+
+void View::DbValidationDialog::setBtnCancelEnabled(bool aIsEnabled)
+{
+    mUi->pBtnCancel->setEnabled(aIsEnabled);
+}
+
+void View::DbValidationDialog::setLabelWarningVisible(bool aIsVisible)
+{
+    mUi->labelWarning->setVisible(aIsVisible);
+}
+
+void View::DbValidationDialog::getErrorNumberOfLevel(std::map<std::string, std::uint32_t>& aErrorNumberOfLevelMap)
+{
+    aErrorNumberOfLevelMap[std::string("Need To Verify")] = mUi->tableOverview->item(0, 1)->text().toInt();
+    aErrorNumberOfLevelMap[std::string("Serious Error")] = mUi->tableOverview->item(1, 1)->text().toInt();
 }

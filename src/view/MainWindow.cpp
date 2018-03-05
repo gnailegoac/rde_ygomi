@@ -225,10 +225,14 @@ void View::MainWindow::setupConnections()
         if(mDbValidationDialog->isHidden())
         {
             mDbValidationDialog->show();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
         else
         {
             mDbValidationDialog->hide();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
     });
 }
@@ -371,4 +375,23 @@ double View::MainWindow::GetDistance()
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
 {
     return mDbValidationDialog;
+}
+
+void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
+{
+    if(aStatus == 0)
+    {
+        mDbValidationDialog->setBtnShowDetailsEnabled(false);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/pass.png")));
+    }
+    if(aStatus == 1)
+    {
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/warning.png")));
+    }
+    if(aStatus == 2)
+    {
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/error.png")));
+    }
 }
