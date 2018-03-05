@@ -434,25 +434,30 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     roadStateSet->setAttributeAndModes(blendFunc);
 }
 
-void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
+void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 {
-    double width = 0.0;
-    double s = 1000;
-    double t = 100;
-    const double widthMin = 1.0;
-    const double widthMax = 10.0;
-    if(aDistance > s)
+    float width = 1.0;
+    if(aLevel == 1)
     {
-        width = widthMin;
+        width = 1.0;
     }
-    else if(aDistance < t)
+    else if(aLevel == 2)
     {
-        width = widthMax;
+        width = 2.0;
+    }
+    else if (aLevel == 3)
+    {
+        width = 4.0;
+    }
+    else if(aLevel == 4)
+    {
+        width = 7.0;
     }
     else
     {
-        width = (s - aDistance) / (s - t) * widthMax;
+        width = 10.0;
     }
+
     osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
     lineWidth->setWidth(width);
     for(const auto& node : mLineNodeMap)
@@ -462,41 +467,15 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
     }
 }
 
-std::uint8_t Model::SceneModel::getLevel(const double& aDistance)
+void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const uint8_t& aLevel)
 {
-    if(aDistance >= 3000)
-    {
-        return 1;
-    }
-    else if(aDistance < 3000 && aDistance > 1500)
-    {
-        return 2;
-    }
-    else if(aDistance <= 1500 && aDistance > 1000)
-    {
-        return 3;
-    }
-    else if(aDistance <= 1000 && aDistance > 400)
-    {
-        return 4;
-    }
-    else if(aDistance <= 400)
-    {
-        return 5;
-    }
-    return 0;
-}
+    RedrawRoadMarks(aLevel);
 
-void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance)
-{
-    RedrawRoadMarks(aDistance);
-
-    std::uint8_t level = getLevel(aDistance);
-    if(mLevel == level)
+    if(mLevel == aLevel)
     {
         return;
     }
-    mLevel = level;
+    mLevel = aLevel;
 
     for(auto& node : mLineNodeMap)
     {
@@ -505,7 +484,7 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMe
 
         std::uint64_t lineId = node.first;
         std::shared_ptr<Model::Line> line = aMemoryModel->GetLineById(lineId);
-        Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(level);
+        Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(aLevel);
         if(pointListPtr->size() == 0)
         {
             return;
@@ -535,6 +514,6 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMe
 
         std::uint64_t laneId = node.first;
         std::shared_ptr<Model::Lane> lane = aMemoryModel->GetLaneById(laneId);
-        updateLaneNode(geode, lane, level);
+        updateLaneNode(geode, lane, aLevel);
     }
 }

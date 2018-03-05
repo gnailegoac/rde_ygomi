@@ -57,6 +57,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
+    result->get().push_back(ApplicationFacade::CHANGE_MAP);
     return NotificationNames(result);
 }
 
@@ -181,7 +182,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-        if(dbValidation(filePath))
+        //if(dbValidation(filePath))
         {
             getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
@@ -193,7 +194,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
-            if(dbValidation(folderPath.toStdString()))
+            //if(dbValidation(folderPath.toStdString()))
             {
                 getMainWindow()->EnableSaveAction(true);
                 ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
@@ -236,7 +237,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         if(sceneModel != nullptr && memoryModel != nullptr)
         {
-            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetDistance());
+            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
@@ -311,6 +312,17 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if(noteName == ApplicationFacade::CLOSE_ROAD_RENDERING)
     {
         closeRoadRendering();
+    }
+    else if (noteName == ApplicationFacade::CHANGE_MAP)
+    {
+        View::MainWindow* mainWindow = getMainWindow();
+        MainProxy* mainProxy = getMainProxy();
+        const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        if(sceneModel != nullptr && memoryModel != nullptr)
+        {
+            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
+        }
     }
 }
 

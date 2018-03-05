@@ -54,6 +54,7 @@ const std::string ApplicationFacade::NOTIFY_RESULT = "NotifyResult";
 const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile";
 const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
 const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering";
+const std::string ApplicationFacade::CHANGE_MAP = "ChangeMap";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {

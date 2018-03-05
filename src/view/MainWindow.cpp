@@ -362,10 +362,10 @@ void View::MainWindow::EnableSaveAction(bool aEnable)
     ui->menuExport->setEnabled(aEnable);
 }
 
-double View::MainWindow::GetDistance()
+uint8_t View::MainWindow::GetLevel()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
-    return viewer->GetDistance();
+    return viewer->GetLevel();
 }
 
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
