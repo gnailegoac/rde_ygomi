@@ -5,91 +5,87 @@
     [
         {
             "measureId": 50101,
-            "description": "Road table does not exist"
+            "description": "Road table does not exist or it's redundant."
         },
         {
             "measureId": 50102,
-            "description": "Segment table does not exist"
+            "description": "Segment table does not exist or it's redundant."
         },
         {
             "measureId": 50103,
-            "description": "Lane table does not exist"
+            "description": "Lane table does not exist or it's redundant."
         },
         {
             "measureId": 50104,
-            "description": "LaneConnection table does not exist"
+            "description": "LaneConnection table does not exist or it's redundant."
         },
         {
             "measureId": 50105,
-            "description": "Segment table does not exist"
+            "description": "Line table does not exist or it's redundant."
         },
         {
             "measureId": 50106,
-            "description": "Lane table does not exist"
+            "description": "Curve table does not exist or it's redundant."
         },
         {
             "measureId": 50107,
-            "description": "LaneConnection table does not exist"
+            "description": "TrafficSign table does not exist or it's redundant."
         },
         {
             "measureId": 50201,
-            "description": "Road table structure is incorrect"
+            "description": "Road table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50202,
-            "description": "Segment table structure is incorrect"
+            "description": "Segment table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50203,
-            "description": "Lane table structure is incorrect"
+            "description": "Lane table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50204,
-            "description": "LaneConnection table structure is incorrect"
+            "description": "LaneConnection table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
                 {
             "measureId": 50205,
-            "description": "Line table structure is incorrect"
+            "description": "Line table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50206,
-            "description": "Curve table structure is incorrect"
+            "description": "Curve table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50207,
-            "description": "TraffciSign table structure is incorrect"
+            "description": "TrafficSign table structure is incorrect (extra fields, missing fields, incorrect fields)."
         },
         {
             "measureId": 50301,
-            "description": "Road table field type err"
+            "description": "Road table field type error"
         },
         {
             "measureId": 50302,
-            "description": "Segment table field type err"
+            "description": "Segment table field type error"
         },
         {
             "measureId": 50303,
-            "description": "Lane table field type err"
+            "description": "Lane table field type error"
         },
         {
             "measureId": 50304,
-            "description": "LaneConnection table field type err"
+            "description": "LaneConnection table field type error"
         },
         {
             "measureId": 50305,
-            "description": "Line table field type err"
+            "description": "Line table field type error"
         },
         {
             "measureId": 50306,
-            "description": "Curve table field type err"
+            "description": "Curve table field type error"
         },
         {
             "measureId": 50307,
-            "description": "TraffciSign table field type err"
-        },
-        {
-            "measureId": 50310,
-            "description": "version table field type err"
+            "description": "TraffciSign table field type error"
         },
         {
             "measureId": 50401,
@@ -102,6 +98,14 @@
         {
             "measureId": 50403,
             "description": "Lane ID uniqueness."
+        },
+        {
+            "measureId": 50404,
+            "description": "LaneConnection srcID,dstID uniqueness."
+        },
+        {
+            "measureId": 50405,
+            "description": "Line ID uniqueness."
         },
         {
             "measureId": 50406,
@@ -129,7 +133,7 @@
         },
         {
             "measureId": 50505,
-            "description": "The AvgSlamTrace field of the Lane table does not exist in the ID field of the Line table."
+            "description": "The TrafficSignID field of the Lane table does not exist in the ID field of the TrafficSign table."
         },
         {
             "measureId": 50506,
@@ -152,6 +156,10 @@
             "description": "The SegID field of the TrafficSign table does not exist in the ID field of the Segment table."
         },
         {
+            "measureId": 50514,
+            "description": "The ID field of the TrafficSign table does not exist in the TrafficSignID field of the Lane table."
+        },
+        {
             "measureId": 50601,
             "description": "The Type value of the LaneConnection table is not in the range of (0,1,2,3)."
         },
@@ -169,95 +177,99 @@
         },
         {
             "measureId": 50702,
-            "description": "There are illegal characters in the ReferencePoint field of the Segment table.Allowed:,-.1234567890."
+            "description": "There are illegal characters existing in the ReferencePoint field of the Segment table.Allowed:,-.1234567890."
         },
         {
             "measureId": 50703,
-            "description": "There are illegal characters in the ID field of the Lane table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the ID field of the Lane table.Allowed:_1234567890."
         },
         {
             "measureId": 50704,
-            "description": "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the LLineID field of the Lane table.Allowed:_1234567890."
         },
         {
             "measureId": 50705,
-            "description": "There are illegal characters in the LLineID field of the Lane table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the LLineID field of the Lane table.Allowed:_1234567890."
         },
         {
             "measureId": 50706,
-            "description": "There are illegal characters in the AvgSlamTrace field of the Lane table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the AvgSlamTrace field of the Lane table.Allowed:_1234567890."
         },
         {
             "measureId": 50707,
-            "description": "There are illegal characters in the TrafficSignID field of the Lane table.Allowed:,-.1234567890."
+            "description": "There are illegal characters existing in the TrafficSignID field of the Lane table.Allowed:,_.1234567890."
         },
         {
             "measureId": 50708,
-            "description": "There are illegal characters in the Attribute field of the Lane table.Allowed:,-.1234567890."
+            "description": "There are illegal characters existing in the Attribute field of the Lane table.Allowed:,-.1234567890."
         },
         {
             "measureId": 50709,
-            "description": "There are illegal characters in the SrcID field of the LaneConnection table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the SrcID field of the LaneConnection table.Allowed:_1234567890."
         },
         {
             "measureId": 50710,
-            "description": "There are illegal characters in the DstID field of the LaneConnection table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the DstID field of the LaneConnection table.Allowed:_1234567890."
         },
         {
             "measureId": 50711,
-            "description": "There are illegal characters in the ID field of the Line table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the ID field of the Line table.Allowed:_1234567890."
         },
         {
             "measureId": 50712,
-            "description": "There are illegal characters in the LaneID field of the Line table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the LaneID field of the Line table.Allowed:_1234567890."
         },
         {
             "measureId": 50713,
-            "description": "There are illegal characters in the ID field of the Curve table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the ID field of the Curve table.Allowed:_1234567890."
         },
         {
             "measureId": 50714,
-            "description": "There are illegal characters in the LineID field of the Curve table.Allowed:_1234567890."
+            "description": "There are illegal characters existing in the LineID field of the Curve table.Allowed:_1234567890."
         },
         {
             "measureId": 50715,
-            "description": "There are illegal characters in the EquationDescription field of the Curve."
+            "description": "There are illegal characters existing in the EquationDescription field of the Curve."
         },
         {
             "measureId": 50716,
-            "description": "There are illegal characters in the Color field of the Curve table.Allowed:,-.1234567890."
+            "description": "There are illegal characters existing in the Color field of the Curve table.Allowed:,-.1234567890."
         },
         {
             "measureId": 50717,
-            "description": "There are illegal characters in the ID field of the TrafficSign table.Allowed:-.1234567890."
+            "description": "There are illegal characters existing in the ID field of the TrafficSign table.Allowed:_.1234567890."
         },
         {
             "measureId": 50718,
-            "description": "There are illegal characters in the GPS field of the TrafficSign table.Allowed:,.1234567890."
+            "description": "There are illegal characters existing in the GPS field of the TrafficSign table.Allowed:-,.1234567890."
         },
         {
             "measureId": 50801,
-            "description": "The ID/LaneID/Length of the Line table is not equal to 0 or Null or \"\" or 0.0"
+            "description": "The ID/LaneID/Length of the Line table should not be 0 or Null or \"\" or 0.0"
         },
         {
             "measureId": 50802,
-            "description": "The ID/LineID/EquationDescription/Length/Width of the Curve table is not equal to 0 or Null or \"\" or  0.0."
+            "description": "The ID/LineID/EquationDescription/Length/Width of the Curve table should not be 0 or Null or \"\" or  0.0."
+        },
+        {
+            "measureId": 50803,
+            "description": "All fields in Road table should not be 0 or Null or \"\"."
         },
         {
             "measureId": 50804,
-            "description": "The ID/ReferencePoint of the Segment table is not equal to 0 or Null or \"\" or 0,0,0."
+            "description": "The ID/ReferencePoint of the Segment table should not be 0 or Null or \"\" or 0,0,0."
         },
         {
             "measureId": 50806,
-            "description": "All of the TrafficSign table field should not equal to 0 or Null or \"\",except Confidence can be 0."
+            "description": "All fields in TrafficSign table should not be 0 or Null or \"\",except Confidence can be 0."
         },
         {
             "measureId": 50808,
-            "description": "All of the LaneConnection table field should not be Null or  \"\",except type field can be 0."
+            "description": "All fields in LaneConnection table should not be Null or \"\",except type field can be 0."
         },
         {
             "measureId": 50809,
-            "description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table is not equal to 0 or Null or \"\"."
+            "description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table should not be 0 or Null or \"\"."
         }
     ]
 }
