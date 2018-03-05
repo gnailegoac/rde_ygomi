@@ -48,36 +48,33 @@ class OsgWidget : public QOpenGLWidget
 public:
     OsgWidget(QWidget* aParent = 0,
               Qt::WindowFlags aFlag = 0);
-
     virtual ~OsgWidget();
-
     osg::Polytope GetPolytope();
     void Refresh();
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
     void JumpToCenter(const osg::Vec3d& aCenter);
     void SetSelectType(const Model::SelectType& aSelectType);
     double GetDistance();
+
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
     void paintGL() override;
     void resizeGL(int aWidth, int aHeight) override;
-
     void keyPressEvent(QKeyEvent* aEvent) override;
     void keyReleaseEvent(QKeyEvent* aEvent) override;
-
     void mouseMoveEvent(QMouseEvent* aEvent) override;
     void mousePressEvent(QMouseEvent* aEvent) override;
     void mouseReleaseEvent(QMouseEvent* aEvent) override;
     void wheelEvent(QWheelEvent* aEvent) override;
-
     bool event(QEvent* aEvent) override;
+
+private slots:
+    void showContextMenu(const QPoint& aPoint);
 
 private:
     bool isMouseButtonPressed(QMouseEvent*& aEvent, std::int32_t aButtonMask) const;
-
     virtual void onHome();
     virtual void onResize(int aWidth, int aHeight);
-
     osgGA::EventQueue* getEventQueue() const;
     void notifyCameraChange();
 

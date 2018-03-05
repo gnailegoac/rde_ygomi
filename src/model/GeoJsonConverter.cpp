@@ -55,7 +55,7 @@ QJsonArray Model::GeoJsonConverter::Convert(int aLevel, TileConstPtr& aTile)
         QJsonArray lanes;
 
         road["type"] = "road";
-        roadData["id"] = static_cast<double>(roadPtr->GetRoadId());
+        roadData["id"] = QString::number(roadPtr->GetRoadId());
         roadData["ndsId"] = static_cast<double>(aTile->GetTileId());
 
         for (const auto& it : *(roadPtr->GetLaneList()))

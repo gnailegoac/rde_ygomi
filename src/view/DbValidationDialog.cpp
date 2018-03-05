@@ -107,8 +107,12 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
         {
             continue;
         }
-        textContent += "<font size=""4"" color=""red""><b>" + tr("Error Code: ") + QString::number(i) + "</b></font><br>";
         QJsonObject ErrorCodeObject = value.toObject();
+        if(!ErrorCodeObject.value("Details").isArray())
+        {
+            continue;
+        }
+        textContent += "<font size=""4"" color=""red""><b>" + tr("Error Code: ") + QString::number(i) + "</b></font><br>";
         if(ErrorCodeObject.contains(QString("Description")))
         {
             QString description = ErrorCodeObject.value("Description").toString();
@@ -126,11 +130,6 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
             {
                 ++verifyLevelCount;
             }
-        }
-        if(!ErrorCodeObject.value("Details").isArray())
-        {
-            textContent += "<br><br>";
-            continue;
         }
         QJsonArray details = ErrorCodeObject.value("Details").toArray();
         textContent += "<br>" + space + tr("Details: ");

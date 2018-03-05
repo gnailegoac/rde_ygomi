@@ -14,6 +14,7 @@
 #include "SceneModel.h"
 #include "model/Lane.h"
 #include "model/Line.h"
+#include "model/Utilities.h"
 #include "model/MemoryModel.h"
 
 #include <osg/Material>
@@ -62,6 +63,13 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
 {
     if (mRoadNodeMap.find(aRoadId) != mRoadNodeMap.end())
     {
+        // Should remove line from mLineNodeMap frist.
+        std::vector<osg::Node*> lineNodeList = GetLineNodesByRoadNode(mRoadNodeMap[aRoadId]);
+        for (const auto& lineNode : lineNodeList)
+        {
+            uint64_t lineId = GetIdByNodeName(lineNode->getName());
+            mLineNodeMap.erase(lineId);
+        }
         mSceneModelRoot->removeChild(mRoadNodeMap[aRoadId].release());
         mRoadNodeMap.erase(aRoadId);
     }
@@ -239,6 +247,7 @@ void Model::SceneModel::RemoveRoadModelFromScene()
         mSceneModelRoot->removeChild((roadNode.second).release());
     }
     mRoadNodeMap.clear();
+    // TODO: shall we clear lineNodeMap?
 }
 
 osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel)
@@ -460,6 +469,35 @@ void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
         osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
         geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
     }
+}
+
+uint64_t Model::SceneModel::GetIdByNodeName(const std::string& aNodeName)
+{
+    std::vector<std::string> results;
+    results = strings::Split(aNodeName, ":");
+    if(results.size() != 2)
+    {
+        return 0;
+    }
+
+    return QString::fromStdString(results[1]).toULong();
+}
+
+std::vector<osg::Node*> Model::SceneModel::GetLineNodesByRoadNode(osg::Node* aNode)
+{
+    std::vector<osg::Node*> lineNodeList;
+    osg::Group* roadNode = dynamic_cast<osg::Group*>(aNode);
+    for(unsigned int i = 0; i < roadNode->getNumChildren(); ++i)
+    {
+        osg::Group* laneNode = dynamic_cast<osg::Group*>(roadNode->getChild(i));
+        for (unsigned int j = 0; j < laneNode->getNumChildren(); ++j)
+        {
+            osg::Node* lineNode = laneNode->getChild(j);
+            lineNodeList.push_back(lineNode);
+        }
+    }
+
+    return lineNodeList;
 }
 
 std::uint8_t Model::SceneModel::getLevel(const double& aDistance)
