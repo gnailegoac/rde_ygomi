@@ -1,13 +1,16 @@
 {
-    "configuration" : {
-        "name": "RoadDatabaseExplorer",
-        "outdir": "out",
-        "version": "0.1.0",
+    "name": "RoadDatabaseExplorer",
+    "version": "0.1.0",
+    "build": {
+        "outdir": "deploy/release",
         "make_tool": "qmake",
         "dev_user": "rde",
-        "channel": "devel",
-        "conan_server": "NEXUS",
-        "extra_lib_path": "/home/bamboo/Qt5.7.0/5.7/gcc_64/lib:/home/bamboo/Qt5.7.0/Tools/QtCreator/lib/qtcreator",
-        "env_path": "/home/bamboo/Qt5.7.0/5.7/gcc_64/bin:/home/bamboo/Qt5.7.0/Tools/QtCreator/bin"
+        "channel": "release"
+    },
+    "delpoy": {
+        "groupId": "com.ygomi.rdb.delivery",
+        "repositoryId": "aws-rdb-delivery-release",
+        "url": "https://10.74.29.190:8443/repository/gis-maven-repository-release/",
+        "dependencyUrl": "https://10.74.29.190:8443/repository/gis-maven-repository-release/com/ygomi/rdb/delivery/RoadDBExplorerDependency/1.0/RoadDBExplorerDependency-1.0.tar.gz"
     }
 }

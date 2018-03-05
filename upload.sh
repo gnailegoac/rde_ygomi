@@ -3,14 +3,14 @@
 set -e
 
 script_dir=$(dirname `readlink -f $0`)
-proj_name=$(grep -Po '(?<="name" : ")[^"]*' config.json)
-major_version=$(grep -Po '(?<="major_version" : ")[^"]*' config.json)
-out_path=$(grep -Po '(?<="outdir" : ")[^"]*' config.json)
-dev_user=$(grep -Po '(?<="dev_user" : ")[^"]*' config.json)
-channel=$(grep -Po '(?<="channel" : ")[^"]*' config.json)
+proj_name=$(grep -Po '(?<="name": ")[^"]*' config.json)
+major_version=$(grep -Po '(?<="major_version": ")[^"]*' config.json)
+out_path=$(grep -Po '(?<="outdir": ")[^"]*' config.json)
+dev_user=$(grep -Po '(?<="dev_user": ")[^"]*' config.json)
+channel=$(grep -Po '(?<="channel": ")[^"]*' config.json)
 conan_user=$1
 conan_passwd=$2
-conan_server=$(grep -Po '(?<="conan_server" : ")[^"]*' config.json)
+conan_server=$(grep -Po '(?<="conan_server": ")[^"]*' config.json)
 commit_id=`git rev-parse --short HEAD`
 echo ${commit_id}
 dt=$(date +%Y%m%d%H%M%S)

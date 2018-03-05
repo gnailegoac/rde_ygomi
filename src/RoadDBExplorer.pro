@@ -7,7 +7,7 @@
 QT       += core gui opengl webenginewidgets xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = RoadDBExplorer
+TARGET = RoadDatabaseExplorer
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -166,10 +166,15 @@ trafficSign_resource_files.files += $${IMAGE_FILES}
 
 icon_files.path = $$OUT_PWD/resource
 icon_files.files += $$files(resource/RoadSurface.png) \
-                        $$files(resource/WarningIcon.png)
+                    $$files(resource/WarningIcon.png)
 
 config_files.path = $$OUT_PWD/resource/ValidationConfiger
 config_files.files += $$files(resource/ValidationConfiger/*)
 
-INSTALLS += trafficSign_resource_files icon_files config_files
+target.path = $$OUT_PWD/../deploy/release/
+#trafficSign_resource_files.path += $$OUT_PWD/../deploy/release/resource/trafficsign/US_signs_pics_defines
+#icon_files.path += $$OUT_PWD/../deploy/release/resource
+#config_files.path += $$OUT_PWD/../deploy/release/resource/ValidationConfiger
+
+INSTALLS += trafficSign_resource_files icon_files config_files target
 
