@@ -24,7 +24,6 @@
 #include <QWheelEvent>
 #include <QGLFormat>
 #include <QMenu>
-#include <QMessageBox>
 #include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
@@ -147,12 +146,7 @@ void View::OsgWidget::Refresh()
 
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
-    osg::Vec3d eye(aMatrix(3, 0), aMatrix(3, 1), aMatrix(3, 2));
-    osg::Vec3d direction(aMatrix(2, 0), aMatrix(2, 1), aMatrix(2, 2));
-    osg::Vec3d center = eye - direction * 15000.0;
-    osg::Vec3d up(aMatrix(1, 0), aMatrix(1, 1), aMatrix(1, 2));
-    mView->getCameraManipulator()->setHomePosition(eye, center, up);
-    mView->home();
+    mView->getCameraManipulator()->setByMatrix(aMatrix);
     repaint();
 }
 
@@ -281,7 +275,7 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             {
                 this->setContextMenuPolicy(Qt::CustomContextMenu);
                 connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-                        this, SLOT(showContextMenu(const QPoint&)));
+                        this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
             }
             else
             {
@@ -412,6 +406,7 @@ void View::OsgWidget::showContextMenu(const QPoint &aPoint)
         {
             const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
+            Service::RoadEditParameters::Instance()->ClearSelectedElement();
             ApplicationFacade::SendNotification(ApplicationFacade::MERGE_ROAD, &roadsId);
         });
         contextMenu.addAction(&mergeAction);

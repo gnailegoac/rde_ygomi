@@ -15,7 +15,6 @@
 
 #include <CoordinateTransform/Factory.h>
 #include <PureMVC/PureMVC.hpp>
-#include <QDebug>
 
 #include <memory>
 
@@ -37,7 +36,6 @@ void Controller::RoadEditCommand::execute(const PureMVC::Interfaces::INotificati
         ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
         std::pair<uint64_t, uint64_t> selectPair =
                 *CommonFunction::ConvertToNonConstType<std::pair<uint64_t, uint64_t>>(aNotification.getBody());
-        qDebug() << "To merge road " << selectPair.first << "and " << selectPair.second;
         mergeRoad(selectPair.first, selectPair.second);
         ApplicationFacade::SendNotification(ApplicationFacade::UPDATE_TREE_VIEW);
     }
@@ -64,9 +62,8 @@ std::string Controller::RoadEditCommand::GetCommandName()
 
 void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const uint64_t& aToRoadId)
 {
-    // The pointer should all be valid if come here.
     // No need to check if the two roads are in the same tile.
-    // We will convert the points' geodetic coordinate to the same relative coordinate.
+    // Will transform the points' geodetic coordinate in the same relative coordinate frame.
     const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
     const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
     std::shared_ptr<Model::Road> fromRoad = memoryModel->GetRoadById(aFromRoadId);
@@ -76,21 +73,18 @@ void Controller::RoadEditCommand::mergeRoad(const uint64_t& aFromRoadId, const u
         // Remove road from scene model
         sceneModel->RemoveRoadFromScene(aFromRoadId);
         sceneModel->RemoveRoadFromScene(aToRoadId);
-        size_t laneCount = fromRoad->GetLaneListSize();
-        const Model::TilePtr& tile = fromRoad->GetTile();
         // Merge roads, update road1, remove road2
-        // 1. Merge line
         QVector<uint64_t> lineIdVec;
         for (const auto& lane : *(fromRoad->GetLaneList()))
         {
             uint64_t successorLaneId = lane->GetSuccessorLaneId();
             Model::LanePtr successorLane = toRoad->GetLaneById(successorLaneId);
+            // Merge line
             mergeLine(lineIdVec, lane->GetLeftLine(), successorLane->GetLeftLine());
             mergeLine(lineIdVec, lane->GetRightLine(), successorLane->GetRightLine());
             mergeLine(lineIdVec, lane->GetCenterLine(), successorLane->GetCenterLine());
             mergeLine(lineIdVec, lane->GetAvgSlamTrace(), successorLane->GetAvgSlamTrace());
         }
-        // 2. Update lane predecessor/successor connection
         // Update successor of lanes in fromRoad and predecessor of lanes in toRoad's successor
         updateRoadConnection(fromRoad, toRoad);
         // Remove toRoad from memory model
@@ -113,28 +107,24 @@ void Controller::RoadEditCommand::mergeLine(QVector<uint64_t>& aMergedLineIds,
         return;
     }
     aMergedLineIds.push_back(fromLineId);
-    qDebug() << "To merge line " << fromLineId << " and " << aToLine->GetLineId();
-    // Keep the curve type, modify curve length.
     const Model::PaintListPtr& fromPaintList = aFromLine->GetGeodeticPointsList();
     const Model::PaintListPtr& toPaintList = aToLine->GetGeodeticPointsList();
     // Convert to relative coordinates
     std::shared_ptr<Model::NurbsCurve> mergedCurve = mergePaintList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(),
                                                           fromPaintList, toPaintList);
-    // Set curve ID
     uint64_t curveId = aFromLine->GetCurve(0)->GetCurveId();
     Model::CurveType curveType = aFromLine->GetCurve(0)->GetCurveType();
     aFromLine->GetMutableCurveList()->clear();
+    // Set curve ID
     mergedCurve->SetCurveId(curveId);
+    // Keep the curve type, modify curve length.
     mergedCurve->SetCurveType(curveType);
     mergedCurve->SetLength(mergedCurve->GetLineLength());
     aFromLine->GetMutableCurveList()->push_back(mergedCurve);
     aFromLine->SetLength(mergedCurve->GetLength());
     aFromLine->CreateGeodeticPointsList(aFromLine->GetLane()->GetRoad()->GetTile()->GetReferencePoint(), SamplingInterval);
-    // Convert geodetic coordinates into ECEF coordinates
-    auto ecef = CRS::Factory().CreateEcefProjection(
-                               CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Ecef);
-    aFromLine->GenerateViewPaintMap(ecef);
+    // Clear the ViewPaintMap, will regenerate when needed.
+    aFromLine->GetMutablePaintListMap()->clear();
 }
 
 std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
@@ -154,10 +144,6 @@ std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::mergePaintList(
         // Merge to a dashed line.
         aFromPaint->insert(aFromPaint->end(), aToPaint->begin(), aToPaint->end());
     }
-//    convertWgs84ToRelative(aReferencePoint, aFromPaint);
-//    std::string errorInfo;
-//    std::shared_ptr<Model::NurbsCurve> fitCurve = Model::FitNurbs::FitPointsToCurve(aFromPaint, NurbsOrder, errorInfo);
-//    return fitCurve;
     return getFittedCurve(aReferencePoint, aFromPaint);
 }
 
@@ -212,13 +198,12 @@ bool Controller::RoadEditCommand::isRoadConnected(const Model::RoadPtr& aFromRoa
             return false;
         }
     }
-    // Is it enough? Should we check if successor of lanes in aFromRoad is in aToRoad?
+
     return true;
 }
 
 bool Controller::RoadEditCommand::canRoadsBeMerged(Model::RoadPtr& aFromRoad, Model::RoadPtr& aToRoad)
 {
-    // TODO: shall we check if connected lines have the same type?
     QString message;
     // Check if the roads to merge have the same number of lanes
     if (aFromRoad->GetLaneListSize() != aToRoad->GetLaneListSize())
@@ -303,10 +288,7 @@ void Controller::RoadEditCommand::addLineToRoad(const std::shared_ptr<Model::Mem
     line->SetLength(curve->GetLineLength());
     line->GetMutableCurveList()->push_back(curve);
     line->CreateGeodeticPointsList(referencePoint, SamplingInterval);
-    auto ecef = CRS::Factory().CreateEcefProjection(
-                               CRS::CoordinateType::Wgs84,
-                               CRS::CoordinateType::Ecef);
-    line->GenerateViewPaintMap(ecef);
+    line->GetMutablePaintListMap()->clear();
     Model::LanePtr lane = aRoad->GetTile()->GetMutableLane(laneId);
     lane->SetLaneId(laneId);
     lane->SetRoad(aRoad);

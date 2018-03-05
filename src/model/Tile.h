@@ -61,7 +61,7 @@ public:
     JunctionPtr GetJunction(const std::uint64_t& aId);
     JunctionPtr GetMutableJunction(const std::uint64_t& aId);
 
-    void RemoveRoad(const std::uint64_t& aId);
+    void RemoveRoad(const Model::RoadPtr& aRoad);
 
 private:
     std::int32_t getBit(std::int32_t aInteger, std::uint8_t aIndex);

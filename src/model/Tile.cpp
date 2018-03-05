@@ -221,11 +221,10 @@ Model::JunctionPtr Model::Tile::GetMutableJunction(const uint64_t& aId)
     return mJunctionMap->at(aId);
 }
 
-void Model::Tile::RemoveRoad(const uint64_t& aId)
+void Model::Tile::RemoveRoad(const Model::RoadPtr& aRoad)
 {
-    RoadPtr road = GetRoad(aId);
     // Remove from mLineMap, mLaneMap and mRoadMap
-    for (const auto& lane : *(road->GetLaneList()))
+    for (const auto& lane : *(aRoad->GetLaneList()))
     {
         // Remove from mLineMap
         Model::LinePtr line = lane->GetLeftLine();
@@ -244,7 +243,7 @@ void Model::Tile::RemoveRoad(const uint64_t& aId)
         }
         mLaneMap->erase(lane->GetLaneId());
     }
-    mRoadMap->erase(aId);
+    mRoadMap->erase(aRoad->GetRoadId());
 }
 
 std::int32_t Model::Tile::getBit(std::int32_t aInteger, std::uint8_t aIndex)

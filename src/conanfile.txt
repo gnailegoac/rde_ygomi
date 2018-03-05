@@ -5,6 +5,7 @@ sqlite/3.0@RDE/stable 
 CoordinateTransform/0.2.0.20180110124633.ce35a0d@rde/devel
 opencv/3.0.0@RDBDelivery/stable
 Protobuf/2.6.1@RDE/stable
+basicmeasure/0.1.0@RDE/devel
 
 [generators]
 qmake
