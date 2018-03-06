@@ -393,7 +393,7 @@ void View::OsgWidget::notifyCameraChange()
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
 }
 
-void View::OsgWidget::showContextMenu(const QPoint &aPoint)
+void View::OsgWidget::showContextMenu(const QPoint& aPoint)
 {
     QPoint globalPos = this->mapToGlobal(aPoint);
     QMenu contextMenu(this);
