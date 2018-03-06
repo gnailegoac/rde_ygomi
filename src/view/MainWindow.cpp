@@ -229,10 +229,14 @@ void View::MainWindow::setupConnections()
         if(mDbValidationDialog->isHidden())
         {
             mDbValidationDialog->show();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
         else
         {
             mDbValidationDialog->hide();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
     });
 }
