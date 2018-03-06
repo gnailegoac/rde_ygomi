@@ -182,7 +182,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-        //if(dbValidation(filePath))
+        if(dbValidation(filePath))
         {
             getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
@@ -194,7 +194,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
         if (databaseFileList.size() > 0)
         {
-            //if(dbValidation(folderPath.toStdString()))
+            if(dbValidation(folderPath.toStdString()))
             {
                 getMainWindow()->EnableSaveAction(true);
                 ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
