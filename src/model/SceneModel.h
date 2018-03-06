@@ -40,6 +40,8 @@ public:
     void RemoveRoadModelFromScene();
     void RedrawRoadMarks(const std::uint8_t& aLevel);
     void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const std::uint8_t& aLevel);
+    static std::vector<osg::Node*> GetLineNodesByRoadNode(osg::Node* aNode);
+    static uint64_t GetIdByNodeName(const std::string& aNodeName);
 
 private:
     osg::ref_ptr<osg::Node> buildLineNode(const Model::LinePtr& aLine);

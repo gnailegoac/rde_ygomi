@@ -58,6 +58,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CHANGE_MAP);
+    result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     return NotificationNames(result);
 }
 
@@ -323,6 +324,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         {
             sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
+    }
+    else if (noteName == ApplicationFacade::UPDATE_TREE_VIEW)
+    {
+        MainProxy* mainProxy = getMainProxy();
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy->GetMemoryModel();
+        std::shared_ptr<Model::TreeModel> treeModel(new Model::TreeModel(memoryModel));
+        mainProxy->SetTreeModel(treeModel);
+        getMainWindow()->SetTreeModel(treeModel);
     }
 }
 

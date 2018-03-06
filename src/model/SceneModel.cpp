@@ -14,6 +14,7 @@
 #include "SceneModel.h"
 #include "model/Lane.h"
 #include "model/Line.h"
+#include "model/Utilities.h"
 #include "model/MemoryModel.h"
 
 #include <osg/Material>
@@ -62,6 +63,13 @@ void Model::SceneModel::RemoveRoadFromScene(const std::uint64_t& aRoadId)
 {
     if (mRoadNodeMap.find(aRoadId) != mRoadNodeMap.end())
     {
+        // Should remove line from mLineNodeMap frist.
+        std::vector<osg::Node*> lineNodeList = GetLineNodesByRoadNode(mRoadNodeMap[aRoadId]);
+        for (const auto& lineNode : lineNodeList)
+        {
+            uint64_t lineId = GetIdByNodeName(lineNode->getName());
+            mLineNodeMap.erase(lineId);
+        }
         mSceneModelRoot->removeChild(mRoadNodeMap[aRoadId].release());
         mRoadNodeMap.erase(aRoadId);
     }
@@ -239,6 +247,7 @@ void Model::SceneModel::RemoveRoadModelFromScene()
         mSceneModelRoot->removeChild((roadNode.second).release());
     }
     mRoadNodeMap.clear();
+    // TODO: shall we clear lineNodeMap?
 }
 
 osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::shared_ptr<Model::Lane>& aLane, const int& aLevel)

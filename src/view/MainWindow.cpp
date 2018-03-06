@@ -25,6 +25,7 @@
 #include "model/TreeModel.h"
 
 #include "proxy/MainProxy.h"
+#include "service/RoadEditParameters.h"
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
     ui(new Ui::MainWindow),
@@ -237,6 +238,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
 {
     ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
     Model::SelectType selectType = aSelectType;
+    Service::RoadEditParameters::Instance()->ClearSelectedElement();
     if (aSelectType == Model::SelectType::Road)
     {
         if (!aIsChecked)
@@ -246,6 +248,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Road);
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectLane->setChecked(false);
             ui->actionSelectSign->setChecked(false);
@@ -260,6 +263,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Lane);
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectRoad->setChecked(false);
             ui->actionSelectSign->setChecked(false);
@@ -274,6 +278,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Line);
             ui->actionSelectRoad->setChecked(false);
             ui->actionSelectLane->setChecked(false);
             ui->actionSelectSign->setChecked(false);
