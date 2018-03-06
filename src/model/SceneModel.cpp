@@ -317,7 +317,7 @@ osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::sha
     geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
     geometry->addPrimitiveSet(tris);
     geometry->setTexCoordArray(0, textureCoords.get());
-    std::string path = "../src/resource/RoadSurface.png";
+    std::string path = "../src/resource/image/RoadSurface.png";
     createRoadTexture(path, geometry);
     return geometry;
 }
@@ -419,7 +419,7 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     osg::Image* roadImage = osgDB::readImageFile(aRoadTextureFile);
     if (!roadImage)
     {
-        roadImage = osgDB::readImageFile("../Resources/NoTexture.jpg");
+        roadImage = osgDB::readImageFile("../src/resource/image/NoTexture.png");
         osg::notify(osg::WARN) << "Couldn't load texture."  << std::endl;
         if (!roadImage)
         {
@@ -474,28 +474,7 @@ std::vector<osg::Node*> Model::SceneModel::GetLineNodesByRoadNode(osg::Node* aNo
 
 void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 {
-    float width = 1.0;
-    if(aLevel == 1)
-    {
-        width = 1.0;
-    }
-    else if(aLevel == 2)
-    {
-        width = 2.0;
-    }
-    else if (aLevel == 3)
-    {
-        width = 3.0;
-    }
-    else if(aLevel == 4)
-    {
-        width = 4.0;
-    }
-    else
-    {
-        width = 6.0;
-    }
-
+    float width = aLevel;
     osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
     lineWidth->setWidth(width);
     for(const auto& node : mLineNodeMap)
