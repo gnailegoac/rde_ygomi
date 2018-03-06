@@ -398,6 +398,7 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 
 void View::OsgWidget::notifyCameraChange()
 {
+    mViewer->frame();
     osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);

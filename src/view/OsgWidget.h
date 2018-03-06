@@ -83,8 +83,6 @@ private:
     osgGA::EventQueue* getEventQueue() const;
     void notifyCameraChange();
 
-    void testCamera(const QString aStart, const QString aEnd);
-
 private:
     osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> mGraphicsWindow;
     osg::ref_ptr<osgViewer::View> mView;
