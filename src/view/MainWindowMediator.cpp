@@ -57,7 +57,6 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
-    result->get().push_back(ApplicationFacade::CHANGE_MAP);
     result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     return NotificationNames(result);
 }
@@ -314,17 +313,6 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         closeRoadRendering();
     }
-    else if (noteName == ApplicationFacade::CHANGE_MAP)
-    {
-        View::MainWindow* mainWindow = getMainWindow();
-        MainProxy* mainProxy = getMainProxy();
-        const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
-        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
-        if(sceneModel != nullptr && memoryModel != nullptr)
-        {
-            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
-        }
-    }
     else if (noteName == ApplicationFacade::UPDATE_TREE_VIEW)
     {
         MainProxy* mainProxy = getMainProxy();
@@ -383,13 +371,32 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
         getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
         return false;
     }
-    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    else
     {
-        getMainWindow()->GetDbValidationDialog()->show();
-        return false;
+        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
+        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(0);
+        }
+        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(1);
+        }
+        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        {
+            getMainWindow()->setActionWarningIcon(2);
+            getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);
+            getMainWindow()->GetDbValidationDialog()->setLabelWarningVisible(true);
+            if(!getMainWindow()->GetDbValidationDialog()->exec())
+            {
+                return false;
+            }
+        }
     }
     return true;
 }
+
 
 void View::MainWindowMediator::onRemove()
 {

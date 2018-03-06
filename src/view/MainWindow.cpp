@@ -43,7 +43,8 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->raise();
     mRoadInfoView->setVisible(false);
     mDbValidationDialog->hide();
-    ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/WarningIcon.png")));
+    ui->actionWarning->setEnabled(false);
+    ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/pass.png")));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -223,6 +224,8 @@ void View::MainWindow::setupConnections()
     connect(ui->actionWarning, &QAction::triggered, [ = ]()
     {
         mDbValidationDialog->ResetPos();
+        mDbValidationDialog->setBtnContinueEnabled(false);
+        mDbValidationDialog->setLabelWarningVisible(false);
         if(mDbValidationDialog->isHidden())
         {
             mDbValidationDialog->show();
@@ -376,4 +379,26 @@ uint8_t View::MainWindow::GetLevel()
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
 {
     return mDbValidationDialog;
+}
+
+void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
+{
+    if(aStatus == 0)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(false);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/pass.png")));
+    }
+    if(aStatus == 1)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/warning.png")));
+    }
+    if(aStatus == 2)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/ValidationIcon/error.png")));
+    }
 }

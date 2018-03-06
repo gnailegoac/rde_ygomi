@@ -147,8 +147,14 @@ void View::OsgWidget::Refresh()
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
     mView->getCameraManipulator()->setByMatrix(aMatrix);
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
+    if(sceneModel != nullptr && memoryModel != nullptr)
+    {
+        sceneModel->RedrawSceneByLOD(memoryModel, GetLevel());
+    }
     repaint();
-    ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_MAP);
 }
 
 void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
@@ -386,7 +392,6 @@ void View::OsgWidget::onHome()
 {
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
     mView->home();
-    mViewer->frame();
     notifyCameraChange();
 }
 
@@ -417,15 +422,16 @@ void View::OsgWidget::notifyCameraChange()
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
 }
 
-void View::OsgWidget::showContextMenu(const QPoint &aPoint)
+void View::OsgWidget::showContextMenu(const QPoint& aPoint)
 {
     QPoint globalPos = this->mapToGlobal(aPoint);
     QMenu contextMenu(this);
     QAction mergeAction("Merge");
     if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
-        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+            && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
     {
-        connect(&mergeAction, &QAction::triggered, [=](){
+        connect(&mergeAction, &QAction::triggered, [ = ]()
+        {
             const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
             Service::RoadEditParameters::Instance()->ClearSelectedElement();

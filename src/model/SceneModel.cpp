@@ -485,15 +485,15 @@ void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
     }
     else if (aLevel == 3)
     {
-        width = 4.0;
+        width = 3.0;
     }
     else if(aLevel == 4)
     {
-        width = 7.0;
+        width = 4.0;
     }
     else
     {
-        width = 10.0;
+        width = 6.0;
     }
 
     osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
@@ -507,13 +507,13 @@ void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 
 void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const uint8_t& aLevel)
 {
-    RedrawRoadMarks(aLevel);
-
     if(mLevel == aLevel)
     {
         return;
     }
     mLevel = aLevel;
+
+    RedrawRoadMarks(aLevel);
 
     for(auto& node : mLineNodeMap)
     {
