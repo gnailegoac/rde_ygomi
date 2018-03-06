@@ -443,6 +443,35 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     roadStateSet->setAttributeAndModes(blendFunc);
 }
 
+uint64_t Model::SceneModel::GetIdByNodeName(const std::string& aNodeName)
+{
+    std::vector<std::string> results;
+    results = strings::Split(aNodeName, ":");
+    if(results.size() != 2)
+    {
+        return 0;
+    }
+
+    return QString::fromStdString(results[1]).toULong();
+}
+
+std::vector<osg::Node*> Model::SceneModel::GetLineNodesByRoadNode(osg::Node* aNode)
+{
+    std::vector<osg::Node*> lineNodeList;
+    osg::Group* roadNode = dynamic_cast<osg::Group*>(aNode);
+    for(unsigned int i = 0; i < roadNode->getNumChildren(); ++i)
+    {
+        osg::Group* laneNode = dynamic_cast<osg::Group*>(roadNode->getChild(i));
+        for (unsigned int j = 0; j < laneNode->getNumChildren(); ++j)
+        {
+            osg::Node* lineNode = laneNode->getChild(j);
+            lineNodeList.push_back(lineNode);
+        }
+    }
+
+    return lineNodeList;
+}
+
 void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 {
     float width = 1.0;
