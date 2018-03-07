@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QGLWidget>
 
 namespace  Model
 {
@@ -308,7 +309,7 @@ osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::sha
     geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
     geometry->addPrimitiveSet(tris);
     geometry->setTexCoordArray(0, textureCoords.get());
-    std::string path = "resource/RoadSurface.png";
+    std::string path = ":/images/RoadSurface.png";
     createRoadTexture(path, geometry);
     return geometry;
 }
@@ -401,13 +402,25 @@ bool Model::SceneModel::createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& 
     return true;
 }
 
+osg::ref_ptr<osg::Image> readImageFromResouce(const std::string& aRoadTextureFile)
+{
+//    QImage img(QString::fromStdString(aRoadTextureFile));
+    QImage glImage = QGLWidget::convertToGLFormat(QImage(QString::fromStdString(aRoadTextureFile)));
+    osg::ref_ptr<osg::Image> osgImage = new osg::Image;
+    unsigned char* bits = new unsigned char[glImage.byteCount()];
+    memcpy(bits, glImage.bits(),glImage.byteCount());
+    osgImage->setImage(glImage.width(), glImage.height(), 1, 4, GL_RGBA, GL_UNSIGNED_BYTE, bits, osg::Image::USE_NEW_DELETE);
+    return osgImage;
+}
+
 void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry)
 {
     osg::ref_ptr<osg::Material> roadMaterial = new osg::Material();
     roadMaterial->setEmission(osg::Material::FRONT, osg::Vec4(1.0, 1.0, 1.0, 1.0));
     roadMaterial->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
     roadMaterial->setTransparency(osg::Material::FRONT_AND_BACK, 0.1);
-    osg::Image* roadImage = osgDB::readImageFile(aRoadTextureFile);
+//    osg::Image* roadImage = osgDB::readImageFile(aRoadTextureFile);
+    osg::ref_ptr<osg::Image> roadImage = readImageFromResouce(aRoadTextureFile);
     if (!roadImage)
     {
         roadImage = osgDB::readImageFile("../Resources/NoTexture.jpg");

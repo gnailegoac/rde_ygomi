@@ -178,3 +178,6 @@ target.path = $$OUT_PWD/../deploy/release/
 
 INSTALLS += trafficSign_resource_files icon_files config_files target
 
+RESOURCES += \
+    resources.qrc
+

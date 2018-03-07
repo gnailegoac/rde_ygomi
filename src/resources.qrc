@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="RoadSurface.png">resource/RoadSurface.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="Warning.png">resource/WarningIcon.png</file>
+    </qresource>
+</RCC>

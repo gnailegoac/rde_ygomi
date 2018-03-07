@@ -42,7 +42,7 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->raise();
     mRoadInfoView->setVisible(false);
     mDbValidationDialog->hide();
-    ui->actionWarning->setIcon(QIcon(QPixmap("resource/WarningIcon.png")));
+    ui->actionWarning->setIcon(QIcon(QPixmap(":/icons/Warning.png")));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
