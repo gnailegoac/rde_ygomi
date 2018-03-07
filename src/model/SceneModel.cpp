@@ -317,7 +317,7 @@ osg::ref_ptr<osg::Geometry> Model::SceneModel::createLaneGeometry(const std::sha
     geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
     geometry->addPrimitiveSet(tris);
     geometry->setTexCoordArray(0, textureCoords.get());
-    std::string path = "../src/resource/RoadSurface.png";
+    std::string path = "../src/resource/image/RoadSurface.png";
     createRoadTexture(path, geometry);
     return geometry;
 }
@@ -419,7 +419,7 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     osg::Image* roadImage = osgDB::readImageFile(aRoadTextureFile);
     if (!roadImage)
     {
-        roadImage = osgDB::readImageFile("../Resources/NoTexture.jpg");
+        roadImage = osgDB::readImageFile("../src/resource/image/NoTexture.png");
         osg::notify(osg::WARN) << "Couldn't load texture."  << std::endl;
         if (!roadImage)
         {
@@ -441,34 +441,6 @@ void Model::SceneModel::createRoadTexture(const std::string& aRoadTextureFile, o
     blendFunc->setFunction(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
     roadStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     roadStateSet->setAttributeAndModes(blendFunc);
-}
-
-void Model::SceneModel::RedrawRoadMarks(const double& aDistance)
-{
-    double width = 0.0;
-    double s = 1000;
-    double t = 100;
-    const double widthMin = 1.0;
-    const double widthMax = 10.0;
-    if(aDistance > s)
-    {
-        width = widthMin;
-    }
-    else if(aDistance < t)
-    {
-        width = widthMax;
-    }
-    else
-    {
-        width = (s - aDistance) / (s - t) * widthMax;
-    }
-    osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
-    lineWidth->setWidth(width);
-    for(const auto& node : mLineNodeMap)
-    {
-        osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
-        geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
-    }
 }
 
 uint64_t Model::SceneModel::GetIdByNodeName(const std::string& aNodeName)
@@ -500,41 +472,27 @@ std::vector<osg::Node*> Model::SceneModel::GetLineNodesByRoadNode(osg::Node* aNo
     return lineNodeList;
 }
 
-std::uint8_t Model::SceneModel::getLevel(const double& aDistance)
+void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 {
-    if(aDistance >= 3000)
+    float width = aLevel;
+    osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth;
+    lineWidth->setWidth(width);
+    for(const auto& node : mLineNodeMap)
     {
-        return 1;
+        osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
+        geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
     }
-    else if(aDistance < 3000 && aDistance > 1500)
-    {
-        return 2;
-    }
-    else if(aDistance <= 1500 && aDistance > 1000)
-    {
-        return 3;
-    }
-    else if(aDistance <= 1000 && aDistance > 400)
-    {
-        return 4;
-    }
-    else if(aDistance <= 400)
-    {
-        return 5;
-    }
-    return 0;
 }
 
-void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance)
+void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const uint8_t& aLevel)
 {
-    RedrawRoadMarks(aDistance);
-
-    std::uint8_t level = getLevel(aDistance);
-    if(mLevel == level)
+    if(mLevel == aLevel)
     {
         return;
     }
-    mLevel = level;
+    mLevel = aLevel;
+
+    RedrawRoadMarks(aLevel);
 
     for(auto& node : mLineNodeMap)
     {
@@ -543,7 +501,7 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMe
 
         std::uint64_t lineId = node.first;
         std::shared_ptr<Model::Line> line = aMemoryModel->GetLineById(lineId);
-        Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(level);
+        Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(aLevel);
         if(pointListPtr->size() == 0)
         {
             return;
@@ -573,6 +531,6 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMe
 
         std::uint64_t laneId = node.first;
         std::shared_ptr<Model::Lane> lane = aMemoryModel->GetLaneById(laneId);
-        updateLaneNode(geode, lane, level);
+        updateLaneNode(geode, lane, aLevel);
     }
 }

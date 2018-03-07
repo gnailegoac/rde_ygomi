@@ -55,7 +55,7 @@ public:
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
     void EnableSaveAction(bool aEnable);
-    double GetDistance();
+    std::uint8_t GetLevel();
     DbValidationDialog* GetDbValidationDialog() const;
     //0 status means pass; 1 warning; 2 error.
     void setActionWarningIcon(unsigned int aStatus);

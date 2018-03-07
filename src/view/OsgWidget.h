@@ -22,6 +22,8 @@
 #include <osgViewer/GraphicsWindow>
 #include "model/Common.h"
 
+#include <QString>
+
 namespace Controller
 {
 class PickHandler;
@@ -54,7 +56,7 @@ public:
     void CameraMatrixChanged(const osg::Matrixd& aMatrix);
     void JumpToCenter(const osg::Vec3d& aCenter);
     void SetSelectType(const Model::SelectType& aSelectType);
-    double GetDistance();
+    std::uint8_t GetLevel();
 
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;
