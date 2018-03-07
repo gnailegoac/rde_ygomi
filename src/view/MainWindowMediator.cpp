@@ -238,7 +238,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         if(sceneModel != nullptr && memoryModel != nullptr)
         {
-            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetDistance());
+            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
@@ -367,7 +367,7 @@ void View::MainWindowMediator::closeRoadRendering()
 
 bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
 {
-    QString config = "../src/resource/ValidationConfiger";
+    QString config = "../src/resource/configurationfile";
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
@@ -380,13 +380,32 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
         getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
         return false;
     }
-    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    else
     {
-        getMainWindow()->GetDbValidationDialog()->show();
-        return false;
+        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
+        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(0);
+        }
+        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(1);
+        }
+        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        {
+            getMainWindow()->setActionWarningIcon(2);
+            getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);
+            getMainWindow()->GetDbValidationDialog()->setLabelWarningVisible(true);
+            if(!getMainWindow()->GetDbValidationDialog()->exec())
+            {
+                return false;
+            }
+        }
     }
     return true;
 }
+
 
 void View::MainWindowMediator::onRemove()
 {

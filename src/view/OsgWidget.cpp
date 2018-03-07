@@ -147,6 +147,13 @@ void View::OsgWidget::Refresh()
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
     mView->getCameraManipulator()->setByMatrix(aMatrix);
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
+    if(sceneModel != nullptr && memoryModel != nullptr)
+    {
+        sceneModel->RedrawSceneByLOD(memoryModel, GetLevel());
+    }
     repaint();
 }
 
@@ -155,10 +162,39 @@ void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
     mPickHandler->SetSelectType(aSelectType);
 }
 
-double View::OsgWidget::GetDistance()
+uint8_t View::OsgWidget::GetLevel()
 {
-    osgGA::TrackballManipulator* trackballManipulator = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
-    return trackballManipulator->getDistance();
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    osg::Vec3 boundCenter = dynamic_cast<osg::Node*>(sceneModel->GetSceneModelRoot().get())->getBound().center();
+
+    osg::Vec3 eye, center, up;
+    osg::Matrix viewMatrix = mView->getCamera()->getViewMatrix();
+    viewMatrix.getLookAt(eye, center, up);
+    osg::Vec3 direction = eye * viewMatrix.inverse(viewMatrix) - boundCenter;
+    double distance = sqrt(direction.x() * direction.x() + direction.y() * direction.y() + direction.z() * direction.z());
+    distance -= 6.367e6;
+    if(distance >= 3000)
+    {
+        return 1;
+    }
+    else if(distance < 3000 && distance > 1500)
+    {
+        return 2;
+    }
+    else if(distance <= 1500 && distance > 1000)
+    {
+        return 3;
+    }
+    else if(distance <= 1000 && distance > 400)
+    {
+        return 4;
+    }
+    else if(distance <= 400)
+    {
+        return 5;
+    }
+    return 0;
 }
 
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
@@ -388,6 +424,7 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 
 void View::OsgWidget::notifyCameraChange()
 {
+    mViewer->frame();
     osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
@@ -400,7 +437,7 @@ void View::OsgWidget::showContextMenu(const QPoint& aPoint)
     QAction mergeAction("Merge");
     QAction editAction("Edit");
     if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
-        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+            && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
     {
         connect(&mergeAction, &QAction::triggered, [=]()
         {
