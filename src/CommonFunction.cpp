@@ -26,7 +26,7 @@ osgDB::ReaderWriter::ReadResult ReadImageFromResourceCallback::readImage(const s
         osg::ref_ptr<osg::Image> osgImage = new osg::Image;
         QImage glImage = QGLWidget::convertToGLFormat(QImage(QString::fromStdString(aFileName)));
         unsigned char* bits = new unsigned char[glImage.byteCount()];
-        memcpy(bits, glImage.bits(),glImage.byteCount());
+        memcpy(bits, glImage.bits(), glImage.byteCount());
         osgImage->setImage(glImage.width(), glImage.height(), 1, 4, GL_RGBA, GL_UNSIGNED_BYTE, bits, osg::Image::USE_NEW_DELETE);
         return osgImage;
     }
