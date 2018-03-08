@@ -360,7 +360,7 @@ std::shared_ptr<Model::NurbsCurve> Controller::RoadEditCommand::getFittedCurve(c
                     double y = point.toArray().at(1).toDouble();
                     double z = aReferencePoint->GetZ();
                     wgs84ToRelative->Transform(x, y, z);
-                    relativePaint->push_back(std::make_shared<Model::Point3D>(x, y, z ));
+                    relativePaint->push_back(std::make_shared<Model::Point3D>(x, y, z));
                 }
             }
             paintList->push_back(relativePaint);
