@@ -34,9 +34,7 @@ private:
     void dehighlightNode();
     std::vector<osg::Node*> findNode(const std::vector<osg::Node*>& aNodeList);
     std::vector<osg::Node*> getLineNodesByLaneName(const std::string& aLaneNodeName);
-    std::vector<osg::Node*> getLineNodesByRoadNode(osg::Node* aNode);
     void highlightNodeOnTreeView();
-    uint64_t getIdByNodeName(const std::string& aNodeName);
     void clearSelectNodes(bool aNeedClearNodeOnTree = true);
     void selectNodeIn3DView(const std::string& aName, const std::string& aValue);
     void jumpToNode(const osg::Node* aNode);

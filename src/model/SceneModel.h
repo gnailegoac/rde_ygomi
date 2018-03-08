@@ -38,8 +38,10 @@ public:
     const osg::ref_ptr<osg::Node>& GetTrafficSignNodeById(const std::uint64_t& aLineId) const;
     void AddRoadModelToScene(const std::shared_ptr<Model::Road>& aRoad);
     void RemoveRoadModelFromScene();
-    void RedrawRoadMarks(const double& aDistance);
-    void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const double& aDistance);
+    void RedrawRoadMarks(const std::uint8_t& aLevel);
+    void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const std::uint8_t& aLevel);
+    static std::vector<osg::Node*> GetLineNodesByRoadNode(osg::Node* aNode);
+    static uint64_t GetIdByNodeName(const std::string& aNodeName);
 
 private:
     osg::ref_ptr<osg::Node> buildLineNode(const Model::LinePtr& aLine);
@@ -55,7 +57,6 @@ private:
     bool createRoadTriangles(const osg::ref_ptr<osg::Vec3Array>& aVertexArray,
                              int aRightLinePointsNum, osg::ref_ptr<osg::DrawElementsUInt>& aTris);
     void createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
-    std::uint8_t getLevel(const double& aDistance);
 
 private:
     osg::ref_ptr<osg::Group> mSceneModelRoot;

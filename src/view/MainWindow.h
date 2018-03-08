@@ -51,12 +51,15 @@ public:
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
     void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
     void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
+    void SendRoadToEdit(const QJsonObject& aRoad);
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);
     void EnableSaveAction(bool aEnable);
-    double GetDistance();
+    std::uint8_t GetLevel();
     DbValidationDialog* GetDbValidationDialog() const;
+    //0 status means pass; 1 warning; 2 error.
+    void setActionWarningIcon(unsigned int aStatus);
 
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;

@@ -86,6 +86,9 @@ SOURCES +=\
     model/data_handler/DLMSerializer.cpp \
     model/data_handler/DLMInterpreter.cpp \
     model/data_handler/DLMSetting.cpp \
+    service/RoadEditParameters.cpp \
+    control/RoadEditCommand.cpp \
+    model/RoadModelUtilities.cpp \
     view/DbValidationDialog.cpp
 
 HEADERS  += view/MainWindow.h \
@@ -152,14 +155,17 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/DLMSerializer.h \
     model/data_handler/DLMInterpreter.h \
     model/data_handler/DLMSetting.h \
+    service/RoadEditParameters.h \
+    control/RoadEditCommand.h \
+    model/RoadModelUtilities.h \
     view/DbValidationDialog.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \
     view/DbValidationDialog.ui
 
-config_files.path = $$OUT_PWD/resource/ValidationConfiger
-config_files.files += $$files(resource/ValidationConfiger/*)
+config_files.path = $$OUT_PWD/resource/configurationfile
+config_files.files += $$files(resource/configurationfile/*)
 
 target.path = $$OUT_PWD/../deploy/release/
 

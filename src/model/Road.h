@@ -37,6 +37,7 @@ public:
     LaneListPtr GetMutableLaneList();
     size_t GetLaneListSize() const;
     LanePtr GetLane(const size_t& aIndex);
+    LanePtr GetLaneById(const uint64_t& aLaneId);
 
     const ElementPtr& GetPredecessor() const;
     void SetPredecessor(const ElementPtr& aPredecessor);

@@ -25,6 +25,7 @@
 #include "model/TreeModel.h"
 
 #include "proxy/MainProxy.h"
+#include "service/RoadEditParameters.h"
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
     ui(new Ui::MainWindow),
@@ -42,7 +43,7 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->raise();
     mRoadInfoView->setVisible(false);
     mDbValidationDialog->hide();
-    ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/WarningIcon.png")));
+    ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/warning.png")));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -98,6 +99,11 @@ void View::MainWindow::SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray)
 void View::MainWindow::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
 {
     ui->webRoadEditor->PushEntireRoadTilesExtent(aTileArray);
+}
+
+void View::MainWindow::SendRoadToEdit(const QJsonObject& aRoad)
+{
+    ui->webRoadEditor->SendRoadToEdit(aRoad);
 }
 
 QTreeView* View::MainWindow::GetTreeView() const
@@ -222,13 +228,19 @@ void View::MainWindow::setupConnections()
     connect(ui->actionWarning, &QAction::triggered, [ = ]()
     {
         mDbValidationDialog->ResetPos();
+        mDbValidationDialog->setBtnContinueEnabled(false);
+        mDbValidationDialog->setLabelWarningVisible(false);
         if(mDbValidationDialog->isHidden())
         {
             mDbValidationDialog->show();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
         else
         {
             mDbValidationDialog->hide();
+            mDbValidationDialog->setBtnContinueEnabled(false);
+            mDbValidationDialog->setLabelWarningVisible(false);
         }
     });
 }
@@ -237,6 +249,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
 {
     ApplicationFacade::SendNotification(ApplicationFacade::DEHIGHLIGHT_ALL_NODE);
     Model::SelectType selectType = aSelectType;
+    Service::RoadEditParameters::Instance()->ClearSelectedElement();
     if (aSelectType == Model::SelectType::Road)
     {
         if (!aIsChecked)
@@ -246,6 +259,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Road);
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectLane->setChecked(false);
             ui->actionSelectSign->setChecked(false);
@@ -260,6 +274,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Lane);
             ui->actionSelectLine->setChecked(false);
             ui->actionSelectRoad->setChecked(false);
             ui->actionSelectSign->setChecked(false);
@@ -274,6 +289,7 @@ void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, 
         }
         else
         {
+            Service::RoadEditParameters::Instance()->SetEditType(Service::EditType::Line);
             ui->actionSelectRoad->setChecked(false);
             ui->actionSelectLane->setChecked(false);
             ui->actionSelectSign->setChecked(false);
@@ -362,13 +378,35 @@ void View::MainWindow::EnableSaveAction(bool aEnable)
     ui->menuExport->setEnabled(aEnable);
 }
 
-double View::MainWindow::GetDistance()
+uint8_t View::MainWindow::GetLevel()
 {
     View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
-    return viewer->GetDistance();
+    return viewer->GetLevel();
 }
 
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
 {
     return mDbValidationDialog;
+}
+
+void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
+{
+    if(aStatus == 0)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(false);
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/pass.png")));
+    }
+    if(aStatus == 1)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/warning.png")));
+    }
+    if(aStatus == 2)
+    {
+        ui->actionWarning->setEnabled(true);
+        mDbValidationDialog->setBtnShowDetailsEnabled(true);
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/error.png")));
+    }
 }

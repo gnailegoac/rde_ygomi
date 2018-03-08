@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resource/WarningIcon.png</file>
-        <file>resource/RoadSurface.png</file>
         <file>resource/trafficsign/US_signs_pics_defines/default.jpg</file>
         <file>resource/trafficsign/US_signs_pics_defines/SRIF_SIGN_CLASS_DANGER_PEDESTRIAN_1.png</file>
         <file>resource/trafficsign/US_signs_pics_defines/SR_SIGN_CLASS_GIVE_WAY_1.png</file>
@@ -78,5 +76,9 @@
         <file>resource/trafficsign/US_signs_pics_defines/SR_SIGN_CLASS_MAIN_SL_080_2.png</file>
         <file>resource/trafficsign/US_signs_pics_defines/SR_SIGN_CLASS_MAIN_SL_085_1.png</file>
         <file>resource/trafficsign/US_signs_pics_defines/SR_SIGN_CLASS_MAIN_STOP_1.png</file>
+        <file>resource/image/error.png</file>
+        <file>resource/image/pass.png</file>
+        <file>resource/image/RoadSurface.png</file>
+        <file>resource/image/warning.png</file>
     </qresource>
 </RCC>

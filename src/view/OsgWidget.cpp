@@ -23,7 +23,7 @@
 #include <QPainter>
 #include <QWheelEvent>
 #include <QGLFormat>
-
+#include <QMenu>
 #include <osg/Camera>
 #include <osg/DisplaySettings>
 #include <osg/Geode>
@@ -44,7 +44,7 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include "PickHandler.h"
-
+#include "service/RoadEditParameters.h"
 #include "facade/ApplicationFacade.h"
 #include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
@@ -147,6 +147,13 @@ void View::OsgWidget::Refresh()
 void View::OsgWidget::CameraMatrixChanged(const osg::Matrixd& aMatrix)
 {
     mView->getCameraManipulator()->setByMatrix(aMatrix);
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
+    if(sceneModel != nullptr && memoryModel != nullptr)
+    {
+        sceneModel->RedrawSceneByLOD(memoryModel, GetLevel());
+    }
     repaint();
 }
 
@@ -155,10 +162,39 @@ void View::OsgWidget::SetSelectType(const Model::SelectType& aSelectType)
     mPickHandler->SetSelectType(aSelectType);
 }
 
-double View::OsgWidget::GetDistance()
+uint8_t View::OsgWidget::GetLevel()
 {
-    osgGA::TrackballManipulator* trackballManipulator = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator());
-    return trackballManipulator->getDistance();
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy.GetSceneModel();
+    osg::Vec3 boundCenter = dynamic_cast<osg::Node*>(sceneModel->GetSceneModelRoot().get())->getBound().center();
+
+    osg::Vec3 eye, center, up;
+    osg::Matrix viewMatrix = mView->getCamera()->getViewMatrix();
+    viewMatrix.getLookAt(eye, center, up);
+    osg::Vec3 direction = eye * viewMatrix.inverse(viewMatrix) - boundCenter;
+    double distance = sqrt(direction.x() * direction.x() + direction.y() * direction.y() + direction.z() * direction.z());
+    distance -= 6.367e6;
+    if(distance >= 3000)
+    {
+        return 1;
+    }
+    else if(distance < 3000 && distance > 1500)
+    {
+        return 2;
+    }
+    else if(distance <= 1500 && distance > 1000)
+    {
+        return 3;
+    }
+    else if(distance <= 1000 && distance > 400)
+    {
+        return 4;
+    }
+    else if(distance <= 400)
+    {
+        return 5;
+    }
+    return 0;
 }
 
 void View::OsgWidget::JumpToCenter(const osg::Vec3d& aCenter)
@@ -205,16 +241,21 @@ void View::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
-    if(aEvent->key() == Qt::Key_D)
+    if (aEvent->key() == Qt::Key_D)
     {
         osgDB::writeNodeFile( *mViewer->getView(0)->getSceneData(),
                               "./tmp/sceneGraph.osg" );
 
         return;
     }
-    else if(aEvent->key() == Qt::Key_H)
+    else if (aEvent->key() == Qt::Key_H)
     {
         this->onHome();
+        return;
+    }
+    else if (aEvent->key() == Qt::Key_Control)
+    {
+        Service::RoadEditParameters::Instance()->EnableMultiSelectMode(true);
         return;
     }
 
@@ -223,6 +264,11 @@ void View::OsgWidget::keyPressEvent(QKeyEvent* aEvent)
 
 void View::OsgWidget::keyReleaseEvent(QKeyEvent* aEvent)
 {
+    if (aEvent->key() == Qt::Key_Control)
+    {
+        Service::RoadEditParameters::Instance()->EnableMultiSelectMode(false);
+        return;
+    }
     QString aKeyString = aEvent->text();
     const char* aKeyData = aKeyString.toLocal8Bit().data();
 
@@ -261,11 +307,22 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             aButton = 2;
             break;
         case Qt::RightButton:
-            aButton = 3;
+            if (Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() > 0)
+            {
+                this->setContextMenuPolicy(Qt::CustomContextMenu);
+                connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                        this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
+            }
+            else
+            {
+                QObject::disconnect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 0, 0);
+                aButton = 3;
+            }
             break;
         default:
             break;
     }
+
     mSyncMap = true;
     auto aPixelRatio = this->devicePixelRatio();
     this->getEventQueue()->mouseButtonPress(static_cast<float>(aEvent->x() * aPixelRatio),
@@ -367,7 +424,43 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
 
 void View::OsgWidget::notifyCameraChange()
 {
+    mViewer->frame();
     osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
     QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
     ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
+}
+
+void View::OsgWidget::showContextMenu(const QPoint& aPoint)
+{
+    QPoint globalPos = this->mapToGlobal(aPoint);
+    QMenu contextMenu(this);
+    QAction mergeAction("Merge");
+    QAction editAction("Edit");
+    if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
+            && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+    {
+        connect(&mergeAction, &QAction::triggered, [=]()
+        {
+            const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
+            std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
+            Service::RoadEditParameters::Instance()->ClearSelectedElement();
+            ApplicationFacade::SendNotification(ApplicationFacade::MERGE_ROAD, &roadsId);
+        });
+        contextMenu.addAction(&mergeAction);
+    }
+    if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 1)
+        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+    {
+        connect(&editAction, &QAction::triggered, [=]()
+        {
+            const std::vector<uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
+            uint64_t roadId = roadIdVec.front();
+            ApplicationFacade::SendNotification(ApplicationFacade::EDIT_ROAD, &roadId);
+        });
+        contextMenu.addAction(&editAction);
+    }
+    if (contextMenu.actions().size() > 0)
+    {
+        contextMenu.exec(globalPos);
+    }
 }

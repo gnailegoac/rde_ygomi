@@ -57,6 +57,8 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
+    result->get().push_back(ApplicationFacade::EDIT_ROAD);
+    result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     return NotificationNames(result);
 }
 
@@ -236,7 +238,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
         if(sceneModel != nullptr && memoryModel != nullptr)
         {
-            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetDistance());
+            sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
@@ -312,6 +314,22 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         closeRoadRendering();
     }
+    else if (noteName == ApplicationFacade::EDIT_ROAD)
+    {
+        uint64_t roadId = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        const Model::RoadPtr& roadPtr = memoryModel->GetRoadById(roadId);
+        QJsonObject roadObj = Model::GeoJsonConverter().Convert(-1, roadPtr);
+        getMainWindow()->SendRoadToEdit(roadObj);
+    }
+    else if (noteName == ApplicationFacade::UPDATE_TREE_VIEW)
+    {
+        MainProxy* mainProxy = getMainProxy();
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy->GetMemoryModel();
+        std::shared_ptr<Model::TreeModel> treeModel(new Model::TreeModel(memoryModel));
+        mainProxy->SetTreeModel(treeModel);
+        getMainWindow()->SetTreeModel(treeModel);
+    }
 }
 
 void View::MainWindowMediator::openRoadRendering()
@@ -349,7 +367,7 @@ void View::MainWindowMediator::closeRoadRendering()
 
 bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
 {
-    QString config = "resource/ValidationConfiger";
+    QString config = "./resource/configurationfile";
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
@@ -362,13 +380,32 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
         getMainWindow()->PopupWarningMessage(QString("DB Validation Failed!"));
         return false;
     }
-    if(getMainWindow()->GetDbValidationDialog()->IsInterrupt())
+    else
     {
-        getMainWindow()->GetDbValidationDialog()->show();
-        return false;
+        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
+        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(0);
+        }
+        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        {
+            getMainWindow()->setActionWarningIcon(1);
+        }
+        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        {
+            getMainWindow()->setActionWarningIcon(2);
+            getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);
+            getMainWindow()->GetDbValidationDialog()->setLabelWarningVisible(true);
+            if(!getMainWindow()->GetDbValidationDialog()->exec())
+            {
+                return false;
+            }
+        }
     }
     return true;
 }
+
 
 void View::MainWindowMediator::onRemove()
 {

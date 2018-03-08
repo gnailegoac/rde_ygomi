@@ -37,8 +37,6 @@ public:
     bool SaveRoadSections(const MemoryModelPtr& aMemoryModel);
 
 private:
-    LanePtr getLeftMostLane(const RoadPtr& aRoad);
-    LanePtr getRightLane(const LanePtr& aLane);
     std::uint32_t getLaneIndex(const LanePtr& aLane);
     LaneBoundaryType convertLineType(const CurveType& aCurveType);
     std::uint32_t convertRoadId(const std::uint64_t& aRoadId);

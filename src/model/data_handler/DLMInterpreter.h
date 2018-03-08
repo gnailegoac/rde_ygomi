@@ -38,10 +38,6 @@ public:
 
 private:
     DLM::Marking convertLineType(const CurveType& aCurveType);
-    LanePtr getLeftMostLane(const RoadPtr& aRoad);
-    LanePtr getRightMostLane(const RoadPtr& aRoad);
-    LanePtr getLeftLane(const LanePtr& aLane);
-    LanePtr getRightLane(const LanePtr& aLane);
     std::uint32_t getLaneIndex(const LanePtr& aLane);
     DLM::ConnectionType getLaneConnectionType(const LanePtr& aLane);
     bool saveDLMFile(QDomDocument& aDocument) const;

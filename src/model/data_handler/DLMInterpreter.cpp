@@ -22,6 +22,7 @@
 
 #include "CoordinateTransform/Factory.h"
 #include "model/Utilities.h"
+#include "model/RoadModelUtilities.h"
 
 Model::DLMInterpreter::DLMInterpreter(const std::string& aFileName, const double& aInterval) :
     mFileName(aFileName),
@@ -72,60 +73,6 @@ DLM::Marking Model::DLMInterpreter::convertLineType(const Model::CurveType& aCur
     return markingType;
 }
 
-Model::LanePtr Model::DLMInterpreter::getLeftMostLane(const Model::RoadPtr& aRoad)
-{
-    for (size_t i = 0; i < aRoad->GetLaneListSize(); ++i)
-    {
-        LanePtr lanePtr = aRoad->GetLane(i);
-        // After data validation, there will be only one lane in a road has no left-lane.
-        if (0 == lanePtr->GetLeftLaneId())
-        {
-            return lanePtr;
-        }
-    }
-
-    return nullptr;
-}
-
-Model::LanePtr Model::DLMInterpreter::getRightMostLane(const Model::RoadPtr& aRoad)
-{
-    for (size_t i = 0; i < aRoad->GetLaneListSize(); ++i)
-    {
-        LanePtr lanePtr = aRoad->GetLane(i);
-        // After data validation, there will be only one lane in a road has no right-lane.
-        if (0 == lanePtr->GetRightLaneId())
-        {
-            return lanePtr;
-        }
-    }
-
-    return nullptr;
-}
-
-Model::LanePtr Model::DLMInterpreter::getLeftLane(const Model::LanePtr& aLane)
-{
-    std::uint64_t leftLaneId = aLane->GetLeftLaneId();
-
-    if (0 != leftLaneId)
-    {
-        return aLane->GetRoad()->GetTile()->GetLane(leftLaneId);
-    }
-
-    return nullptr;
-}
-
-Model::LanePtr Model::DLMInterpreter::getRightLane(const Model::LanePtr& aLane)
-{
-    std::uint64_t rightLaneId = aLane->GetRightLaneId();
-
-    if (0 != rightLaneId)
-    {
-        return aLane->GetRoad()->GetTile()->GetLane(rightLaneId);
-    }
-
-    return nullptr;
-}
-
 uint32_t Model::DLMInterpreter::getLaneIndex(const Model::LanePtr& aLane)
 {
     // Describes the index of the lane, counting from the curb side.
@@ -135,7 +82,7 @@ uint32_t Model::DLMInterpreter::getLaneIndex(const Model::LanePtr& aLane)
 
     if (DLMSetting::Instance()->GetTrafficSense() == DLM::TrafficSense::RightHand)
     {
-        LanePtr lane = getRightMostLane(road);
+        LanePtr lane = GetRightMostLane(road);
         while (nullptr != lane)
         {
             if (lane == aLane)
@@ -143,12 +90,12 @@ uint32_t Model::DLMInterpreter::getLaneIndex(const Model::LanePtr& aLane)
                 break;
             }
             ++index;
-            lane = getLeftLane(lane);
+            lane = GetLeftLane(lane);
         }
     }
     else
     {
-        LanePtr lane = getLeftMostLane(road);
+        LanePtr lane = GetLeftMostLane(road);
         while (nullptr != lane)
         {
             if (lane == aLane)
@@ -156,7 +103,7 @@ uint32_t Model::DLMInterpreter::getLaneIndex(const Model::LanePtr& aLane)
                 break;
             }
             ++index;
-            lane = getRightLane(lane);
+            lane = GetRightLane(lane);
         }
     }
 

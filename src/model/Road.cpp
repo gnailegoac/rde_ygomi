@@ -64,6 +64,19 @@ Model::LanePtr Model::Road::GetLane(const size_t& aIndex)
     return nullptr;
 }
 
+Model::LanePtr Model::Road::GetLaneById(const uint64_t& aLaneId)
+{
+    for (auto& lane : *mLaneList)
+    {
+        if (lane->GetLaneId() == aLaneId)
+        {
+            return lane;
+        }
+    }
+
+    return nullptr;
+}
+
 const Model::ElementPtr& Model::Road::GetPredecessor() const
 {
     return mPredecessor;
