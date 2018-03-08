@@ -158,25 +158,12 @@ FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \
     view/DbValidationDialog.ui
 
-IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
-               $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
-
-trafficSign_resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
-trafficSign_resource_files.files += $${IMAGE_FILES}
-
-icon_files.path = $$OUT_PWD/resource
-icon_files.files += $$files(resource/RoadSurface.png) \
-                    $$files(resource/WarningIcon.png)
-
 config_files.path = $$OUT_PWD/resource/ValidationConfiger
 config_files.files += $$files(resource/ValidationConfiger/*)
 
 target.path = $$OUT_PWD/../deploy/release/
-#trafficSign_resource_files.path += $$OUT_PWD/../deploy/release/resource/trafficsign/US_signs_pics_defines
-#icon_files.path += $$OUT_PWD/../deploy/release/resource
-#config_files.path += $$OUT_PWD/../deploy/release/resource/ValidationConfiger
 
-INSTALLS += trafficSign_resource_files icon_files config_files target
+INSTALLS += config_files target
 
 RESOURCES += \
     resources.qrc

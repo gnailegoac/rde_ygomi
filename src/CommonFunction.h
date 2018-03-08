@@ -13,6 +13,10 @@
 
 #pragma once
 
+#include <string>
+#include <osgDB/ReadFile>
+#include <osgDB/ReaderWriter>
+
 class CommonFunction
 {
 public:
@@ -22,4 +26,11 @@ public:
         T* result = static_cast<T*>(const_cast<void*>(aValue));
         return result;
     }
+};
+
+
+class ReadImageFromResourceCallback : public osgDB::ReadFileCallback
+{
+public:
+    osgDB::ReaderWriter::ReadResult readImage(const std::string& aFileName, const osgDB::Options* aOptions) override;
 };
