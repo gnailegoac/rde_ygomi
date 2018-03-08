@@ -86,8 +86,9 @@ SOURCES +=\
     model/data_handler/DLMSerializer.cpp \
     model/data_handler/DLMInterpreter.cpp \
     model/data_handler/DLMSetting.cpp \
-    control/RoadEditCommand.cpp \
     service/RoadEditParameters.cpp \
+    control/RoadEditCommand.cpp \
+    model/RoadModelUtilities.cpp \
     view/DbValidationDialog.cpp
 
 HEADERS  += view/MainWindow.h \
@@ -154,8 +155,9 @@ HEADERS  += view/MainWindow.h \
     model/data_handler/DLMSerializer.h \
     model/data_handler/DLMInterpreter.h \
     model/data_handler/DLMSetting.h \
-    control/RoadEditCommand.h \
     service/RoadEditParameters.h \
+    control/RoadEditCommand.h \
+    model/RoadModelUtilities.h \
     view/DbValidationDialog.h
 
 FORMS    += view/MainWindow.ui \

@@ -56,6 +56,8 @@ const std::string ApplicationFacade::REQUEST_ROADS_IN_TILE = "RequestRoadsInTile
 const std::string ApplicationFacade::OPEN_ROAD_RENDERING = "OpenRoadRendering";
 const std::string ApplicationFacade::CLOSE_ROAD_RENDERING = "CloseRoadRendering";
 const std::string ApplicationFacade::MERGE_ROAD = "MergeRoad";
+const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
+const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
 const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
@@ -119,7 +121,7 @@ void ApplicationFacade::initializeCommands()
     mCommandList[Controller::NodeHighlightCommand::GetCommandName()] =
                     std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
     mCommandList[Controller::RoadEditCommand::GetCommandName()] =
-                    std::shared_ptr<Controller::RoadEditCommand>(new Controller::RoadEditCommand);
+                        std::shared_ptr<Controller::RoadEditCommand>(new Controller::RoadEditCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()
@@ -137,6 +139,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[DEHIGHLIGHT_ALL_NODE] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[SELECT_NODE_IN_3DVIEW] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[MERGE_ROAD] = Controller::RoadEditCommand::GetCommandName();
+    mMessageList[ADD_LINE_TO_ROAD] = Controller::RoadEditCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

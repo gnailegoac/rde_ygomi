@@ -57,6 +57,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::REQUEST_ROADS_IN_TILE);
     result->get().push_back(ApplicationFacade::OPEN_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
+    result->get().push_back(ApplicationFacade::EDIT_ROAD);
     result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     return NotificationNames(result);
 }
@@ -312,6 +313,14 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if(noteName == ApplicationFacade::CLOSE_ROAD_RENDERING)
     {
         closeRoadRendering();
+    }
+    else if (noteName == ApplicationFacade::EDIT_ROAD)
+    {
+        uint64_t roadId = *CommonFunction::ConvertToNonConstType<uint64_t>(aNotification.getBody());
+        const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
+        const Model::RoadPtr& roadPtr = memoryModel->GetRoadById(roadId);
+        QJsonObject roadObj = Model::GeoJsonConverter().Convert(-1, roadPtr);
+        getMainWindow()->SendRoadToEdit(roadObj);
     }
     else if (noteName == ApplicationFacade::UPDATE_TREE_VIEW)
     {

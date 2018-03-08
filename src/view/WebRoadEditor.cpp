@@ -21,6 +21,7 @@ namespace
 const QString scCameraMatrixChange = "dataHandler.setCameraMatrix(%1)";
 const QString scPushRoadTile = "dataHandler.pushRoadTile(%1,%2)";
 const QString scEntireRoadTiles = "dataHandler.pushEntireRoadTilesExtent(%1)";
+const QString scEditRoad = "dataHandler.editRoad(%1)";
 }
 
 WebGlobeChannelObject::WebGlobeChannelObject(QObject* aParent) :
@@ -48,6 +49,11 @@ void WebGlobeChannelObject::fetchRoadListByTile(const QJsonValue& aLevel, const 
     int level = aLevel.toInt();
     std::uint64_t tileId = static_cast<std::uint64_t>(aTileId.toDouble());
     emit requestRoadsInTile(level, tileId);
+}
+
+void WebGlobeChannelObject::addLineData(const QJsonObject& aData)
+{
+    emit addLineToRoad(aData);
 }
 
 WebRoadEditor::WebRoadEditor() :
@@ -84,6 +90,13 @@ void WebRoadEditor::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
     page()->runJavaScript(command);
 }
 
+void WebRoadEditor::SendRoadToEdit(const QJsonObject& aRoad)
+{
+    QString roadString(QJsonDocument(aRoad).toJson());
+    QString command = scEditRoad.arg(roadString);
+    page()->runJavaScript(command);
+}
+
 void WebRoadEditor::setupConnections()
 {
     connect(mWebChannelObject.data(), &WebGlobeChannelObject::cameraMatrixChanged,
@@ -97,5 +110,11 @@ void WebRoadEditor::setupConnections()
     {
         std::pair<std::uint64_t, std::uint64_t> tileInfo = std::make_pair(aLevel, aTileId);
         ApplicationFacade::SendNotification(ApplicationFacade::REQUEST_ROADS_IN_TILE, &tileInfo);
+    });
+
+    connect(mWebChannelObject.data(), &WebGlobeChannelObject::addLineToRoad,
+            [=](const QJsonObject& aData)
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::ADD_LINE_TO_ROAD, &aData);
     });
 }

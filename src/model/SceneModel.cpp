@@ -486,10 +486,10 @@ void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
 
 void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryModel>& aMemoryModel, const uint8_t& aLevel)
 {
-    if(mLevel == aLevel)
-    {
-        return;
-    }
+//    if(mLevel == aLevel)
+//    {
+//        return;
+//    }
     mLevel = aLevel;
 
     RedrawRoadMarks(aLevel);

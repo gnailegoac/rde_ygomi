@@ -51,6 +51,7 @@ public:
     void ChangeCameraMatrix(const QJsonArray& aMatrix);
     void SendRoadsInTile(int aLevel, const QJsonArray& aRoadArray);
     void PushEntireRoadTilesExtent(const QJsonArray& aTileArray);
+    void SendRoadToEdit(const QJsonObject& aRoad);
 
     QTreeView* GetTreeView() const;
     void JumpToCenter(const osg::Vec3d& aCenter);

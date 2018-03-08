@@ -307,10 +307,18 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             aButton = 2;
             break;
         case Qt::RightButton:
-            this->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-                    this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
-            return;
+            if (Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() > 0)
+            {
+                this->setContextMenuPolicy(Qt::CustomContextMenu);
+                connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                        this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
+            }
+            else
+            {
+                QObject::disconnect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 0, 0);
+                aButton = 3;
+            }
+            break;
         default:
             break;
     }
@@ -427,10 +435,11 @@ void View::OsgWidget::showContextMenu(const QPoint& aPoint)
     QPoint globalPos = this->mapToGlobal(aPoint);
     QMenu contextMenu(this);
     QAction mergeAction("Merge");
+    QAction editAction("Edit");
     if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
             && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
     {
-        connect(&mergeAction, &QAction::triggered, [ = ]()
+        connect(&mergeAction, &QAction::triggered, [=]()
         {
             const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
@@ -438,6 +447,17 @@ void View::OsgWidget::showContextMenu(const QPoint& aPoint)
             ApplicationFacade::SendNotification(ApplicationFacade::MERGE_ROAD, &roadsId);
         });
         contextMenu.addAction(&mergeAction);
+    }
+    if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 1)
+        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+    {
+        connect(&editAction, &QAction::triggered, [=]()
+        {
+            const std::vector<uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
+            uint64_t roadId = roadIdVec.front();
+            ApplicationFacade::SendNotification(ApplicationFacade::EDIT_ROAD, &roadId);
+        });
+        contextMenu.addAction(&editAction);
     }
     if (contextMenu.actions().size() > 0)
     {

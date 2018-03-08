@@ -102,6 +102,11 @@ void View::MainWindow::PushEntireRoadTilesExtent(const QJsonArray& aTileArray)
     ui->webRoadEditor->PushEntireRoadTilesExtent(aTileArray);
 }
 
+void View::MainWindow::SendRoadToEdit(const QJsonObject& aRoad)
+{
+    ui->webRoadEditor->SendRoadToEdit(aRoad);
+}
+
 QTreeView* View::MainWindow::GetTreeView() const
 {
     return mRoadInfoView;
