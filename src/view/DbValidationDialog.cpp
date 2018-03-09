@@ -87,9 +87,9 @@ void View::DbValidationDialog::initTableOverView()
     mUi->tableOverview->setRowCount(2);
     mUi->tableOverview->setRowHeight(0, 30);
     mUi->tableOverview->setRowHeight(1, 30);
-    mUi->tableOverview->setItem(0, 0, new QTableWidgetItem(QString("Need To Verify")));
+    mUi->tableOverview->setItem(0, 0, new QTableWidgetItem(scLevelWarning));
     mUi->tableOverview->setItem(0, 1, new QTableWidgetItem(QString("0")));
-    mUi->tableOverview->setItem(1, 0, new QTableWidgetItem(QString("Serious Error")));
+    mUi->tableOverview->setItem(1, 0, new QTableWidgetItem(scLevelError));
     mUi->tableOverview->setItem(1, 1, new QTableWidgetItem(QString("0")));
 }
 
@@ -188,18 +188,14 @@ bool View::DbValidationDialog::UpdateData(const QString& aFilePath)
         {
             QString level = errorCodeObject.value("Level").toString();
             mUi->tableDetails->setItem(startRow, 0, new QTableWidgetItem(level));
-            if(!level.compare("Serious Error"))
+            if(!level.compare(scLevelError))
             {
                 ++seriousLevelCount;
             }
-            if(!level.compare("Need To Verify"))
+            if(!level.compare(scLevelWarning))
             {
                 ++verifyLevelCount;
             }
-        }
-        if(!errorCodeObject.value("Details").isArray())
-        {
-            continue;
         }
     }
 
@@ -233,8 +229,8 @@ void View::DbValidationDialog::setLabelWarningVisible(bool aIsVisible)
     mUi->labelWarning->setVisible(aIsVisible);
 }
 
-void View::DbValidationDialog::getErrorNumberOfLevel(std::map<std::string, std::uint32_t>& aErrorNumberOfLevelMap)
+void View::DbValidationDialog::getErrorNumberOfLevel(std::map<QString, std::uint32_t>& aErrorNumberOfLevelMap)
 {
-    aErrorNumberOfLevelMap[std::string("Need To Verify")] = mUi->tableOverview->item(0, 1)->text().toInt();
-    aErrorNumberOfLevelMap[std::string("Serious Error")] = mUi->tableOverview->item(1, 1)->text().toInt();
+    aErrorNumberOfLevelMap[scLevelWarning] = mUi->tableOverview->item(0, 1)->text().toInt();
+    aErrorNumberOfLevelMap[scLevelError] = mUi->tableOverview->item(1, 1)->text().toInt();
 }

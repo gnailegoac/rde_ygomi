@@ -371,7 +371,7 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
-    savePath += "/validation_" + current_date + ".json";
+    savePath += "validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
     pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
@@ -382,17 +382,17 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
     }
     else
     {
-        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        std::map<QString, std::uint32_t> errorNumberOfLevelMap;
         getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
-        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        if(errorNumberOfLevelMap[scLevelWarning] == 0 && errorNumberOfLevelMap[scLevelError] == 0)
         {
             getMainWindow()->setActionWarningIcon(0);
         }
-        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        if(errorNumberOfLevelMap[scLevelWarning] > 0 && errorNumberOfLevelMap[scLevelError] == 0)
         {
             getMainWindow()->setActionWarningIcon(1);
         }
-        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        if(errorNumberOfLevelMap[scLevelError] > 0)
         {
             getMainWindow()->setActionWarningIcon(2);
             getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);
