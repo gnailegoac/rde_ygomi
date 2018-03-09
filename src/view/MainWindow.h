@@ -57,6 +57,7 @@ public:
     void JumpToCenter(const osg::Vec3d& aCenter);
     void EnableSaveAction(bool aEnable);
     std::uint8_t GetLevel();
+    QJsonArray GetCameraMatrix();
     DbValidationDialog* GetDbValidationDialog() const;
     //0 status means pass; 1 warning; 2 error.
     void setActionWarningIcon(unsigned int aStatus);

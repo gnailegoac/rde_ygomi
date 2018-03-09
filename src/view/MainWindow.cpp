@@ -384,6 +384,12 @@ uint8_t View::MainWindow::GetLevel()
     return viewer->GetLevel();
 }
 
+QJsonArray View::MainWindow::GetCameraMatrix()
+{
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    return viewer->GetCameraMatrix();
+}
+
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
 {
     return mDbValidationDialog;

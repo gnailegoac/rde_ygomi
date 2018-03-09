@@ -230,9 +230,6 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::CHANGE_CAMERA)
     {
         View::MainWindow* mainWindow = getMainWindow();
-        QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
-        mainWindow->ChangeCameraMatrix(cameraMatrix);
-
         MainProxy* mainProxy = getMainProxy();
         const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
@@ -240,6 +237,9 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         {
             sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
+
+        getMainWindow()->centralWidget()->repaint();
+        mainWindow->ChangeCameraMatrix(mainWindow->GetCameraMatrix());
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {
@@ -371,7 +371,7 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
-    savePath += "validation_" + current_date + ".json";
+    savePath += "/validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
     pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
