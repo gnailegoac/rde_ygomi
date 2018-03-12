@@ -50,7 +50,7 @@ private:
     void selectNodeOnTree(const std::shared_ptr<Model::TrafficSign>& aTrafficSign);
     void openRoadRendering();
     void closeRoadRendering();
-    bool dbValidation(const std::string& aDbPath);
+    bool dbValidation(const std::list<std::string>& aDbPathList);
 private:
     View::MainWindow* getMainWindow();
     MainProxy* getMainProxy();

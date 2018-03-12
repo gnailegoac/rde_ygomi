@@ -43,8 +43,7 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->raise();
     mRoadInfoView->setVisible(false);
     mDbValidationDialog->hide();
-    ui->actionWarning->setEnabled(false);
-    ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/image/pass.png")));
+    ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/warning.png")));
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -385,6 +384,12 @@ uint8_t View::MainWindow::GetLevel()
     return viewer->GetLevel();
 }
 
+QJsonArray View::MainWindow::GetCameraMatrix()
+{
+    View::OsgWidget* viewer = dynamic_cast<View::OsgWidget*>(centralWidget());
+    return viewer->GetCameraMatrix();
+}
+
 View::DbValidationDialog* View::MainWindow::GetDbValidationDialog() const
 {
     return mDbValidationDialog;
@@ -396,18 +401,18 @@ void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
     {
         ui->actionWarning->setEnabled(true);
         mDbValidationDialog->setBtnShowDetailsEnabled(false);
-        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/image/pass.png")));
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/pass.png")));
     }
     if(aStatus == 1)
     {
         ui->actionWarning->setEnabled(true);
         mDbValidationDialog->setBtnShowDetailsEnabled(true);
-        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/image/warning.png")));
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/warning.png")));
     }
     if(aStatus == 2)
     {
         ui->actionWarning->setEnabled(true);
         mDbValidationDialog->setBtnShowDetailsEnabled(true);
-        ui->actionWarning->setIcon(QIcon(QPixmap("../src/resource/image/error.png")));
+        ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/error.png")));
     }
 }

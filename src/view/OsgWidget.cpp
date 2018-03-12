@@ -400,6 +400,7 @@ void View::OsgWidget::onHome()
 {
     mView->getCameraManipulator()->setHomePosition(mEye, mCenter, mUp);
     mView->home();
+    paintGL();
     notifyCameraChange();
 }
 
@@ -422,12 +423,15 @@ osgGA::EventQueue* View::OsgWidget::getEventQueue() const
     }
 }
 
+QJsonArray View::OsgWidget::GetCameraMatrix()
+{
+    osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
+    return Model::GeoJsonConverter().Convert(mat);
+}
+
 void View::OsgWidget::notifyCameraChange()
 {
-    mViewer->frame();
-    osg::Matrixd mat = dynamic_cast<osgGA::TrackballManipulator*>(mView->getCameraManipulator())->getMatrix();
-    QJsonArray cameraMatrix = Model::GeoJsonConverter().Convert(mat);
-    ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA, &cameraMatrix);
+    ApplicationFacade::SendNotification(ApplicationFacade::CHANGE_CAMERA);
 }
 
 void View::OsgWidget::showContextMenu(const QPoint& aPoint)
@@ -439,7 +443,7 @@ void View::OsgWidget::showContextMenu(const QPoint& aPoint)
     if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 2)
             && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
     {
-        connect(&mergeAction, &QAction::triggered, [=]()
+        connect(&mergeAction, &QAction::triggered, [ = ]()
         {
             const std::vector<std::uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             std::pair<std::uint64_t, std::uint64_t> roadsId = std::make_pair(roadIdVec.front(), roadIdVec.back());
@@ -449,9 +453,9 @@ void View::OsgWidget::showContextMenu(const QPoint& aPoint)
         contextMenu.addAction(&mergeAction);
     }
     if ((Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() == 1)
-        && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
+            && (Service::RoadEditParameters::Instance()->GetEditType() == Service::EditType::Road))
     {
-        connect(&editAction, &QAction::triggered, [=]()
+        connect(&editAction, &QAction::triggered, [ = ]()
         {
             const std::vector<uint64_t>& roadIdVec = Service::RoadEditParameters::Instance()->GetSelectedElementIds();
             uint64_t roadId = roadIdVec.front();

@@ -183,7 +183,8 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-        if(dbValidation(filePath))
+        std::list<std::string> dbFileList({filePath});
+        if (dbValidation(dbFileList))
         {
             getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
@@ -193,9 +194,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         QString folderPath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
+        std::list<std::string> dbFileList(databaseFileList.begin(), databaseFileList.end());
         if (databaseFileList.size() > 0)
         {
-            if(dbValidation(folderPath.toStdString()))
+            if (dbValidation(dbFileList))
             {
                 getMainWindow()->EnableSaveAction(true);
                 ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
@@ -230,9 +232,6 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::CHANGE_CAMERA)
     {
         View::MainWindow* mainWindow = getMainWindow();
-        QJsonArray cameraMatrix = *CommonFunction::ConvertToNonConstType<QJsonArray>(aNotification.getBody());
-        mainWindow->ChangeCameraMatrix(cameraMatrix);
-
         MainProxy* mainProxy = getMainProxy();
         const std::shared_ptr<Model::SceneModel>& sceneModel = mainProxy->GetSceneModel();
         const std::shared_ptr<Model::MemoryModel>& memoryModel = getMainProxy()->GetMemoryModel();
@@ -240,6 +239,9 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         {
             sceneModel->RedrawSceneByLOD(memoryModel, mainWindow->GetLevel());
         }
+
+        getMainWindow()->centralWidget()->repaint();
+        mainWindow->ChangeCameraMatrix(mainWindow->GetCameraMatrix());
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {
@@ -365,15 +367,15 @@ void View::MainWindowMediator::closeRoadRendering()
     getMainWindow()->centralWidget()->repaint();
 }
 
-bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
+bool View::MainWindowMediator::dbValidation(const std::list<std::string>& aDbPathList)
 {
-    QString config = "../src/resource/configurationfile";
+    QString config = "./resource/configurationfile";
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
     savePath += "/validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
-    pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
+    pCheck->Initialize(aDbPathList, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
     if(!getMainWindow()->GetDbValidationDialog()->UpdateData(savePath))
     {
@@ -382,17 +384,17 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
     }
     else
     {
-        std::map<std::string, std::uint32_t> errorNumberOfLevelMap;
+        std::map<QString, std::uint32_t> errorNumberOfLevelMap;
         getMainWindow()->GetDbValidationDialog()->getErrorNumberOfLevel(errorNumberOfLevelMap);
-        if(errorNumberOfLevelMap["Need To Verify"] == 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        if(errorNumberOfLevelMap[scLevelWarning] == 0 && errorNumberOfLevelMap[scLevelError] == 0)
         {
             getMainWindow()->setActionWarningIcon(0);
         }
-        if(errorNumberOfLevelMap["Need To Verify"] > 0 && errorNumberOfLevelMap["Serious Error"] == 0)
+        if(errorNumberOfLevelMap[scLevelWarning] > 0 && errorNumberOfLevelMap[scLevelError] == 0)
         {
             getMainWindow()->setActionWarningIcon(1);
         }
-        if(errorNumberOfLevelMap["Serious Error"] > 0)
+        if(errorNumberOfLevelMap[scLevelError] > 0)
         {
             getMainWindow()->setActionWarningIcon(2);
             getMainWindow()->GetDbValidationDialog()->setBtnContinueEnabled(true);

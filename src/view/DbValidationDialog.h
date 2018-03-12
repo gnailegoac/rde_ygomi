@@ -22,6 +22,9 @@ class DbValidationDialog;
 namespace View
 {
 
+static const QString scLevelError = "Serious Error";
+static const QString scLevelWarning = "Warning";
+
 class DbValidationDialog : public QDialog
 {
     Q_OBJECT
@@ -35,7 +38,7 @@ public:
     void setBtnContinueEnabled(bool aIsEnabled);
     void setBtnCancelEnabled(bool aIsEnabled);
     void setLabelWarningVisible(bool aIsVisible);
-    void getErrorNumberOfLevel(std::map<std::string, std::uint32_t>& aErrorNumberOfLevelMap);
+    void getErrorNumberOfLevel(std::map<QString, std::uint32_t>& aErrorNumberOfLevelMap);
 
 private slots:
     void onShowDetails();

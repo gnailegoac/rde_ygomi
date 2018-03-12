@@ -4,6 +4,10 @@
     "measures":
     [
         {
+            "measureId": 50000,
+            "description": "DB file to SegmentID hexadecimal converted to take two-digit folder name storage."
+        },
+        {
             "measureId": 50101,
             "description": "Road table does not exist or it's redundant."
         },
@@ -269,7 +273,7 @@
         },
         {
             "measureId": 50809,
-            "description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table should not be 0 or Null or \"\"."
+            "description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Lane table should not be 0 or Null or \"\"."
         }
     ]
 }

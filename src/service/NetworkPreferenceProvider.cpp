@@ -105,6 +105,10 @@ QString Service::NetworkPreferenceProvider::readWebServerSetting()
     QSettings settings;
     settings.beginGroup("WebServer");
     mWebServer = settings.value("webServer").toString();
+    if (mWebServer.isEmpty())
+    {
+        SetWebServer(scDefaultWebServer);
+    }
     return mWebServer;
 }
 

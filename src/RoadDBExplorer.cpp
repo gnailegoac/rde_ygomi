@@ -13,6 +13,8 @@
 #include "view/MainWindow.h"
 #include <QApplication>
 #include "facade/ApplicationFacade.h"
+#include "CommonFunction.h"
+#include <osgDB/Registry>
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +22,7 @@ int main(int argc, char *argv[])
 #ifdef QT_DEBUG
     qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9000");
 #endif
+    osgDB::Registry::instance()->setReadFileCallback(new ReadImageFromResourceCallback);
     View::MainWindow mainWindow;
     ApplicationFacade::GetInstance()->StartUp(&mainWindow);
     return application.exec();

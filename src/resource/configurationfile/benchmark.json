@@ -5,8 +5,9 @@
             "field": {
                 "ID": "UNSIGNED BIG INT",
                 "SegID": "INTEGER",
-                "StartJunctionID": "BIT INT",
-                "EndJunctionID": "BIT INT"
+                "StartJunctionID": "UNSIGNED BIG INT",
+                "EndJunctionID": "UNSIGNED BIG INT",
+                "PassedSegList": "TEXT"
             },
             "measureID": [50101,50201,50301,50506,
                           50401,50701,50803],
@@ -20,11 +21,16 @@
             "uniqueness": {
                 "50401": ["ID"]
             },
+            "character": {
+                "50701": {
+                    "PassedSegList": [",","-",".","0-9"]
+                }
+            },
             "nullvalue": {
                 "50803": {
-                    "Null": ["ID","SegID","StartJunctionID","EndJunctionID"],
-                    "EmptyText": ["ID","SegID","StartJunctionID","EndJunctionID"],
-                    "Zero": ["ID","SegID","StartJunctionID","EndJunctionID"]
+                    "Null": ["ID","SegID","StartJunctionID","EndJunctionID","PassedSegList"],
+                    "EmptyText": ["ID","SegID","StartJunctionID","EndJunctionID","PassedSegList"],
+                    "Zero": ["ID","SegID","StartJunctionID","EndJunctionID","PassedSegList"]
                 }
             }
         },
@@ -130,7 +136,7 @@
             "field": {
                 "SrcID": "TEXT",
                 "DstID": "TEXT",
-                "Type": "TEXT"
+                "Type": "INTEGER"
             },
             "measureID": [50104,50204,50304,50601,
                           50507,50404,50709,50710,
@@ -266,14 +272,14 @@
         {
             "name": "TrafficSign",
             "field": {
-                "ID": "UNSIGNED BIG INT",
-                "SegmentID": "INTEGER",
+                "ID": "TEXT",
+                "SegID": "INTEGER",
                 "Type": "INTEGER",
                 "Orientation": "float",
                 "ShapeWidth": "float",
                 "ShapeHeight": "float",
                 "Confidence": "float",
-                "Gps": "TEXT"
+                "GPS": "TEXT"
             },
             "measureID": [50107,50207,50307,50607,
                           50510,50407,50717,50718,
@@ -393,7 +399,7 @@
             }
         },
         {
-            "name": "DBVersion",
+            "name": "Version",
             "field": {
                 "VERSION": "UNSIGNED INT"
             },
@@ -859,7 +865,7 @@
             "Level": "Warning"
         },
         "50809": {
-            "Description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Curve table should not be 0 or Null or \"\".",
+            "Description": "The ID/RoadID/LLineID/RLineID/AvgSlamTrace of the Lane table should not be 0 or Null or \"\".",
             "ShortName": "LaneFieldEmpty",
             "Level": "Warning"
         },

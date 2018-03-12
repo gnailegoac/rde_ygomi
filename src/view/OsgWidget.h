@@ -57,6 +57,7 @@ public:
     void JumpToCenter(const osg::Vec3d& aCenter);
     void SetSelectType(const Model::SelectType& aSelectType);
     std::uint8_t GetLevel();
+    QJsonArray GetCameraMatrix();
 
 protected:
     void paintEvent(QPaintEvent* aPaintEvent) override;

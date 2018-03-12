@@ -7,7 +7,7 @@
 QT       += core gui opengl webenginewidgets xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = RoadDBExplorer
+TARGET = RoadDatabaseExplorer
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -164,11 +164,13 @@ FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \
     view/DbValidationDialog.ui
 
-IMAGE_FILES += $$files(resource/trafficsign/US_signs_pics_defines/*.jpg,true) \
-               $$files(resource/trafficsign/US_signs_pics_defines/*.png,true)
+config_files.path = $$OUT_PWD/resource/configurationfile
+config_files.files += $$files(resource/configurationfile/*)
 
-resource_files.path = $$OUT_PWD/resource/trafficsign/US_signs_pics_defines
-resource_files.files += $${IMAGE_FILES}
+target.path = $$OUT_PWD/../deploy/release/
 
-INSTALLS += resource_files
+INSTALLS += config_files target
+
+RESOURCES += \
+    resources.qrc
 

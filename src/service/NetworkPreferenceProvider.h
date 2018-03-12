@@ -17,6 +17,8 @@
 namespace Service
 {
 
+static const QString scDefaultWebServer = "http://10.69.141.8:8095";
+
 class NetworkPreferenceProvider
 {
 public:
