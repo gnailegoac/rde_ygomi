@@ -183,7 +183,8 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     if (noteName == ApplicationFacade::FILE_OPEN)
     {
         std::string filePath = CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody())->toStdString();
-        if(dbValidation(filePath))
+        std::list<std::string> dbFileList({filePath});
+        if (dbValidation(dbFileList))
         {
             getMainWindow()->EnableSaveAction(true);
             ApplicationFacade::SendNotification(ApplicationFacade::FILE_OPEN_SUCCESS, &filePath);
@@ -193,9 +194,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     {
         QString folderPath = *CommonFunction::ConvertToNonConstType<QString>(aNotification.getBody());
         std::vector<std::string> databaseFileList = searchDatabaseFileList(folderPath);
+        std::list<std::string> dbFileList(databaseFileList.begin(), databaseFileList.end());
         if (databaseFileList.size() > 0)
         {
-            if(dbValidation(folderPath.toStdString()))
+            if (dbValidation(dbFileList))
             {
                 getMainWindow()->EnableSaveAction(true);
                 ApplicationFacade::SendNotification(ApplicationFacade::FOLDER_OPEN_SUCCESS, &databaseFileList);
@@ -365,7 +367,7 @@ void View::MainWindowMediator::closeRoadRendering()
     getMainWindow()->centralWidget()->repaint();
 }
 
-bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
+bool View::MainWindowMediator::dbValidation(const std::list<std::string>& aDbPathList)
 {
     QString config = "./resource/configurationfile";
     QString savePath = QDir::currentPath();
@@ -373,7 +375,7 @@ bool View::MainWindowMediator::dbValidation(const std::string& aDbPath)
     QString current_date = current_date_time.toString("yyyyMMdd_hhmmss");
     savePath += "/validation_" + current_date + ".json";
     std::shared_ptr<Validation::BasicCheck> pCheck = std::make_shared<Validation::BasicCheck>();
-    pCheck->Initialize(aDbPath, config.toStdString(), savePath.toStdString());
+    pCheck->Initialize(aDbPathList, config.toStdString(), savePath.toStdString());
     pCheck->RunCheck();
     if(!getMainWindow()->GetDbValidationDialog()->UpdateData(savePath))
     {
