@@ -481,7 +481,10 @@ void Model::SceneModel::RedrawRoadMarks(const uint8_t& aLevel)
     for(const auto& node : mLineNodeMap)
     {
         osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
-        geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
+        if (nullptr != geode)
+        {
+            geode->getOrCreateStateSet()->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
+        }
     }
 }
 
@@ -498,6 +501,10 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryMode
     for(auto& node : mLineNodeMap)
     {
         osg::Geode* geode = dynamic_cast<osg::Geode*>((node.second).get());
+        if (nullptr == geode)
+        {
+            continue;
+        }
         geode->removeDrawables(0, geode->getNumDrawables());
 
         std::uint64_t lineId = node.first;
@@ -505,7 +512,7 @@ void Model::SceneModel::RedrawSceneByLOD(const std::shared_ptr<Model::MemoryMode
         Model::PaintListPtr pointListPtr = line->GetPaintListByLevel(aLevel);
         if(pointListPtr->size() == 0)
         {
-            return;
+            continue;
         }
         for (Point3DListPtr& points : *pointListPtr)
         {
