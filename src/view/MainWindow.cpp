@@ -17,6 +17,7 @@
 #include "view/MainWindow.h"
 #include "view/NetworkPreferenceDialog.h"
 #include "ui_MainWindow.h"
+#include "view/AboutDialog.h"
 #include "view/DbValidationDialog.h"
 
 #include "OsgWidget.h"
@@ -242,6 +243,12 @@ void View::MainWindow::setupConnections()
             mDbValidationDialog->setBtnContinueEnabled(false);
             mDbValidationDialog->setLabelWarningVisible(false);
         }
+    });
+
+    connect(ui->actionAbout, &QAction::triggered, [ = ]()
+    {
+        View::AboutDialog aboutDialog;
+        aboutDialog.exec();
     });
 }
 

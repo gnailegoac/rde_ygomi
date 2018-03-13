@@ -1,6 +1,6 @@
 {
     "name": "RoadDatabaseExplorer",
-    "version": "0.1.3",
+    "version": "1.0.0",
     "build": {
         "outdir": "deploy/release",
         "make_tool": "qmake",
@@ -11,6 +11,6 @@
         "groupId": "com.ygomi.rdb.delivery",
         "repositoryId": "aws-rdb-delivery-release",
         "url": "https://10.74.29.190:8443/repository/gis-maven-repository-release/",
-        "dependencyUrl": "https://10.74.29.190:8443/repository/gis-maven-repository-release/com/ygomi/rdb/delivery/RoadDBExplorerDependency/1.0/RoadDBExplorerDependency-1.0.tar.gz"
+        "dependencyUrl": "https://10.74.29.190:8443/repository/gis-maven-repository-release/com/ygomi/rdb/delivery/RoadDBExplorerDependency/2.0/RoadDBExplorerDependency-2.0.tar.gz"
     }
 }
