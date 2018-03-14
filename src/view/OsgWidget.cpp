@@ -307,17 +307,17 @@ void View::OsgWidget::mousePressEvent(QMouseEvent* aEvent)
             aButton = 2;
             break;
         case Qt::RightButton:
-            // if (Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() > 0)
-            // {
-            //     this->setContextMenuPolicy(Qt::CustomContextMenu);
-            //     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-            //             this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
-            // }
-            // else
-            // {
-                // QObject::disconnect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 0, 0);
+            if (Service::RoadEditParameters::Instance()->GetSelectedElementIds().size() > 0)
+            {
+                this->setContextMenuPolicy(Qt::CustomContextMenu);
+                connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                        this, SLOT(showContextMenu(const QPoint&)), Qt::UniqueConnection);
+            }
+            else
+            {
+                QObject::disconnect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 0, 0);
                 aButton = 3;
-            // }
+            }
             break;
         default:
             break;
