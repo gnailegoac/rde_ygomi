@@ -89,7 +89,8 @@ SOURCES +=\
     service/RoadEditParameters.cpp \
     control/RoadEditCommand.cpp \
     model/RoadModelUtilities.cpp \
-    view/DbValidationDialog.cpp
+    view/DbValidationDialog.cpp \
+    view/AboutDialog.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -158,11 +159,15 @@ HEADERS  += view/MainWindow.h \
     service/RoadEditParameters.h \
     control/RoadEditCommand.h \
     model/RoadModelUtilities.h \
-    view/DbValidationDialog.h
+    view/DbValidationDialog.h \
+    view/AboutDialog.h \
+    AppMeta.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \
-    view/DbValidationDialog.ui
+    view/DbValidationDialog.ui \
+    view/AboutDialog.ui \
+    view/AboutDialog.ui
 
 config_files.path = $$OUT_PWD/resource/configurationfile
 config_files.files += $$files(resource/configurationfile/*)
