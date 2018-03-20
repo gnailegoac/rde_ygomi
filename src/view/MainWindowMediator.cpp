@@ -29,6 +29,7 @@
 #include "model/SceneModel.h"
 #include "view/DbValidationDialog.h"
 #include "BasicCheck.h"
+#include "external/json/json.h"
 
 const std::string View::MainWindowMediator::NAME = "MainWindowMediator";
 
@@ -369,6 +370,7 @@ void View::MainWindowMediator::closeRoadRendering()
 
 bool View::MainWindowMediator::dbValidation(const std::list<std::string>& aDbPathList)
 {
+    Json::Reader reader;
     QString config = "./resource/configurationfile";
     QString savePath = QDir::currentPath();
     QDateTime current_date_time = QDateTime::currentDateTime();

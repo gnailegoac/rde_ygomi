@@ -250,6 +250,11 @@ void View::MainWindow::setupConnections()
         View::AboutDialog aboutDialog;
         aboutDialog.exec();
     });
+
+    connect(ui->actionCheck_Logic_Consistency, &QAction::triggered, [ = ]()
+    {
+        ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY);
+    });
 }
 
 void View::MainWindow::onSelectTypeChange(const Model::SelectType& aSelectType, bool aIsChecked)

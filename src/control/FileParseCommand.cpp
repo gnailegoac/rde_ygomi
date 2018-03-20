@@ -35,6 +35,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         setMemoryModel(memoryModel);
         ceateSceneModel();
         createTreeModel(memoryModel);
+        saveFilePath(filePath);
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
     else if(aNotification.getName() == ApplicationFacade::FOLDER_OPEN_SUCCESS)
@@ -50,6 +51,7 @@ void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification co
         setMemoryModel(memoryModel);
         ceateSceneModel();
         createTreeModel(memoryModel);
+        saveFilePath(databaseFilePathList);
         ApplicationFacade::SendNotification(ApplicationFacade::INIT_SCENE);
     }
 }
@@ -77,4 +79,21 @@ void Controller::FileParseCommand::setMemoryModel(const Model::MemoryModelPtr& a
 {
     MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
     mainProxy.SetMemoryModel(aMemoryModel);
+}
+
+void Controller::FileParseCommand::saveFilePath(const std::string filePath)
+{
+    std::vector<std::string> filePathList;
+    filePathList.push_back(filePath);
+    saveFilePath(filePathList);
+}
+
+void Controller::FileParseCommand::saveFilePath(const std::vector<std::string> filePathList)
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
+    if (memoryModel != nullptr)
+    {
+        memoryModel->setFilePathList(filePathList);
+    }
 }

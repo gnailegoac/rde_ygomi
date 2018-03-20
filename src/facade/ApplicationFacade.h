@@ -58,6 +58,7 @@ public:
     static const std::string EDIT_ROAD;
     static const std::string ADD_LINE_TO_ROAD;
     static const std::string UPDATE_TREE_VIEW;
+    static const std::string CHECK_LOGIC_CONSISTENCY;
 
     static ApplicationFacade* GetInstance();
 

@@ -6,28 +6,26 @@
  *      This software is furnished under license and may be used or
  *      copied only in accordance with the terms of such license.
  *******************************************************************************
- * @file    FileParseCommand.h
+ * @file    CheckLogicConsistencyCommand.h
  *******************************************************************************
  */
 
 #pragma once
 
 #include "BasicCommand.h"
-#include "model/data_handler/IParser.h"
+#include "PeqiDataDefine.h"
+#include "service/LogicDbLoader.h"
 
 namespace Controller
 {
-class FileParseCommand : public BasicCommand
+class CheckLogicConsistencyCommand : public BasicCommand
 {
 public:
     void execute(PureMVC::Interfaces::INotification const& aNotification) override;
     static std::string GetCommandName();
 private:
-    void setMemoryModel(const Model::MemoryModelPtr& aMemoryModel);
-    void ceateSceneModel();
-    void createTreeModel(const Model::MemoryModelPtr& aMemoryModel);
-    void saveFilePath(const std::string filePath);
-    void saveFilePath(const std::vector<std::string> filePathList);
+    void checkLogicConsistency(PeqiDataDefine::PointData& sensorData);
+    void createQIModel();
+    void saveResult(PeqiDataDefine::ResultInfo& result);
 };
 }
-

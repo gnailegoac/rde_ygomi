@@ -19,6 +19,7 @@ namespace Model
 class SceneModel;
 class MemoryModel;
 class TreeModel;
+class QIModel;
 }
 
 class MainProxy : public PureMVC::Patterns::Proxy
@@ -36,8 +37,12 @@ public:
 
     const std::shared_ptr<Model::TreeModel>& GetTreeModel() const;
     void SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel);
+
+    const std::shared_ptr<Model::QIModel>& GetQIModel() const;
+    void SetQIModel(const std::shared_ptr<Model::QIModel>& aQIModel);
 private:
     std::shared_ptr<Model::SceneModel> mSceneModel;
     std::shared_ptr<Model::MemoryModel> mMemoryModel;
     std::shared_ptr<Model::TreeModel> mTreeModel;
+    std::shared_ptr<Model::QIModel> mQIModel;
 };

@@ -19,6 +19,7 @@
 #include "control/SceneManageCommand.h"
 #include "control/NodeHighlightCommand.h"
 #include "control/RoadEditCommand.h"
+#include "control/CheckLogicConsistencyCommand.h"
 
 const std::string ApplicationFacade::NAME = "ApplicationFacade";
 std::map<std::string, PureMVC::Patterns::IProxy*> ApplicationFacade::mProxyList;
@@ -59,6 +60,7 @@ const std::string ApplicationFacade::MERGE_ROAD = "MergeRoad";
 const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
 const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY = "CheckLogicConsistency";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -122,6 +124,8 @@ void ApplicationFacade::initializeCommands()
                     std::shared_ptr<Controller::NodeHighlightCommand>(new Controller::NodeHighlightCommand);
     mCommandList[Controller::RoadEditCommand::GetCommandName()] =
                         std::shared_ptr<Controller::RoadEditCommand>(new Controller::RoadEditCommand);
+    mCommandList[Controller::CheckLogicConsistencyCommand::GetCommandName()] =
+                        std::shared_ptr<Controller::CheckLogicConsistencyCommand>(new Controller::CheckLogicConsistencyCommand);
 }
 
 void ApplicationFacade::initializeMessageMap()
@@ -140,6 +144,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[SELECT_NODE_IN_3DVIEW] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[MERGE_ROAD] = Controller::RoadEditCommand::GetCommandName();
     mMessageList[ADD_LINE_TO_ROAD] = Controller::RoadEditCommand::GetCommandName();
+    mMessageList[CHECK_LOGIC_CONSISTENCY] = Controller::CheckLogicConsistencyCommand::GetCommandName();
 }
 
 void ApplicationFacade::RegisterProxy(PureMVC::Patterns::IProxy* aProxy)

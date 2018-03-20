@@ -90,7 +90,12 @@ SOURCES +=\
     control/RoadEditCommand.cpp \
     model/RoadModelUtilities.cpp \
     view/DbValidationDialog.cpp \
-    view/AboutDialog.cpp
+    view/AboutDialog.cpp \
+    service/PointCloudLoader.cpp \
+    service/LogicDbLoader.cpp \
+    service/AlgoPointDataConverter.cpp \
+    control/CheckLogicConsistencyCommand.cpp \
+    model/QIModel.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -161,7 +166,12 @@ HEADERS  += view/MainWindow.h \
     model/RoadModelUtilities.h \
     view/DbValidationDialog.h \
     view/AboutDialog.h \
-    AppMeta.h
+    AppMeta.h \
+    service/PointCloudLoader.h \
+    service/LogicDbLoader.h \
+    service/AlgoPointDataConverter.h \
+    control/CheckLogicConsistencyCommand.h \
+    model/QIModel.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \

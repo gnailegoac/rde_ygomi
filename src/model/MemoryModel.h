@@ -68,6 +68,9 @@ public:
 
     void RemoveRoad(const Model::RoadPtr& aRoad);
 
+    void setFilePathList(std::vector<std::string> filePathList);
+    std::vector<std::string> getFilePathList();
+
 private:
     TileMapPtr mTileMap;
     CurveIdMapPtr mCurveIdMap;
@@ -75,6 +78,7 @@ private:
     LaneIdMapPtr mLaneIdMap;
     RoadIdMapPtr mRoadIdMap;
     TrafficSignIdMapPtr mTrafficSignIdMap;
+    std::vector<std::string> mFilePathList;
 };
 
 }

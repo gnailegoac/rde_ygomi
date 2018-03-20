@@ -86,10 +86,19 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuCheck">
+    <property name="title">
+     <string>Check</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheck_Logic_Consistency"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menu3DModel"/>
    <addaction name="menuAbout"/>
+   <addaction name="menuCheck"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="enabled">
@@ -217,6 +226,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionCheck_Logic_Consistency">
+   <property name="text">
+    <string>Check Logic Consistency</string>
    </property>
   </action>
  </widget>
