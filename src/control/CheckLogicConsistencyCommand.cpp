@@ -46,6 +46,7 @@ void Controller::CheckLogicConsistencyCommand::execute(PureMVC::Interfaces::INot
             checkLogicConsistency(sensedPointData);
         }
     }
+    ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
 }
 
 std::string Controller::CheckLogicConsistencyCommand::GetCommandName()

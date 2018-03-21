@@ -95,7 +95,8 @@ SOURCES +=\
     service/LogicDbLoader.cpp \
     service/AlgoPointDataConverter.cpp \
     control/CheckLogicConsistencyCommand.cpp \
-    model/QIModel.cpp
+    model/QIModel.cpp \
+    view/LogicCheckDialog.cpp
 
 HEADERS  += view/MainWindow.h \
     view/PickHandler.h \
@@ -171,13 +172,14 @@ HEADERS  += view/MainWindow.h \
     service/LogicDbLoader.h \
     service/AlgoPointDataConverter.h \
     control/CheckLogicConsistencyCommand.h \
-    model/QIModel.h
+    model/QIModel.h \
+    view/LogicCheckDialog.h
 
 FORMS    += view/MainWindow.ui \
     view/NetworkPreferenceDialog.ui \
     view/DbValidationDialog.ui \
     view/AboutDialog.ui \
-    view/AboutDialog.ui
+    view/LogicCheckDialog.ui
 
 config_files.path = $$OUT_PWD/resource/configurationfile
 config_files.files += $$files(resource/configurationfile/*)

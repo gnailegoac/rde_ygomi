@@ -61,6 +61,7 @@ const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
 const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY = "CheckLogicConsistency";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS = "CheckLogicConsistencySucess";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {

@@ -62,6 +62,8 @@ public:
     //0 status means pass; 1 warning; 2 error.
     void setActionWarningIcon(unsigned int aStatus);
 
+    void ShowCheckLogicConsistencyResult();
+
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;

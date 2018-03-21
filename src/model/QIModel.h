@@ -22,10 +22,6 @@ namespace Model
 
 struct ErrorPoint
 {
-    std::int32_t         mID;
-    std::string          mName;
-    std::string          mDescription;
-
     double               dX;
     double               dY;
     double               dZ;

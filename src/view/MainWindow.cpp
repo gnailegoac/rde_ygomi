@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTreeWidget>
 
 #include "service/NetworkPreferenceProvider.h"
 #include "view/MainWindow.h"
@@ -27,6 +28,7 @@
 
 #include "proxy/MainProxy.h"
 #include "service/RoadEditParameters.h"
+#include "model/QIModel.h"
 
 View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWindow(aParent, flags),
     ui(new Ui::MainWindow),
@@ -426,5 +428,24 @@ void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
         ui->actionWarning->setEnabled(true);
         mDbValidationDialog->setBtnShowDetailsEnabled(true);
         ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/error.png")));
+    }
+}
+
+void View::MainWindow::ShowCheckLogicConsistencyResult()
+{
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    const std::shared_ptr<Model::QIModel>& qiModel = mainProxy.GetQIModel();
+    if (qiModel != nullptr)
+    {
+        QTreeWidget* tree = new QTreeWidget();
+        tree->show();
+
+        const std::map<int, std::vector<Model::ErrorPoint>>& errMap = qiModel->GetErrPointMap();
+
+        for (const auto& pointListIter : errMap)
+        {
+            QString str = QStringLiteral("%1:%2").arg(pointListIter.first).arg(pointListIter.second.size());
+            new QTreeWidgetItem(tree, QStringList(str));
+        }
     }
 }
