@@ -14,6 +14,9 @@
 
 namespace Model {
 
+QIModel::QIModel():mSelectedErrCode(0)
+{}
+
 void QIModel::AddErrPoint(int errID, const ErrorPoint& errPoint)
 {
     mErrPointMap[errID].push_back(errPoint);
@@ -34,6 +37,16 @@ void QIModel::SetRefPoint(double x, double y, double z)
 const Point3D& QIModel::GetRefPoint()
 {
     return mReferencePoint;
+}
+
+void QIModel::SetSelectedErrCode(int errCode)
+{
+    mSelectedErrCode = errCode;
+}
+
+int QIModel::GetSelectedErrCode()
+{
+    return mSelectedErrCode;
 }
 
 }

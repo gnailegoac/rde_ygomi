@@ -91,7 +91,6 @@
      <string>Check</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="actionCheck_Logic_Consistency"/>
    </widget>
    <addaction name="menuFile"/>

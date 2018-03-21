@@ -60,7 +60,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::CLOSE_ROAD_RENDERING);
     result->get().push_back(ApplicationFacade::EDIT_ROAD);
     result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
-    result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
+    result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_COMPLETE);
     return NotificationNames(result);
 }
 
@@ -334,7 +334,7 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         mainProxy->SetTreeModel(treeModel);
         getMainWindow()->SetTreeModel(treeModel);
     }
-    else if (noteName == ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS)
+    else if (noteName == ApplicationFacade::CHECK_LOGIC_CONSISTENCY_COMPLETE)
     {
         getMainWindow()->ShowCheckLogicConsistencyResult();
     }

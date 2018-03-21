@@ -30,17 +30,22 @@ struct ErrorPoint
 class QIModel
 {
 public:
+    QIModel();
     void AddErrPoint(int errID, const ErrorPoint& errPoint);
     const std::map<int, std::vector<ErrorPoint>>& GetErrPointMap();
 
     void SetRefPoint(double x, double y, double z);
     const Point3D& GetRefPoint();
 
+    void SetSelectedErrCode(int errCode);
+    int GetSelectedErrCode();
+
 private:
 
 private:
     std::map<int, std::vector<ErrorPoint>> mErrPointMap;
     Point3D mReferencePoint;
+    int mSelectedErrCode;
 };
 
 }

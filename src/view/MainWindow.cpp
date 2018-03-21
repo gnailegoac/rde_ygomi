@@ -20,6 +20,7 @@
 #include "ui_MainWindow.h"
 #include "view/AboutDialog.h"
 #include "view/DbValidationDialog.h"
+#include "view/LogicCheckDialog.h"
 
 #include "OsgWidget.h"
 #include "MainWindowMediator.h"
@@ -433,19 +434,6 @@ void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
 
 void View::MainWindow::ShowCheckLogicConsistencyResult()
 {
-    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-    const std::shared_ptr<Model::QIModel>& qiModel = mainProxy.GetQIModel();
-    if (qiModel != nullptr)
-    {
-        QTreeWidget* tree = new QTreeWidget();
-        tree->show();
-
-        const std::map<int, std::vector<Model::ErrorPoint>>& errMap = qiModel->GetErrPointMap();
-
-        for (const auto& pointListIter : errMap)
-        {
-            QString str = QStringLiteral("%1:%2").arg(pointListIter.first).arg(pointListIter.second.size());
-            new QTreeWidgetItem(tree, QStringList(str));
-        }
-    }
+    View::LogicCheckDialog* dialog = new View::LogicCheckDialog();
+    dialog->show();
 }
