@@ -13,6 +13,7 @@
 #include "MainProxy.h"
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
+#include "model/QIModel.h"
 
 const std::string MainProxy::NAME = "MainProxy";
 
@@ -20,8 +21,7 @@ MainProxy::MainProxy():
     Proxy("MainProxy"),
     mSceneModel(nullptr),
     mMemoryModel(nullptr),
-    mTreeModel(nullptr),
-    mQIModel(nullptr)
+    mTreeModel(nullptr)
 {
 
 }
@@ -30,8 +30,7 @@ MainProxy::MainProxy(const std::string& aName):
     Proxy(aName),
     mSceneModel(nullptr),
     mMemoryModel(nullptr),
-    mTreeModel(nullptr),
-    mQIModel(nullptr)
+    mTreeModel(nullptr)
 {
 
 }
@@ -68,10 +67,6 @@ void MainProxy::SetTreeModel(const std::shared_ptr<Model::TreeModel>& aTreeModel
 
 const std::shared_ptr<Model::QIModel>& MainProxy::GetQIModel() const
 {
-    return mQIModel;
-}
-
-void MainProxy::SetQIModel(const std::shared_ptr<Model::QIModel>& aQIModel)
-{
-    mQIModel = aQIModel;
+    static std::shared_ptr<Model::QIModel> qiModel(new Model::QIModel());
+    return qiModel;
 }

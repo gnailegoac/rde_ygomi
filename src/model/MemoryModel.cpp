@@ -229,13 +229,3 @@ void Model::MemoryModel::RemoveRoad(const Model::RoadPtr& aRoad)
 {
     aRoad->GetTile()->RemoveRoad(aRoad);
 }
-
-void Model::MemoryModel::setFilePathList(std::vector<std::string> filePathList)
-{
-    mFilePathList = filePathList;
-}
-
-std::vector<std::string> Model::MemoryModel::getFilePathList()
-{
-    return mFilePathList;
-}

@@ -20,6 +20,7 @@
 #include "model/MemoryModel.h"
 #include "model/SceneModel.h"
 #include "model/TreeModel.h"
+#include "model/QIModel.h"
 
 void Controller::FileParseCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
@@ -91,9 +92,5 @@ void Controller::FileParseCommand::saveFilePath(const std::string filePath)
 void Controller::FileParseCommand::saveFilePath(const std::vector<std::string> filePathList)
 {
     MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-    const std::shared_ptr<Model::MemoryModel>& memoryModel = mainProxy.GetMemoryModel();
-    if (memoryModel != nullptr)
-    {
-        memoryModel->setFilePathList(filePathList);
-    }
+    mainProxy.GetQIModel()->setFilePathList(filePathList);
 }

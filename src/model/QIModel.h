@@ -14,38 +14,53 @@
 #pragma once
 
 #include "Common.h"
+#include <QObject>
 #include "Point3D.h"
 #include <map>
+#include "service/LogicDbLoader.h"
+#include "PeqiDataDefine.h"
+#include "IDataQualityAnalyzer.h"
 
 namespace Model
 {
 
-struct ErrorPoint
+class QIModel : public QObject
 {
-    double               dX;
-    double               dY;
-    double               dZ;
-};
+    Q_OBJECT
 
-class QIModel
-{
 public:
     QIModel();
-    void AddErrPoint(int errID, const ErrorPoint& errPoint);
-    const std::map<int, std::vector<ErrorPoint>>& GetErrPointMap();
 
-    void SetRefPoint(double x, double y, double z);
-    const Point3D& GetRefPoint();
+    const std::map<int, std::vector<Point3D>>& getErrPointMap();
 
-    void SetSelectedErrCode(int errCode);
-    int GetSelectedErrCode();
+    Point3D getRefPoint();
+
+    void setFilePathList(const std::vector<std::string>& filePathList);
+
+    bool isSuccess() { return isSuccess_; }
+
+private slots:
+    void process();
 
 private:
+    bool loadDataFromDBFiles();
+    bool convertLoaderToPointData();
+    bool runQualityAnalyize();
+    bool extractLogicalResult();
 
 private:
-    std::map<int, std::vector<ErrorPoint>> mErrPointMap;
-    Point3D mReferencePoint;
-    int mSelectedErrCode;
+    std::vector<std::string> filePathsList_;
+
+    Service::LogicDbLoader DBloader_;
+    PeqiDataDefine::PointData pointData_;
+    IDataQualityAnalyzer dataAna_;
+    PeqiDataDefine::ResultInfo* pResultInfo_;
+
+    std::map<int, std::vector<Point3D>> errPointMap_;
+
+    Point3D referencePoint_;
+
+    bool isSuccess_;
 };
 
 }

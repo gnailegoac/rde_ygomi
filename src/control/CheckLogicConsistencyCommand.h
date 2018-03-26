@@ -13,19 +13,25 @@
 #pragma once
 
 #include "BasicCommand.h"
-#include "PeqiDataDefine.h"
-#include "service/LogicDbLoader.h"
+#include <QObject>
+#include <QThread>
 
-namespace Controller
+namespace Controller {
+
+class CheckLogicConsistencyCommand : public QObject, public BasicCommand
 {
-class CheckLogicConsistencyCommand : public BasicCommand
-{
+    Q_OBJECT
+
 public:
+    CheckLogicConsistencyCommand();
     void execute(PureMVC::Interfaces::INotification const& aNotification) override;
     static std::string GetCommandName();
+
+public slots:
+    void onThreadEnd();
+
 private:
-    void checkLogicConsistency(PeqiDataDefine::PointData& sensorData);
-    void createQIModel();
-    void saveResult(PeqiDataDefine::ResultInfo& result);
+    QThread* pThread_;
 };
+
 }

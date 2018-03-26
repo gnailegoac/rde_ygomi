@@ -4,6 +4,7 @@
 #include "facade/ApplicationFacade.h"
 #include "proxy/MainProxy.h"
 #include "model/QIModel.h"
+#include "model/Point3D.h"
 
 View::LogicCheckDialog::LogicCheckDialog(QWidget *parent) :
     QDialog(parent),
@@ -20,7 +21,7 @@ View::LogicCheckDialog::LogicCheckDialog(QWidget *parent) :
     const std::shared_ptr<Model::QIModel>& qiModel = mainProxy.GetQIModel();
     if (qiModel != nullptr)
     {
-        const std::map<int, std::vector<Model::ErrorPoint>>& errMap = qiModel->GetErrPointMap();
+        const std::map<int, std::vector<Model::Point3D>>& errMap = qiModel->getErrPointMap();
         for (const auto& pointListIter : errMap)
         {
             QList<QStandardItem*> list;
@@ -53,7 +54,6 @@ void View::LogicCheckDialog::on_treeView_clicked(const QModelIndex &index)
     const std::shared_ptr<Model::QIModel>& qiModel = mainProxy.GetQIModel();
     if (qiModel != nullptr)
     {
-        qiModel->SetSelectedErrCode(errCode);
         ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ERROR_CODE);
     }
 }

@@ -111,6 +111,7 @@
    </attribute>
    <addaction name="actionWarning"/>
    <addaction name="separator"/>
+   <addaction name="actionCheckLogic"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
@@ -229,6 +230,14 @@
   </action>
   <action name="actionCheck_Logic_Consistency">
    <property name="text">
+    <string>Check Logic Consistency</string>
+   </property>
+  </action>
+  <action name="actionCheckLogic">
+   <property name="text">
+    <string>checklogic</string>
+   </property>
+   <property name="toolTip">
     <string>Check Logic Consistency</string>
    </property>
   </action>

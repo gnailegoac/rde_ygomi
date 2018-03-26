@@ -62,6 +62,7 @@ public:
     //0 status means pass; 1 warning; 2 error.
     void setActionWarningIcon(unsigned int aStatus);
 
+    void ShowCheckLogicConsistencyStart();
     void ShowCheckLogicConsistencyResult();
 
 protected:

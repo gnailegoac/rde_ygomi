@@ -61,7 +61,10 @@ const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
 const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY = "CheckLogicConsistency";
-const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_COMPLETE = "CheckLogicConsistencySucess";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START = "CheckLogicConsistencyStart";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_BUSY = "CheckLogicConsistencyBusy";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS = "CheckLogicConsistencySucess";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL = "CheckLogicConsistencyFail";
 const std::string ApplicationFacade::SELECT_ERROR_CODE = "SelectErrorCode";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)

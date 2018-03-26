@@ -59,7 +59,10 @@ public:
     static const std::string ADD_LINE_TO_ROAD;
     static const std::string UPDATE_TREE_VIEW;
     static const std::string CHECK_LOGIC_CONSISTENCY;
-    static const std::string CHECK_LOGIC_CONSISTENCY_COMPLETE;
+    static const std::string CHECK_LOGIC_CONSISTENCY_START;
+    static const std::string CHECK_LOGIC_CONSISTENCY_BUSY;
+    static const std::string CHECK_LOGIC_CONSISTENCY_SUCCESS;
+    static const std::string CHECK_LOGIC_CONSISTENCY_FAIL;
     static const std::string SELECT_ERROR_CODE;
 
     static ApplicationFacade* GetInstance();

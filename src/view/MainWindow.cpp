@@ -432,8 +432,14 @@ void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
     }
 }
 
+void View::MainWindow::ShowCheckLogicConsistencyStart()
+{
+    ui->actionCheckLogic->setText("Checking...");
+}
+
 void View::MainWindow::ShowCheckLogicConsistencyResult()
 {
+    ui->actionCheckLogic->setText("Done!");
     View::LogicCheckDialog* dialog = new View::LogicCheckDialog();
     dialog->show();
 }
