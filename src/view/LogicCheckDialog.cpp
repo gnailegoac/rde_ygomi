@@ -54,6 +54,6 @@ void View::LogicCheckDialog::on_treeView_clicked(const QModelIndex &index)
     const std::shared_ptr<Model::QIModel>& qiModel = mainProxy.GetQIModel();
     if (qiModel != nullptr)
     {
-        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ERROR_CODE);
+        ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ERROR_CODE, &errCode);
     }
 }

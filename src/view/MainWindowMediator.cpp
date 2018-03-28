@@ -27,6 +27,7 @@
 #include "model/MemoryModel.h"
 #include "model/GeoJsonConverter.h"
 #include "model/SceneModel.h"
+#include "model/QIModel.h"
 #include "view/DbValidationDialog.h"
 #include "BasicCheck.h"
 #include "external/json/json.h"
@@ -62,6 +63,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START);
     result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
+    result->get().push_back(ApplicationFacade::SELECT_ERROR_CODE);
     return NotificationNames(result);
 }
 
@@ -245,6 +247,20 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
 
         getMainWindow()->centralWidget()->repaint();
         mainWindow->ChangeCameraMatrix(mainWindow->GetCameraMatrix());
+    }
+    else if (noteName == ApplicationFacade::SELECT_ERROR_CODE)
+    {
+        int err = *CommonFunction::ConvertToNonConstType<int>(aNotification.getBody());
+
+        const std::shared_ptr<Model::SceneModel>& sceneModel = getMainProxy()->GetSceneModel();
+        const std::shared_ptr<Model::QIModel>& qiModel = getMainProxy()->GetQIModel();
+        if(sceneModel != nullptr && qiModel != nullptr)
+        {
+            const std::vector<Model::Point3D>& pointList = qiModel->getErrPointMap()[err];
+            sceneModel->buildErrPointsNode(pointList, qiModel->getRefPoint());
+        }
+
+        getMainWindow()->centralWidget()->repaint();
     }
     else if (noteName == ApplicationFacade::SELECT_ROAD_ON_TREE)
     {

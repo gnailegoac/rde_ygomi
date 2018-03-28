@@ -31,7 +31,7 @@ class QIModel : public QObject
 public:
     QIModel();
 
-    const std::map<int, std::vector<Point3D>>& getErrPointMap();
+    std::map<int, std::vector<Point3D>>& getErrPointMap();
 
     Point3D getRefPoint();
 

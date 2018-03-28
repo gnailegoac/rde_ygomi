@@ -16,6 +16,7 @@
 #include "model/Line.h"
 #include "model/Utilities.h"
 #include "model/MemoryModel.h"
+#include "CoordinateTransform/Factory.h"
 
 #include <osg/Material>
 #include <osg/LineWidth>
@@ -134,6 +135,54 @@ osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& a
 
     geode->setName("Line:" + std::to_string(aLine->GetLineId()));
     return geode;
+}
+
+void Model::SceneModel::buildErrPointsNode(const std::vector<Point3D>& pointList, const Point3D& refPoint)
+{
+    if(pointList.empty())
+    {
+        return;
+    }
+
+    osg::Geode* geode = new osg::Geode;
+    osg::ref_ptr<osg::LineWidth> width = new osg::LineWidth;
+    width->setWidth(1.0f);
+
+    geode->getOrCreateStateSet()->setAttributeAndModes(width, osg::StateAttribute::ON);
+
+    osg::ref_ptr<osg::Material> material = new osg::Material;
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    material->setTransparency(osg::Material::FRONT_AND_BACK, 0.9);
+    geode->getOrCreateStateSet()->setAttributeAndModes(material,
+                                                       osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+
+    osg::ref_ptr<osg::Vec3dArray> vertexArray = new osg::Vec3dArray;
+    auto ecef = CRS::Factory().CreateEcefProjection(CRS::CoordinateType::Wgs84,
+                                                    CRS::CoordinateType::Ecef);
+    auto relativeToWgs84 = CRS::Factory().CreateRelativeTransform(CRS::CoordinateType::Relative,
+                                                               CRS::CoordinateType::Wgs84,
+                                                               refPoint.GetX(),
+                                                               refPoint.GetY(),
+                                                               refPoint.GetZ());
+    for (auto& point : pointList)
+    {
+        double lon = point.GetX();
+        double lat = point.GetY();
+        double ele = point.GetZ();
+        relativeToWgs84->Transform(lon, lat, ele);
+        ecef->Transform(lon, lat, ele);
+        vertexArray->push_back(osg::Vec3d(lon, lat, ele));
+    }
+
+    osg::Geometry* geometry = new osg::Geometry;
+    geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::POINTS, 0, vertexArray->size()));
+    geometry->setVertexArray(vertexArray);
+
+    geode->addDrawable(geometry);
+
+    geode->setName("error: test");
+    mSceneModelRoot->addChild(geode);
 }
 
 osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<Model::Road>& aRoad)

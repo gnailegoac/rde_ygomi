@@ -42,6 +42,7 @@ public:
     void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const std::uint8_t& aLevel);
     static std::vector<osg::Node*> GetLineNodesByRoadNode(osg::Node* aNode);
     static uint64_t GetIdByNodeName(const std::string& aNodeName);
+    void buildErrPointsNode(const std::vector<Point3D>& pointList, const Point3D& refPoint);
 
 private:
     osg::ref_ptr<osg::Node> buildLineNode(const Model::LinePtr& aLine);

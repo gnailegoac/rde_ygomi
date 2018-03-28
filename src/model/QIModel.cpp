@@ -160,7 +160,7 @@ bool QIModel::extractLogicalResult()
     return true;
 }
 
-const std::map<int, std::vector<Point3D>>& QIModel::getErrPointMap()
+std::map<int, std::vector<Point3D>>& QIModel::getErrPointMap()
 {
     return errPointMap_;
 }
