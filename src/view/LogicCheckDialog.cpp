@@ -48,6 +48,9 @@ View::LogicCheckDialog::~LogicCheckDialog()
 void View::LogicCheckDialog::on_pushButton_clicked()
 {
     destroy();
+
+    int errCode = 0;
+    ApplicationFacade::SendNotification(ApplicationFacade::SELECT_ERROR_CODE, &errCode);
 }
 
 void View::LogicCheckDialog::on_treeView_clicked(const QModelIndex &index)

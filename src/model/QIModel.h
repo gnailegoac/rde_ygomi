@@ -44,6 +44,7 @@ private slots:
     void process();
 
 signals:
+    void processUpdate(int value);
     void resultReady();
 
 private:

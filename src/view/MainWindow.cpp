@@ -48,6 +48,9 @@ View::MainWindow::MainWindow(QWidget* aParent, Qt::WindowFlags flags) : QMainWin
     mRoadInfoView->setVisible(false);
     mDbValidationDialog->hide();
     ui->actionWarning->setIcon(QIcon(QPixmap(":/resource/image/warning.png")));
+
+    progDialog_.setWindowModality(Qt::WindowModal);
+    progDialog_.reset();
 }
 
 void View::MainWindow::PopupWarningMessage(const QString& aWarning)
@@ -434,7 +437,7 @@ void View::MainWindow::setActionWarningIcon(unsigned int aStatus)
 
 void View::MainWindow::ShowCheckLogicConsistencyStart()
 {
-    ui->actionCheckLogic->setText("Checking...");
+    showProgress("Logic Consistency", "Checking.....", 100);
 }
 
 void View::MainWindow::ShowCheckLogicConsistencyResult()
@@ -442,4 +445,17 @@ void View::MainWindow::ShowCheckLogicConsistencyResult()
     ui->actionCheckLogic->setText("Done!");
     View::LogicCheckDialog* dialog = new View::LogicCheckDialog();
     dialog->show();
+}
+
+void View::MainWindow::updateProgress(int value)
+{
+    progDialog_.setValue(value);
+}
+
+void View::MainWindow::showProgress(const QString& title, const QString& label, int range)
+{
+    progDialog_.setWindowTitle(title);
+    progDialog_.setLabelText(label);
+    progDialog_.setRange(0,range);
+    progDialog_.setValue(0);
 }

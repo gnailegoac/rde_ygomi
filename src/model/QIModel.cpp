@@ -60,6 +60,8 @@ bool QIModel::runQualityAnalyize()
 
     dataAna_.SetWorkMode(PeqiDataDefine::WorkMode::StatsRegion);
 
+    emit processUpdate(20);
+
     for(int i = 0; i < nMaxSlices; i++)
     {
         std::map<std::int64_t, PeqiDataDefine::PointData>::iterator it_sensor = allTestSlices.find(i);
@@ -86,6 +88,8 @@ bool QIModel::runQualityAnalyize()
         PeqiDataDefine::ResultInfo* cpyInfo = new PeqiDataDefine::ResultInfo;
         *cpyInfo = *pResultInfo_;
         rltArrRegion.push_back(cpyInfo);
+
+        emit processUpdate(20 + 80 / nMaxSlices * i);
     }
 
     dataAna_.SetWorkMode(PeqiDataDefine::WorkMode::StatsComplexMap);
@@ -183,6 +187,7 @@ void QIModel::process()
                 if (extractLogicalResult())
                     isSuccess_ = true;
     emit resultReady();
+    emit processUpdate(100);
 }
 
 }

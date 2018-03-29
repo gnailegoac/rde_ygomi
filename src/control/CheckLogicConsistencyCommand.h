@@ -28,6 +28,7 @@ public:
     static std::string GetCommandName();
 
 public slots:
+    void updateProgress(int value);
     void handleResult();
 
 signals:

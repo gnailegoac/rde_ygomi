@@ -18,6 +18,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QTreeView>
+#include <QProgressDialog>
 
 #include <osg/Polytope>
 #include "model/Common.h"
@@ -65,6 +66,10 @@ public:
     void ShowCheckLogicConsistencyStart();
     void ShowCheckLogicConsistencyResult();
 
+public slots:
+    void showProgress(const QString& title, const QString& label, int range);
+    void updateProgress(int value);
+
 protected:
     void resizeEvent(QResizeEvent* aEvent) override;
     void closeEvent(QCloseEvent* aEvent) override;
@@ -78,6 +83,7 @@ private:
     Ui::MainWindow* ui;
     QTreeView* mRoadInfoView;
     DbValidationDialog* mDbValidationDialog;
+    QProgressDialog progDialog_;
 
 };
 }

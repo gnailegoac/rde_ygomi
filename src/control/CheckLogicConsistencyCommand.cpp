@@ -15,6 +15,7 @@
 #include "proxy/MainProxy.h"
 #include "model/MemoryModel.h"
 #include "model/QIModel.h"
+#include "view/MainWindow.h"
 
 Controller::CheckLogicConsistencyCommand::CheckLogicConsistencyCommand()
 {
@@ -29,6 +30,7 @@ void Controller::CheckLogicConsistencyCommand::execute(PureMVC::Interfaces::INot
 
         connect(this, SIGNAL(operate()), mainProxy.GetQIModel().get(), SLOT(process()));
         connect(mainProxy.GetQIModel().get(), SIGNAL(resultReady()), this, SLOT(handleResult()));
+        connect(mainProxy.GetQIModel().get(), SIGNAL(processUpdate(int)), this, SLOT(updateProgress(int)));
 
         thread_.start();
     }
@@ -43,6 +45,11 @@ void Controller::CheckLogicConsistencyCommand::execute(PureMVC::Interfaces::INot
 std::string Controller::CheckLogicConsistencyCommand::GetCommandName()
 {
     return "CheckLogicConsistencyCommand";
+}
+
+void Controller::CheckLogicConsistencyCommand::updateProgress(int value)
+{
+    getMainWindow()->updateProgress(value);
 }
 
 void Controller::CheckLogicConsistencyCommand::handleResult()

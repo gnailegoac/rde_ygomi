@@ -313,11 +313,11 @@ void Model::SceneModel::showErrPoints(int id)
         {
             if (node.first == id)
             {
-                mSceneModelRoot->addChild(node.second);
+                node.second->setNodeMask(1);
             }
             else
             {
-                mSceneModelRoot->removeChild(node.second);
+                node.second->setNodeMask(0);
             }
         }
     }
