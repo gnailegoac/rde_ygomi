@@ -31,7 +31,8 @@ class QIModel : public QObject
 public:
     QIModel();
 
-    std::map<int, std::vector<Point3D>>& getErrPointMap();
+    std::map<int, std::vector<Point3D>>& getErrPointMap() { return errPointMap_; }
+    std::map<int, std::string>& getErrDescMap() { return errDescMap_; }
 
     Point3D getRefPoint();
 
@@ -41,6 +42,9 @@ public:
 
 private slots:
     void process();
+
+signals:
+    void resultReady();
 
 private:
     bool loadDataFromDBFiles();
@@ -57,6 +61,7 @@ private:
     PeqiDataDefine::ResultInfo* pResultInfo_;
 
     std::map<int, std::vector<Point3D>> errPointMap_;
+    std::map<int, std::string> errDescMap_;
 
     Point3D referencePoint_;
 

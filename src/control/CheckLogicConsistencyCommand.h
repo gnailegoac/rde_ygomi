@@ -28,10 +28,13 @@ public:
     static std::string GetCommandName();
 
 public slots:
-    void onThreadEnd();
+    void handleResult();
+
+signals:
+    void operate();
 
 private:
-    QThread* pThread_;
+    QThread thread_;
 };
 
 }

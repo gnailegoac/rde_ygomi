@@ -27,6 +27,7 @@ void Controller::StartUpCommand::execute(PureMVC::Interfaces::INotification cons
         View::MainWindowMediator* mainWindowMediator = new View::MainWindowMediator(window);
         ApplicationFacade::RegisterMediator(mainWindowMediator);
         window->show();
+        ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_INIT);
     }
 }
 

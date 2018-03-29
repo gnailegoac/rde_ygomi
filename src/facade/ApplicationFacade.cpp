@@ -60,12 +60,14 @@ const std::string ApplicationFacade::MERGE_ROAD = "MergeRoad";
 const std::string ApplicationFacade::EDIT_ROAD = "EditRoad";
 const std::string ApplicationFacade::ADD_LINE_TO_ROAD = "AddLineToRoad";
 const std::string ApplicationFacade::UPDATE_TREE_VIEW = "UpdateTreeView";
+const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_INIT = "CheckLogicConsistencyInit";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY = "CheckLogicConsistency";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START = "CheckLogicConsistencyStart";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_BUSY = "CheckLogicConsistencyBusy";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS = "CheckLogicConsistencySucess";
 const std::string ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL = "CheckLogicConsistencyFail";
 const std::string ApplicationFacade::SELECT_ERROR_CODE = "SelectErrorCode";
+const std::string ApplicationFacade::SELECT_ERROR_POINT = "SelectErrorPoint";
 
 bool ApplicationFacade::StartUp(View::MainWindow* aWindow)
 {
@@ -149,6 +151,7 @@ void ApplicationFacade::initializeMessageMap()
     mMessageList[SELECT_NODE_IN_3DVIEW] = Controller::NodeHighlightCommand::GetCommandName();
     mMessageList[MERGE_ROAD] = Controller::RoadEditCommand::GetCommandName();
     mMessageList[ADD_LINE_TO_ROAD] = Controller::RoadEditCommand::GetCommandName();
+    mMessageList[CHECK_LOGIC_CONSISTENCY_INIT] = Controller::CheckLogicConsistencyCommand::GetCommandName();
     mMessageList[CHECK_LOGIC_CONSISTENCY] = Controller::CheckLogicConsistencyCommand::GetCommandName();
 }
 

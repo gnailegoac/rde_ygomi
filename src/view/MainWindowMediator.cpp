@@ -63,6 +63,7 @@ PureMVC::Patterns::Mediator::NotificationNames View::MainWindowMediator::listNot
     result->get().push_back(ApplicationFacade::UPDATE_TREE_VIEW);
     result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START);
     result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
+    result->get().push_back(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL);
     result->get().push_back(ApplicationFacade::SELECT_ERROR_CODE);
     return NotificationNames(result);
 }
@@ -257,7 +258,8 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
         if(sceneModel != nullptr && qiModel != nullptr)
         {
             const std::vector<Model::Point3D>& pointList = qiModel->getErrPointMap()[err];
-            sceneModel->buildErrPointsNode(pointList, qiModel->getRefPoint());
+            sceneModel->addErrPointsToScene(err, pointList, qiModel->getRefPoint());
+            sceneModel->showErrPoints(err);
         }
 
         getMainWindow()->centralWidget()->repaint();
@@ -358,6 +360,10 @@ void View::MainWindowMediator::handleNotification(PureMVC::Patterns::INotificati
     else if (noteName == ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS)
     {
         getMainWindow()->ShowCheckLogicConsistencyResult();
+    }
+    else if (noteName == ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL)
+    {
+        getMainWindow()->PopupWarningMessage("Check logic consistency failed!");
     }
 }
 

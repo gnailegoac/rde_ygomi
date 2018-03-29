@@ -42,7 +42,9 @@ public:
     void RedrawSceneByLOD(const std::shared_ptr<MemoryModel>& aMemoryModel, const std::uint8_t& aLevel);
     static std::vector<osg::Node*> GetLineNodesByRoadNode(osg::Node* aNode);
     static uint64_t GetIdByNodeName(const std::string& aNodeName);
-    void buildErrPointsNode(const std::vector<Point3D>& pointList, const Point3D& refPoint);
+
+    void addErrPointsToScene(int id, const std::vector<Point3D>& pointList, const Point3D& refPoint);
+    void showErrPoints(int id);
 
 private:
     osg::ref_ptr<osg::Node> buildLineNode(const Model::LinePtr& aLine);
@@ -59,6 +61,8 @@ private:
                              int aRightLinePointsNum, osg::ref_ptr<osg::DrawElementsUInt>& aTris);
     void createRoadTexture(const std::string& aRoadTextureFile, osg::ref_ptr<osg::Geometry>& aRoadGeometry);
 
+    osg::ref_ptr<osg::Node> buildErrPointsNode(int id, const std::vector<Point3D>& pointList, const Point3D& refPoint);
+
 private:
     osg::ref_ptr<osg::Group> mSceneModelRoot;
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mRoadNodeMap;
@@ -67,6 +71,7 @@ private:
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mRoadModelNodeMap;
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mLaneNodeMap;
     std::map<std::uint64_t, osg::ref_ptr<osg::Node>> mMarksNodeMap;
+    std::map<int, osg::ref_ptr<osg::Node>> mErrNodeMap;
     std::uint8_t mLevel;
 };
 }

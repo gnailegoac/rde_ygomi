@@ -113,6 +113,8 @@ bool QIModel::extractLogicalResult()
                     dynamic_cast<ST_Method_Logical*>(iterMeasure);
             if (logicalMeasure != nullptr)
             {
+                errDescMap_[logicalMeasure->mID] = logicalMeasure->mDescription;
+
                 for (const auto& iterLogicalValue :
                      logicalMeasure->mRltsValue)
                 {
@@ -160,11 +162,6 @@ bool QIModel::extractLogicalResult()
     return true;
 }
 
-std::map<int, std::vector<Point3D>>& QIModel::getErrPointMap()
-{
-    return errPointMap_;
-}
-
 Point3D QIModel::getRefPoint()
 {
     return Point3D(DBloader_.getReferencePoint().GetX(),
@@ -185,7 +182,7 @@ void QIModel::process()
             if (runQualityAnalyize())
                 if (extractLogicalResult())
                     isSuccess_ = true;
-    QThread::currentThread()->quit();
+    emit resultReady();
 }
 
 }

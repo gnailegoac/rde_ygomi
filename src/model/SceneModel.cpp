@@ -137,11 +137,11 @@ osg::ref_ptr<osg::Node> Model::SceneModel::buildLineNode(const Model::LinePtr& a
     return geode;
 }
 
-void Model::SceneModel::buildErrPointsNode(const std::vector<Point3D>& pointList, const Point3D& refPoint)
+osg::ref_ptr<osg::Node> Model::SceneModel::buildErrPointsNode(int id, const std::vector<Point3D>& pointList, const Point3D& refPoint)
 {
     if(pointList.empty())
     {
-        return;
+        return nullptr;
     }
 
     osg::Geode* geode = new osg::Geode;
@@ -179,10 +179,15 @@ void Model::SceneModel::buildErrPointsNode(const std::vector<Point3D>& pointList
     geometry->addPrimitiveSet(new osg::DrawArrays(osg::DrawArrays::POINTS, 0, vertexArray->size()));
     geometry->setVertexArray(vertexArray);
 
+    osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
+    colorArray->push_back(osg::Vec4d(1.0, 0.0, 0.0, 0.9));
+    geometry->setColorArray(colorArray);
+    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
     geode->addDrawable(geometry);
 
-    geode->setName("error: test");
-    mSceneModelRoot->addChild(geode);
+    geode->setName("error: " + std::to_string(id));
+    return geode;
 }
 
 osg::ref_ptr<osg::Group> Model::SceneModel::buildRoadNode(const std::shared_ptr<Model::Road>& aRoad)
@@ -288,6 +293,34 @@ void Model::SceneModel::AddRoadModelToScene(const std::shared_ptr<Model::Road>& 
     osg::ref_ptr<osg::Group> roadGroup = buildRoadModelNode(aRoad);
     mSceneModelRoot->addChild(roadGroup);
     mRoadModelNodeMap[aRoad->GetRoadId()] = roadGroup;
+}
+
+void Model::SceneModel::addErrPointsToScene(int id, const std::vector<Point3D>& pointList, const Point3D& refPoint)
+{
+    if (mErrNodeMap.count(id) == 0)
+    {
+        osg::ref_ptr<osg::Node> roadGroup = buildErrPointsNode(id, pointList, refPoint);
+        mSceneModelRoot->addChild(roadGroup);
+        mErrNodeMap[id] = roadGroup;
+    }
+}
+
+void Model::SceneModel::showErrPoints(int id)
+{
+    if (mErrNodeMap.count(id) != 0)
+    {
+        for (auto& node : mErrNodeMap)
+        {
+            if (node.first == id)
+            {
+                mSceneModelRoot->addChild(node.second);
+            }
+            else
+            {
+                mSceneModelRoot->removeChild(node.second);
+            }
+        }
+    }
 }
 
 void Model::SceneModel::RemoveRoadModelFromScene()

@@ -17,30 +17,26 @@
 #include "model/QIModel.h"
 
 Controller::CheckLogicConsistencyCommand::CheckLogicConsistencyCommand()
-    : pThread_(nullptr)
-{}
+{
+}
 
 void Controller::CheckLogicConsistencyCommand::execute(PureMVC::Interfaces::INotification const& aNotification)
 {
-    if (aNotification.getName() == ApplicationFacade::CHECK_LOGIC_CONSISTENCY)
+    if (aNotification.getName() == ApplicationFacade::CHECK_LOGIC_CONSISTENCY_INIT)
     {
-        if (pThread_ == nullptr)
-        {
-            pThread_ = new QThread();
+        MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+        mainProxy.GetQIModel()->moveToThread(&thread_);
 
-            MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-            mainProxy.GetQIModel()->moveToThread(pThread_);
+        connect(this, SIGNAL(operate()), mainProxy.GetQIModel().get(), SLOT(process()));
+        connect(mainProxy.GetQIModel().get(), SIGNAL(resultReady()), this, SLOT(handleResult()));
 
-            connect(pThread_, SIGNAL(started()), mainProxy.GetQIModel().get(), SLOT(process()));
-            connect(pThread_, SIGNAL(finished()), this, SLOT(onThreadEnd()));
-            pThread_->start();
+        thread_.start();
+    }
+    else if (aNotification.getName() == ApplicationFacade::CHECK_LOGIC_CONSISTENCY)
+    {
+        emit operate();
 
-            ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START);
-        }
-        else
-        {
-            ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_BUSY);
-        }
+        ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_START);
     }
 }
 
@@ -49,17 +45,11 @@ std::string Controller::CheckLogicConsistencyCommand::GetCommandName()
     return "CheckLogicConsistencyCommand";
 }
 
-void Controller::CheckLogicConsistencyCommand::onThreadEnd()
+void Controller::CheckLogicConsistencyCommand::handleResult()
 {
-    if (pThread_ != nullptr)
-    {
-        delete pThread_;
-        pThread_ = nullptr;
-
-        MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
-        if (mainProxy.GetQIModel()->isSuccess())
-            ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
-        else
-            ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL);
-    }
+    MainProxy& mainProxy = dynamic_cast<MainProxy&>(ApplicationFacade::RetriveProxy(MainProxy::NAME));
+    if (mainProxy.GetQIModel()->isSuccess())
+        ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_SUCCESS);
+    else
+        ApplicationFacade::SendNotification(ApplicationFacade::CHECK_LOGIC_CONSISTENCY_FAIL);
 }

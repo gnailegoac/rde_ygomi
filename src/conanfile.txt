@@ -8,7 +8,7 @@ Protobuf/2.6.1@RDE/stable
 #basicmeasure/0.1.0@RDE/devel
 BasicMeasure/0.1.20180312.f1204a8@RDE/devel
 DbConverter/0.2.2.20180213110519.c50c455@GIS/stable
-qialgorithm/0.3.0.20180307160000@Algorithm/stable
+qialgorithm/0.3.3.20180327170000@Algorithm/stable
 CommonLogWrapper/0.1.1@RDBDelivery/stable
 pcl/1.7.2.20171120@RDBDelivery/stable
 eigen/3.0@RDBDelivery/stable
